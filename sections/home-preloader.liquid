@@ -1,0 +1,79 @@
+{{ 'home-preloader.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.enable_preloader and template.name == 'index' %}
+<div id="home-preloader-{{ section.id }}" class="home-preloader{% if section.settings.zoom_to_fill %} zoom{% endif %}" style="--preloader-bg: {{ section.settings.background_color }}; --preloader-width: {{ section.settings.animation_width }}px; --preloader-ar: {{ section.settings.animation_aspect_ratio }}" role="status" aria-live="polite" aria-label="Loading">
+  <div class="lottie-preloader" aria-hidden="true"></div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var root = document.getElementById('home-preloader-{{ section.id }}');
+    if (!root) return;
+
+    var minDuration = {{ section.settings.min_duration | default: 800 }};
+    var maxDuration = {{ section.settings.max_duration | default: 6000 }};
+    var start = (window.performance && performance.now) ? performance.now() : Date.now();
+
+    function hide() {
+      root.classList.add('is-fading');
+      setTimeout(function() {
+        if (root && root.parentNode) root.parentNode.removeChild(root);
+      }, 320);
+    }
+
+    var maxTimer = setTimeout(hide, maxDuration);
+
+    window.addEventListener('load', function() {
+      var now = (window.performance && performance.now) ? performance.now() : Date.now();
+      var elapsed = now - start;
+      var delay = Math.max(0, minDuration - elapsed);
+      setTimeout(function() {
+        clearTimeout(maxTimer);
+        hide();
+      }, delay);
+    }, { once: true });
+
+    {% if section.settings.lottie_json_url != blank %}
+    try {
+      if (window.lottie) {
+        window.lottie.loadAnimation({
+          container: root.querySelector('.lottie-preloader'),
+          renderer: 'svg',
+          loop: {{ section.settings.lottie_loop | default: true }},
+          autoplay: {{ section.settings.lottie_autoplay | default: true }},
+          path: '{{ section.settings.lottie_json_url | escape }}'
+        });
+      }
+    } catch(e) {}
+    {% endif %}
+  });
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Home Preloader",
+  "tag": "section",
+  "class": "section-home-preloader",
+  "settings": [
+    { "type": "checkbox", "id": "enable_preloader", "label": "Enable preloader", "default": true },
+    { "type": "url", "id": "lottie_json_url", "label": "Lottie JSON URL" },
+    { "type": "checkbox", "id": "lottie_autoplay", "label": "Autoplay", "default": true },
+    { "type": "checkbox", "id": "lottie_loop", "label": "Loop", "default": true },
+    { "type": "range", "id": "animation_width", "label": "Animation width (px)", "min": 80, "max": 600, "step": 10, "default": 240, "unit": "px" },
+    { "type": "select", "id": "animation_aspect_ratio", "label": "Aspect ratio", "default": "auto", "options": [
+      { "value": "auto", "label": "Auto" },
+      { "value": "16 / 9", "label": "16:9" },
+      { "value": "4 / 3", "label": "4:3" },
+      { "value": "1 / 1", "label": "1:1" },
+      { "value": "9 / 16", "label": "9:16" }
+    ] },
+    { "type": "color", "id": "background_color", "label": "Background color", "default": "#ffffff" },
+    { "type": "checkbox", "id": "zoom_to_fill", "label": "Ocupar ancho completo (zoom)", "default": false },
+    { "type": "range", "id": "min_duration", "label": "Minimum visible time (ms)", "min": 0, "max": 3000, "step": 100, "default": 800, "unit": "ms" },
+    { "type": "range", "id": "max_duration", "label": "Max visible time fallback (ms)", "min": 1000, "max": 9500, "step": 500, "default": 6000, "unit": "ms" }
+  ],
+  "presets": [
+    { "name": "Home Preloader", "category": "Loading" }
+  ]
+}
+{% endschema %}

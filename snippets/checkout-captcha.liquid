@@ -1,0 +1,98 @@
+{% if settings.checkout_captcha_enable and settings.checkout_captcha_site_key != blank %}
+<div id="checkout-captcha-root"
+     data-enabled="true"
+     data-site-key="{{ settings.checkout_captcha_site_key }}"
+     data-theme="{{ settings.checkout_captcha_theme }}"
+     data-size="{{ settings.checkout_captcha_size }}"
+     class="checkout-captcha-modal"
+     hidden>
+  <div class="checkout-captcha-backdrop"></div>
+  <div class="checkout-captcha-dialog" role="dialog" aria-modal="true" aria-labelledby="checkoutCaptchaTitle">
+    <h2 id="checkoutCaptchaTitle">{{ settings.checkout_captcha_message }}</h2>
+    <div id="checkout-captcha-widget" class="captcha-widget">
+      <div id="captchaBox"
+           class="g-recaptcha"
+           data-sitekey="{{ settings.checkout_captcha_site_key }}"
+           data-theme="{{ settings.checkout_captcha_theme }}"
+           data-size="{{ settings.checkout_captcha_size }}"
+           data-callback="checkoutCaptchaSolved"></div>
+      <div id="captchaStatus" class="captcha-status" hidden></div>
+    </div>
+    <div class="captcha-actions">
+      <button id="checkout-captcha-cancel" class="button button-2">Cancelar</button>
+      <button id="checkout-captcha-continue" class="button button-1" disabled>Continuar al checkout</button>
+    </div>
+  </div>
+  <style>
+    .checkout-captcha-modal[hidden] { display: none; }
+    .checkout-captcha-modal { position: fixed; inset: 0; z-index: 9999; }
+    .checkout-captcha-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+    .checkout-captcha-dialog { position: relative; max-width: 480px; margin: 10vh auto; background: #fff; color: #111; border-radius: 8px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+    .checkout-captcha-dialog h2 { font-size: 18px; margin-bottom: 12px; }
+    .captcha-widget { display: flex; justify-content: center; margin: 12px 0 16px; }
+    .captcha-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .captcha-status { font-size: 13px; color: #c40000; text-align: center; margin-top: 8px; }
+  </style>
+  <script>
+    var SHOP_CHECKOUT_URL = '{{ routes.cart_url | split: '/cart' | first }}/checkout';
+    window.checkoutCaptchaSolved = function(){
+      const btn = document.getElementById('checkout-captcha-continue');
+      if (btn) btn.disabled = false;
+    };
+    window.openCheckoutCaptcha = function(nextUrl){
+      try {
+        const root = document.getElementById('checkout-captcha-root');
+        if (!root) { window.location = nextUrl; return; }
+        root.hidden = false;
+        root.dataset.nextUrl = nextUrl;
+        const ensureApi = () => new Promise((resolve) => {
+          if (window.grecaptcha) { resolve(); return; }
+          const s = document.createElement('script');
+          s.src = 'https://www.google.com/recaptcha/api.js';
+          s.async = true; s.defer = true;
+          s.onload = () => resolve();
+          s.onerror = () => resolve();
+          document.head.appendChild(s);
+        });
+
+        ensureApi().then(() => {
+          // Espera breve para auto-render y muestra diagnóstico si no se renderiza
+          setTimeout(() => {
+            const box = document.getElementById('captchaBox');
+            const status = document.getElementById('captchaStatus');
+            const iframe = box ? box.querySelector('iframe') : null;
+            if (!iframe) {
+              if (status) {
+                status.hidden = false;
+                status.textContent = 'No pudimos cargar el captcha. Verifica que la Site Key sea de reCAPTCHA v2 y que el dominio actual esté autorizado en Google reCAPTCHA.';
+              }
+            }
+          }, 800);
+        });
+
+        const cancel = document.getElementById('checkout-captcha-cancel');
+        const cont = document.getElementById('checkout-captcha-continue');
+        cancel.onclick = function(e){ e.preventDefault(); root.hidden = true; };
+        cont.onclick = function(e){ e.preventDefault(); const url = root.dataset.nextUrl; root.hidden = true; window.location = url; };
+      } catch(e){ console.error('Checkout captcha error:', e); window.location = nextUrl; }
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const root = document.getElementById('checkout-captcha-root');
+      const enabled = root?.dataset.enabled === 'true';
+      if (!enabled) return;
+
+      document.addEventListener('click', function(e){
+        const sideBtn = e.target && e.target.closest && e.target.closest('#cart-sidebar-checkout');
+        if (sideBtn) {
+          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+          const inline = sideBtn.getAttribute('onclick');
+          const m = inline ? inline.match(/'([^']+)'/) : null;
+          const href = m && m[1] ? m[1] : SHOP_CHECKOUT_URL;
+          window.openCheckoutCaptcha(href);
+        }
+      }, true);
+    });
+  </script>
+</div>
+{% endif %}

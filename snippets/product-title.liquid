@@ -1,0 +1,67 @@
+{%- liquid
+  assign fontsize_text = block.settings.fontsize_text
+  assign fontsize_text_mb = block.settings.fontsize_text_mb
+  assign color_title = block.settings.color_title
+
+  assign collection_discount = 0
+  assign has_collection_discount = false
+  for col in product.collections
+    if col.metafields.custom.descuento_porcentaje != blank
+      assign collection_discount = col.metafields.custom.descuento_porcentaje | plus: 0
+      if collection_discount > 0
+        assign has_collection_discount = true
+        break
+      endif
+    endif
+  endfor
+-%}
+{%- if check_show_share == '3' -%}
+  <div class="halo-share-3">
+    <h1
+      class="1 productView-title"
+      style="
+        --color-title: {{ color_title }};
+        --fontsize-text: {{ fontsize_text | append: 'px' }};
+        --fontsize-mb-text: {{ fontsize_text_mb | append: 'px' }};
+      "
+    >
+      <span>
+        {{ product.title | escape }}
+      </span>
+      {%- if has_collection_discount -%}
+        <span class="badge-title-discount"
+          ><span>-{{ collection_discount }}%</span></span
+        >
+      {%- endif -%}
+    </h1>
+    {% render 'halo-share',
+      product: product,
+      share_product_type: share_product_type,
+      share_product_script: share_product_script,
+      share_layout: check_show_share
+    %}
+  </div>
+{%- else -%}
+  <h1
+    class="productView-title"
+    style="
+      --color-title: {{ color_title }};
+      --fontsize-text: {{ fontsize_text | append: 'px' }};
+      --fontsize-mb-text: {{ fontsize_text_mb | append: 'px' }};
+    "
+  >
+    <span>
+      {{ product.title | escape }}
+    </span>
+    {%- if has_collection_discount -%}
+      <span class="badge-title-discount"
+        ><span>-{{ collection_discount }}%</span></span
+      >
+    {%- endif -%}
+  </h1>
+{%- endif -%}
+<div
+  class="scm-reviews-rate"
+  data-rate-version2="{{ product.metafields.scm_review_importer.reviewsData.reviewCountInfo | json }}"
+  data-product-id="{{ product.id }}"
+></div>

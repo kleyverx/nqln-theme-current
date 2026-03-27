@@ -1,0 +1,2 @@
+* 378a50f (HEAD -> update-theme-2026-03-27, main) Update theme: modified CSS, JS, and Liquid files; added whatsapp-button
+* 46329e1 (feature/promo-updates) Initial commit with theme files and promo enhancements

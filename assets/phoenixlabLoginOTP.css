@@ -1,0 +1,158 @@
+/* ==========Login Page========= */
+#phoenixLoginMobile{display: none;}
+   #pass-div i{margin-left: -8%;cursor: pointer;font-size: 18px;margin-top:5%}
+   #phone-signin-button, #verify-otp-button,#verify {
+   margin: 0 auto;
+   border: 1px solid #000;
+   padding: 10px 30px;
+   text-decoration: none;
+   background-color: #000;
+   color: #fff!important;
+     transition: all 0.35s;
+margin-top: 20px;
+   }
+  #phone-signin-button:hover, #verify-otp-button:hover, #verify:hover {
+   background-color: transparent;
+   color: #000!important;
+   }
+.phoenixLoginMobile-section{
+   text-align: center;
+   margin: 50px 0;
+}
+.section-header .phoenixLoginTitle{
+   margin-bottom: 30px;
+}
+.phone-number{
+   margin-bottom: 22px;
+   max-width: 450px;
+   margin-left: auto;
+   text-align: left;
+   margin-right: auto;
+}
+#phoenixLoginField{
+   display: flex;
+   justify-content: center;
+}
+#phoenixLoginField #countryCode{
+   padding: 15px 0;
+   border: none;
+   border-bottom: 1px solid;
+   height: 48px;
+  line-height: 17px;
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+#phoenixLoginField #countryCode:focus{
+   outline: none;
+  box-shadow: none;
+}
+#phoenixLoginField #phone-number, #verify-code-div input{
+   padding: 15px 0;
+   border: none;
+   border-bottom: 1px solid;
+   height: 48px;
+   line-height: 48px;
+   padding-left: 20px;
+}
+#phoenixLoginMobile input::placeholder{opacity:1 !important;}
+#phoenixLoginMobile input::::-webkit-input-placeholder{opacity:1 !important;}
+#phoenixLoginMobile input::::-ms-input-placeholder{opacity:1 !important;}
+
+#verify-code-div input{
+  text-align: center;
+  padding: 0;
+}
+#phoenixLoginField #phone-number:focus, #verify-code-div input{
+   outline: none;
+  box-shadow: none;
+}
+#phoenixLoginField .field:after, #phoenixLoginField .field:before{
+    content: none;
+  }
+#phoenixLoginField .field{
+   width: 100%;
+}
+#phoenixLoginField .field #phone-number{
+   width: 100%;
+}
+#verify-code-div a {
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
+    margin-top:8px;
+}
+.success-message-pn{color:#00A300}
+#error-message-cc, .error-message-pn{
+   color:#ff0000
+}
+
+
+/* ==========Account Page========= */
+
+#customer-detail-update{
+  max-width: 680px;
+  text-align: center;
+  background: #f9f9f9;
+  padding: 15px 30px 40px 30px;
+}
+#customer-detail-update .field-list{
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+#customer-detail-update .field-list > div{
+  width: 50%;
+  padding: 0 15px;
+  margin-bottom: 20px;
+}
+#customer-detail-update .field-list > div:last-child{
+  margin: 0 auto;
+}
+#customer-detail-update .field-list > div input{
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 10px 10px;
+  border-radius: 0;
+  border: 1px solid #666;
+  font-size: 14px;
+}
+#customer-detail-update *:focus-visible{
+  box-shadow: none;
+  outline: none;
+}
+#customer-detail-update .field-list > div button{
+  border-radius: 0;
+  height: 46px;
+  border: 2px solid #000;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  padding: 0 30px;
+  cursor: pointer;
+  transition: all 0.35s;
+}
+#customer-detail-update .field-list > div button:hover{
+  background: transparent;
+  color: #000;
+}
+#customer-detail-update .customerMobile{
+  display:flex;
+}
+#customer-detail-update #countryCode{
+  width: 63%;
+    height: 40px;
+    line-height: 22px;
+    padding: 10px;
+    border-radius: 0;
+    border: 1px solid #666;
+    font-size: 14px;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    padding-right: 25px;
+}
+@media (max-width: 517px){
+#customer-detail-update .field-list>div {
+    width: 100%;
+}
+}

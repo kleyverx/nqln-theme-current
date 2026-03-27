@@ -1,0 +1,124 @@
+.halo-productBadges {
+  position: absolute;
+  top: var(--badge-postion-top);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.halo-productBadges .badge {
+  font-family: var(--badge-font);
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  text-transform: var(--badge-text-transform);
+  letter-spacing: var(--badge-letter-spacing);
+  line-height: var(--badge-line-height);
+  border-radius: var(--badge-border-radius);
+  height: auto;
+  padding: var(--badge-padding-top) var(--badge-padding-left-right)
+    var(--badge-padding-bottom) var(--badge-padding-left-right);
+  text-align: center;
+  word-break: break-word;
+}
+
+.halo-productBadges .badge.sale-badge {
+  color: var(--sale-badge-color);
+  background-color: var(--sale-badge-bg);
+}
+
+.halo-productBadges .badge.new-badge {
+  color: var(--new-badge-color);
+  background-color: var(--new-badge-bg);
+}
+
+.halo-productBadges .badge.sold-out-badge {
+  color: var(--sold-out-badge-color);
+  background-color: var(--sold-out-badge-bg);
+}
+
+.halo-productBadges .badge.custom-badge {
+  color: var(--custom-badge-color);
+  background-color: var(--custom-badge-bg);
+}
+
+.halo-productBadges .badge.bundle-badge {
+  color: var(--bundle-badge-color);
+  background-color: var(--bundle-badge-bg);
+}
+
+.halo-productBadges .badge.collection-badge {
+  color: var(--collection-badge-color);
+  background-color: var(--collection-badge-bg);
+}
+.halo-productBadges .badge.collection-badge--2 {
+  color: var(--collection-badge2-color);
+  background-color: var(--collection-badge2-bg);
+}
+.halo-productBadges .badge.collection-badge--3 {
+  color: var(--collection-badge3-color);
+  background-color: var(--collection-badge3-bg);
+}
+.halo-productBadges .badge.collection-badge--4 {
+  color: var(--collection-badge4-color);
+  background-color: var(--collection-badge4-bg);
+}
+
+.halo-productBadges .badge + .badge {
+  margin-top: 5px;
+}
+
+.halo-productBadges--left {
+  left: var(--badge-postion-left-right);
+  align-items: flex-start;
+}
+
+.halo-productBadges--right {
+  right: var(--badge-postion-left-right);
+  align-items: flex-end;
+}
+
+/* =============================================
+   TITLE DISCOUNT BADGE (Teal Pointed)
+   ============================================= */
+.badge-title-discount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3cbf96;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  width: 75px;
+  height: 32px;
+  margin-left: 20px;
+  vertical-align: middle;
+  transform: matrix(-1, 0, 0, 1, 0, 0);
+  border-radius: 5px 2px 2px 5px;
+  line-height: 1;
+  position: relative;
+  top: -2px;
+}
+
+.badge-title-discount::after {
+  content: "";
+  position: absolute;
+  right: -11px;
+  top: 4.7px;
+  width: 22.6px;
+  height: 22.6px;
+  background-color: #3cbf96;
+  transform: rotate(45deg);
+  border-radius: 1.5px;
+  z-index: -1;
+}
+
+.badge-title-discount span {
+  transform: matrix(-1, 0, 0, 1, 0, 0);
+  display: inline-block;
+}
+
+.productView-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

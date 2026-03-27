@@ -1,0 +1,174 @@
+
+
+
+<script>
+  window.SwiftExpert=function(){"use strict";let e,t=[],n=[],o=[],a=null,i=!1;const d=["mouseover","keydown","touchmove","touchstart","wheel"],r=["IMG","IFRAME","LINK"],s=["application/ld+json","application/json"];function c(e){return 1===e.nodeType&&"SCRIPT"===e.tagName&&!s.includes(e.type)}async function l(){if(i)return;i=!0,a.disconnect(),d.forEach((function(e){console.log("deactivate SWE action >>",e),removeEventListener(e,l,{passive:!0})}));const e=await Promise.all([p(document.querySelectorAll('script[type="text/SwiftDisableScript"]')),u(o)]);t.length=0,o.length=0,f(e)}async function u(e=[]){return await e.reduce((async(e,t)=>{const n=await e;if(!t)return n;const o=await function(e){return new Promise((t=>{function n(){this.dataset.swiftStyleDelay="inited",t("isLoaded")}e.onload=n,e.onerror=n,document.body?document.body.append(e):document.head.append(e)}))}(t);return n.push({status:o,node:t}),n}),Promise.resolve([]))}async function p(e=[]){return await[...e].reduce((async(e,t)=>{const n=await e,o=await y(t);return n.push({status:o,node:t}),n}),Promise.resolve([]))}function f(e){const t=new CustomEvent("SwiftPreInitDelay",{detail:e});window.dispatchEvent(t),document.dispatchEvent(t)}function w(e,t={bubbles:!0,cancelable:!0}){const n=new Event(e,t);window.dispatchEvent(n),document.dispatchEvent(n)}function y(e){return new Promise((t=>{function n(){t("isLoaded")}e.type="text/javascript",e.dataset.swiftInit="inited",e.dataset.swiftScriptDisable&&delete e.dataset.swiftScriptDisable,e.onload=n,e.onerror=n,document.body?document.body.appendChild(e):document.head.appendChild(e),e.src&&e.src.length||t("isLoaded")}))}function h(e,n){e.type="text/SwiftDisableScript",t.push(e),n&&n()}function v(e){if(e.dataset.swiftStylePreload||"preload"===e.dataset.swiftStylePreload||"preload"===e.rel)return;const t=e.cloneNode();e.remove(),n.push(t),t.as="style",t.rel="preload",t.dataset.swiftStylePreload="preload",t.addEventListener("load",(function(){this.rel="stylesheet",this.dataset.swiftStylePreload="inited"})),setTimeout((()=>{document.head.append(t),t.insertAdjacentHTML("afterend",`<noscript><link rel="stylesheet" href="${t.href}"></noscript>`)}),1500)}function m(e){const t=e.cloneNode();o.push(t),e.remove()}function E(e){const t=document.documentElement;a=new MutationObserver(e),a.observe(t,{childList:!0,subtree:!0})}function S(e){const t=performance.getEntriesByType("navigation");if(!t.length)return!1;t.forEach((t=>{switch(e){case"DOMContentLoaded":return!!(t.domContentLoadedEventEnd-t.domContentLoadedEventStart>0);case"load":return!!(t.loadEventEnd-t.loadEventStart>0);default:return!1}}))}function b(){S("DOMContentLoaded")&&w("DOMContentLoaded"),S("load")&&w("load"),w("readystatechange");const e=new UIEvent("resize",Object.assign({view:window,detail:!1},{bubbles:!0,cancelable:!0}));window.dispatchEvent(e),document.dispatchEvent(e)}function g({url:e,content:t="",id:n,dataSet:o,isAsync:a=!1,isDefer:i=!1,isHeader:d=!1}){return new Promise(((r,s)=>{const c=document.createElement("script");c.type="text/javascript",a&&(c.async=!0),!a&&i&&(c.defer=!0),n&&(c.id=n),"object"==typeof o&&Object.assign(c.dataset,{...o,swiftPreInit:"preinited"}),e?c.src=e:c.textContent=t,c.onload=()=>r(!0),c.onerror=e=>{s(!0),console.error(e)},d?document.head.append(c):document.body.append(c),e||r(!0)}))}return{getInstance:function(){return e||(d.forEach((function(e){console.log("active SWE action >>",e),window.addEventListener(e,l,{passive:!0})})),e={initObserver:E,deferStyle:v,delayStyle:m,delayScript:h,dispatchEventALL:b,asyncAppendScript:y,dispatchEventManual:w,dispatchEventSwiftPreInit:f,isValidScript:c,loadScript:g,iphone:()=>"undefined"!=typeof window&&"undefined"!=typeof navigator&&/iPhone/i.test(navigator.userAgent||navigator.vendor||window.opera&&"[object Opera]"===opera.toString()),getTrackingInfo:()=>({scriptsDelay:t,styleDefer:n,styleDelay:o,observerNode:a,hadInitCode:i,tagAllow:r})}),e}}}();
+  (function () {
+  		const initSwift = SwiftExpert.getInstance();
+  	
+		  const listDelayScriptContent = [
+  			"previewBarInjector.init",
+  			"window.addEventListener('load', asyncLoad, false)",
+  			`addEventListener('load', prefetchAssets)`,
+          `hotjar`,
+          `shopifycloud`,
+          `googletagmanager.com`,
+          `connect.facebook.net`,
+          `/extensions`,
+          `gdprcdn`,
+          `alireviews`,
+          `isenselabs`,
+          `/wpm`,
+          `FoxKitPlugins`,
+          `pandectes-core.js`,
+          `gdprcdn.b-cdn.net`,
+          `booster-page-speed-optimizer.js`,
+          `gsap.js`,
+          `sticky-add-to-cart.js`,
+          `build-complementary-products.js`,
+          `addthis_widget.js`
+            
+        ];
+  		const listDelayScriptUrl = [
+          `shopifycloud`,
+          `googletagmanager.com`,
+          `connect.facebook.net`,
+          `/extensions`,
+          `gdprcdn`,
+          `alireviews`,
+          `isenselabs`,
+          `/wpm`,
+          `pandectes-core.js`,
+          `gdprcdn.b-cdn.net`,
+          `booster-page-speed-optimizer.js`,
+          `gsap.js`,
+          `sticky-add-to-cart.js`,
+          `build-complementary-products.js`,
+          `addthis_widget.js`
+        ];
+    
+		const preloadedImages = [];
+        if(window.screen.availWidth < 720) listDelayScriptContent.push('domLoadedTranscy');
+  	
+  		function logChanges(records /* , observer */) {
+  			const { tagAllow } = initSwift.getTrackingInfo();
+  			for (const record of records) {
+  				for (const addedNode of record.addedNodes) {
+  					const isValidScript = initSwift.isValidScript(addedNode);
+  					if (
+  						isValidScript &&
+  						addedNode.src &&
+  						listDelayScriptUrl.some((t) => addedNode.src.includes(t))
+  					) {
+  						initSwift.delayScript(addedNode, () => {
+  							addedNode.dataset.swiftScriptDisable = "is-disable";
+  						});
+  						// console.log("zooooo listDelayScriptUrl", addedNode.src, document.querySelector(`script[src='${addedNode.src}']`));
+  					} else if (
+  						isValidScript &&
+  						listDelayScriptContent.some((t) =>
+  							addedNode.textContent.includes(t)
+  						)
+  					) {
+  						if (
+  							addedNode.textContent.includes(
+  								"previewBarInjector.init"
+  							)
+  						) {
+  							addedNode.textContent = addedNode.textContent.replace(
+  								"DOMContentLoaded",
+  								"SwiftPreInitDelay"
+  							);
+  						} else if (
+  							addedNode.textContent.includes(
+  								"window.addEventListener('load', asyncLoad, false)"
+  							)
+  						) {
+  							addedNode.textContent = addedNode.textContent.replace(
+  								"window.addEventListener('load', asyncLoad, false)",
+  								"window.addEventListener('SwiftPreInitDelay', asyncLoad, false)"
+  							);
+  						} else if (
+  							addedNode.textContent.includes(
+  								`addEventListener('load', prefetchAssets)`
+  							)
+  						) {
+  							addedNode.textContent = addedNode.textContent.replace(
+  								`addEventListener('load', prefetchAssets)`,
+  								`addEventListener('SwiftPreInitDelay', prefetchAssets)`
+  							);
+  						} else if (
+  							addedNode.textContent.includes(
+  								`domLoadedTranscy`
+  							)
+  						) {
+  							addedNode.textContent = addedNode.textContent.replace(
+  								`document.addEventListener("DOMContentLoaded"`,
+  								`document.addEventListener("SwiftPreInitDelay"`
+  							);
+  						}
+  						initSwift.delayScript(addedNode, () => {
+  							addedNode.dataset.swiftScriptDisable = "is-disable";
+  						});
+  					} else if (
+  						isValidScript &&
+  						addedNode.className === "analytics"
+  					) {
+  						initSwift.delayScript(addedNode, () => {
+  							addedNode.dataset.swiftScriptDisable = "is-disable";
+  						});
+  					} else if (tagAllow.includes(addedNode.nodeName)) {
+  						if (addedNode.nodeName === "IMG") {
+              addedNode.loading = "lazy";
+
+							  if (preloadedImages.length < 5) {
+                        const image = new Image();
+                        image.src = addedNode.src;
+                        image.alt = addedNode.alt;
+                
+                        const preloadLink = document.createElement('link');
+                        preloadLink.rel = 'preload';
+                        preloadLink.as = 'image';
+                        preloadLink.href = image.src;
+                        document.head.appendChild(preloadLink);
+                
+                        preloadedImages.push(image.src);
+                      }
+
+  						} else if (addedNode.nodeName === "IFRAME") {
+  							addedNode.loading = "lazy";
+  						}
+                       else if (addedNode.nodeName === "LINK") {
+                         const href = addedNode.href || "";
+                         const isCore = href.includes("global.css") || href.includes("theme.css") || href.includes("vendor.css") || href.includes("component-") || href.includes("header-");
+                         if (!isCore) {
+                           if (href.includes("extensions/") || href.includes("lucky-wheel.css") || href.includes("foxkit-sales-boost") || href.includes("component-share.css")) {
+                             initSwift.delayStyle(addedNode);
+                           }
+                         }
+                       }
+                        
+  					}
+  				}
+  			
+  			}
+  		}
+  		{% unless template contains 'cart' %}
+  			initSwift.initObserver(logChanges);
+  		{% endunless %}
+  
+  		addEventListener("SwiftPreInitDelay", (data) => {
+  			const { detail = [] } = data;
+  			console.log("SwiftPreInitDelay>>>", detail);
+  			document.querySelectorAll("iframe[data-swift-src]").forEach((i) => {
+  				i.src = i.dataset.swiftSrc;
+  			});
+  			document
+  				.querySelectorAll("script[data-swift-script-disable]")
+  				.forEach((s) => {
+  					if (s.parentElement) s.parentElement.removeChild(s);
+  					else s.remove();
+  				});
+  		});
+  	})();
+</script>

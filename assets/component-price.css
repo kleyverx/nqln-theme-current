@@ -1,0 +1,272 @@
+.price {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.price dl {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.price dd {
+  margin: 0 10px 0 0;
+}
+
+.price .price__last:last-of-type {
+  margin: 0;
+}
+
+.price__availability,
+.price__regular {
+  display: block;
+}
+
+.price__sale,
+.price__availability,
+.price--on-sale .price__regular,
+.price--on-sale .price__availability,
+.price--no-compare .price__compare {
+  display: none;
+}
+
+.price--on-sale .price__sale {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.price--center {
+  display: flex;
+  justify-content: center;
+}
+
+.price-item {
+  font-size: var(--product-price-font-size);
+  letter-spacing: var(--product-price-letter-spacing);
+  font-weight: var(--product-price-font-weight);
+  line-height: var(--product-price-line-height);
+}
+
+.price-item .text {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: var(--font-body-size);
+  font-weight: var(--font-weight-normal);
+  color: var(--product-compare-price-color);
+  letter-spacing: 0;
+  line-height: var(--product-price-line-height);
+  margin: -2px 10px 0 0;
+}
+
+.price-item .money {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: var(--product-price-font);
+  font-size: var(--product-price-font-size);
+  font-weight: var(--product-price-font-weight);
+  letter-spacing: var(--product-price-letter-spacing);
+  line-height: var(--product-price-line-height);
+  color: var(--product-price-color);
+}
+
+.unit-price {
+  font-size: calc(var(--font-body-size) - 2px);
+  font-weight: var(--font-weight-normal);
+  color: var(--product-compare-price-color);
+  letter-spacing: var(--body-letter-spacing);
+  line-height: var(--body-line-height);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+}
+
+.price.price--unavailable {
+  visibility: hidden;
+}
+
+.price.price--end {
+  justify-content: flex-end;
+}
+
+/* =============================================
+   SALE PRICE (big, bold, black)
+   ============================================= */
+.price.price--on-sale .price-item--sale .money {
+  color: #000;
+  font-weight: 700;
+}
+
+.price.price--medium .price-item .money {
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.price.price--large .price-item .money {
+  font-size: 30px;
+  letter-spacing: -0.04em;
+}
+
+.price.price--large.price--on-sale .price__sale {
+  align-items: center;
+}
+
+/* =============================================
+   COMPARE / ORIGINAL PRICE (strikethrough, red)
+   ============================================= */
+.price.price--on-sale .price__compare s,
+.price.price--on-sale .price__compare s .money,
+.price.price--on-sale .price-item--regular .money {
+  text-decoration: line-through;
+  font-weight: var(--font-weight-normal) !important;
+  color: #e00;
+  font-size: calc(var(--product-price-font-size) - 2px);
+}
+
+.price--on-sale .price__compare {
+  display: flex;
+  align-items: center;
+}
+
+/* =============================================
+   AHORRO BADGE (red pill, white text, inline)
+   ============================================= */
+.price__saved-inline {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0 4px;
+}
+
+.price__saved-inline .price-item--saved {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background-color: #e00;
+  padding: 3px 10px;
+  border-radius: 20px;
+  line-height: 1.5;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.price__saved-inline .price-item--saved::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  z-index: 1;
+  mix-blend-mode: overlay;
+  animation: shine-sweep-saved 3s ease-in-out infinite;
+}
+
+@keyframes shine-sweep-saved {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 200%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+/* =============================================
+   DISCOUNT % LABEL (-50% badge, teal)
+   ============================================= */
+.price__label_sale {
+  display: none;
+}
+
+/* =============================================
+   COUNTDOWN TIMER (teal-to-purple gradient bar)
+   ============================================= */
+.price__countdown-offer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 5px 12px;
+  background: linear-gradient(135deg, #08c4af 35%, #805ae6 100%);
+  border-radius: 8px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.price__countdown-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.price__countdown-text {
+  font-weight: 500;
+  color: #fff;
+}
+
+.price__countdown-timer {
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+/* =============================================
+   ENVÍO GRATIS BADGE (tarjetas colección)
+   ============================================= */
+.price__free-shipping {
+  display: block;
+  margin: 6px 0 0 0;
+}
+
+.price-item--free-shipping {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: #805ae6;
+  border: 1px solid #805ae6;
+  border-radius: 20px;
+  padding: 2px 10px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+/* Ocultar solo en página de producto */
+.template-product .price__free-shipping {
+  display: none !important;
+}
+
+/* AliReviews stars – alinear a la izquierda en desktop y mobile */
+.alireviews-review-star-rating,
+[class*="alireviews-review-star-rating"] {
+  display: flex !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.alireviews-review-star-rating *,
+[class*="alireviews-review-star-rating"] * {
+  justify-content: flex-start !important;
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}

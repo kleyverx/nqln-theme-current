@@ -1,0 +1,84 @@
+/*// =============================================================================
+// Ella Custom CSS - Customize The Style For Layout
+// =============================================================================
+
+// =============================================================================
+//
+// IMPORTANT DISCLAIMER
+// Shopify is notifying shop owners about the need to convert scss files to css files.
+// Please use only CSS to style the layout.
+//
+// =============================================================================*/
+.quickSearchResultsBlock:not(.is-show) {
+    display: none !important;
+}
+
+.header-single-line__content .header__search .search-modal__form .search__input {
+  flex-shrink: 0;
+}
+
+.predictive-search {
+  display: none;
+}
+
+/* Newsletter popup: estilos personalizados eliminados por solicitud */
+
+/* Newsletter popup: estilos mínimos internos (texto y fondo) */
+#halo-newsletter-popup .halo-popup-wrapper,
+#halo-newsletter-popup .halo-popup-content {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+#halo-newsletter-popup .newsletter-popup-title,
+#halo-newsletter-popup p,
+#halo-newsletter-popup li,
+#halo-newsletter-popup span,
+#halo-newsletter-popup small,
+#halo-newsletter-popup strong {
+  color: #ffffff !important;
+}
+
+#halo-newsletter-popup a { color: #ffffff; }
+#halo-newsletter-popup a:hover { color: #e5e5e5; }
+
+#halo-newsletter-popup input[type="text"],
+#halo-newsletter-popup input[type="email"],
+#halo-newsletter-popup input[type="tel"] {
+  color: #ffffff;
+  background-color: #000000;
+  border-color: #444444;
+}
+
+#halo-newsletter-popup input::placeholder { color: #bbbbbb; }
+
+/* Efecto glitch mínimo y aislado al título del popup */
+@keyframes textGlitchPop {
+  0% { transform: none; filter: none; }
+  20% { transform: translate(-1px, 1px); filter: drop-shadow(0 0 6px rgba(255,255,255,0.35)); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: none; }
+  80% { transform: translate(1px, 1px); }
+  100% { transform: none; }
+}
+
+#halo-newsletter-popup .newsletter-popup-title {
+  position: relative;
+  animation: textGlitchPop 1.1s infinite steps(1, end);
+}
+
+/* Opcional: leve glitch en hover del botón (sin cambiar estilos de base) */
+#halo-newsletter-popup button[type="submit"]:hover {
+  animation: textGlitchPop 0.9s infinite steps(1, end);
+}
+
+/* Etiquetas de checkboxes: "No volver a mostrar, gracias" y "Acepto recibir marketing" en blanco */
+#halo-newsletter-popup label,
+#halo-newsletter-popup .form-label--checkbox {
+  color: #ffffff !important;
+}
+
+/* Color del propio checkbox para contrastar sobre fondo negro */
+#halo-newsletter-popup input[type="checkbox"] {
+  accent-color: #ffffff;
+}
