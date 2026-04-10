@@ -84,24 +84,53 @@ class VariantSelects extends HTMLElement {
     updateMedia(time) {
         if (!this.currentVariant || !this.currentVariant?.featured_media) return;
 
-        const newMedia = document.querySelectorAll(
-            `[data-media-id="${this.dataset.section}-${this.currentVariant.featured_media.id}"]`
+        const mediaId = this.currentVariant.featured_media.id;
+        const sectionId = this.dataset.section;
+
+        // Thumbnails use "sectionId-mediaId", main slides use just "mediaId"
+        const thumbnails = document.querySelectorAll(
+            `[data-media-id="${sectionId}-${mediaId}"]`
         );
 
-        if (!newMedia) return;
         window.setTimeout(() => {
-            $(newMedia).trigger('click');
+            // 1) Slick carousel (mobile): navigate directly
+            const slider = document.querySelector('.productView-nav.slick-initialized');
+            if (slider && window.jQuery) {
+                const slides = slider.querySelectorAll('.slick-slide:not(.slick-cloned)');
+                for (let i = 0; i < slides.length; i++) {
+                    if (slides[i].querySelector('[data-media-id="' + mediaId + '"]')) {
+                        $(slider).slick('slickGoTo', parseInt(slides[i].getAttribute('data-slick-index'), 10));
+                        break;
+                    }
+                }
+            }
+
+            // 2) Desktop grid: scroll to the matching image
+            if (!slider) {
+                const target = document.querySelector('.productView-nav [data-media-id="' + mediaId + '"]');
+                if (target) {
+                    const imageBlock = target.closest('.productView-image');
+                    if (imageBlock) {
+                        imageBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+
+            // 3) Click thumbnail to sync thumbnail carousel
+            if (thumbnails.length) {
+                $(thumbnails).trigger('click');
+            }
         }, time);
 
+        // 4) Full-width layout: replace first image directly
         if (!this.isFullWidth || window.innerWidth < 768) return;
 
         const mediaToReplace = document.querySelector('.productView-image[data-index="1"]')
+        if (!mediaToReplace) return;
         const imageToReplace = mediaToReplace.querySelector('img')
-
-        if (!this.currentVariant) return;
+        if (!imageToReplace) return;
 
         const image = this.currentVariant?.featured_image;
-
         if (image == null) return;
 
         imageToReplace.setAttribute('src', image.src)

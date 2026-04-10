@@ -345,6 +345,7 @@ input::-webkit-search-decoration {
 
 .halo-search-popup .halo-popup-wrapper {
     padding: 20px 30px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
 }
 
 .open_search_desktop .background-overlay {

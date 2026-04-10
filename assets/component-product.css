@@ -235,9 +235,11 @@
 .productView-image-wrapper .productView-nav:not(.slick-initialized){
     display: block;
     overflow: hidden;
+    overflow-x: auto;
     font-size: 0;
     letter-spacing: 0;
     white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
 
 .product-left-thumbs .productView {
@@ -2741,6 +2743,8 @@ quantity-input.disabled {
         position: sticky;
         top: 0;
         z-index: 1;
+        max-height: 100vh;
+        overflow: hidden;
     }
 
     .productView-parallax-mobile .productView-details {

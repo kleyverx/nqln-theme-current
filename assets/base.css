@@ -2418,6 +2418,7 @@ input.form-input-hiddenPlaceholder::placeholder {
   z-index: 20;
 }
 
+
 .header-mobile {
   box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
   background: var(--bg-color);
@@ -3193,7 +3194,7 @@ body.term-condition-show .background-overlay {
   position: fixed;
   top: 0;
   bottom: 0;
-  padding: 0;
+  padding: env(safe-area-inset-top, 0px) 0 0 0;
   height: 100%;
   z-index: 101;
   max-width: calc(100vw - 40px);
@@ -3227,7 +3228,7 @@ body.term-condition-show .background-overlay {
 
 .halo-sidebar-close {
   position: absolute;
-  top: 16px;
+  top: calc(16px + env(safe-area-inset-top, 0px));
   width: 40px;
   height: 40px;
   font-size: 0;
@@ -4536,7 +4537,7 @@ body.is-custom-information .background-overlay {
     padding: 13px 20px 0 20px;
   }
   .halo-sidebar-close {
-    top: 5px;
+    top: calc(5px + env(safe-area-inset-top, 0px));
   }
   .halo-sidebar.halo-sidebar-left .halo-sidebar-close {
     left: 5px;

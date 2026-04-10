@@ -3895,7 +3895,7 @@
 
         if (stock < quantity && stock > 0) {
           var arrayInVarName = `cart_selling_array_${event.currentTarget.closest("cart-update-quantity").dataset
-              .product
+            .product
             }`,
             itemInArray = window[arrayInVarName],
             itemStatus =
@@ -6932,15 +6932,18 @@
 
     initWarningPopup: function () {
       this.warningPopup = document.querySelector("[data-warning-popup]");
+      if (!this.warningPopup) return;
       this.warningPopupContent = this.warningPopup.querySelector(
         "[data-halo-warning-content]"
       );
       this.warningPopupCloseButton = this.warningPopup.querySelector(
         "[data-close-warning-popup]"
       );
-      this.warningPopupCloseButton.addEventListener("click", () => {
-        document.body.classList.remove("has-warning");
-      });
+      if (this.warningPopupCloseButton) {
+        this.warningPopupCloseButton.addEventListener("click", () => {
+          document.body.classList.remove("has-warning");
+        });
+      }
 
       this.warningTime = 3000;
       this.warningTimeout = undefined;

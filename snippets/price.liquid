@@ -177,9 +177,50 @@
         </script>
       {%- endif -%}
     </div>
-    {%- comment -%} Envío gratis — en tarjetas (ocultado por CSS en página de producto) {%- endcomment -%}
+    {%- comment -%} Badges dinámicos por Tags (ocultado por CSS en página de producto) {%- endcomment -%}
     <dd class="price__free-shipping">
-      <span class="price-item--free-shipping">🚚 Envío gratis X $20</span>
+      {%- liquid
+        assign highlight_tag = blank
+        assign badge_class = blank
+        assign badge_text = blank
+        assign badge_icon = blank
+
+        for tag in product.tags
+          assign tag_down = tag | downcase
+          if tag_down contains 'tendencia'
+            assign highlight_tag = 'trend'
+            assign badge_class = 'price-item--tag-trend'
+            assign badge_text = settings.badge_trend_text
+            assign badge_icon = settings.badge_trend_icon
+            break
+          elsif tag_down contains 'nuevo'
+            assign highlight_tag = 'new'
+            assign badge_class = 'price-item--tag-new'
+            assign badge_text = settings.badge_new_text
+            assign badge_icon = settings.badge_new_icon
+            break
+          elsif tag_down contains 'semana'
+            assign highlight_tag = 'weekly'
+            assign badge_class = 'price-item--tag-weekly'
+            assign badge_text = settings.badge_weekly_text
+            assign badge_icon = settings.badge_weekly_icon
+            break
+          elsif tag_down contains 'mes'
+            assign highlight_tag = 'monthly'
+            assign badge_class = 'price-item--tag-monthly'
+            assign badge_text = settings.badge_monthly_text
+            assign badge_icon = settings.badge_monthly_icon
+            break
+          endif
+        endfor
+      -%}
+
+      {%- if highlight_tag != blank -%}
+        <span class="price-item--tag-badge {{ badge_class }}">
+          {%- if badge_icon != blank -%}<span class="badge-icon">{{ badge_icon }}</span>{%- endif -%}
+          <span class="badge-label">{{ badge_text }}</span>
+        </span>
+      {%- endif -%}
     </dd>
     <small class="unit-price caption{% if available == false or product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
       <dt class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</dt>

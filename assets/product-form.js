@@ -1,6 +1,6 @@
 class ProductForm extends HTMLElement {
     constructor() {
-        super();   
+        super();
 
         this.form = this.querySelector('form');
         this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
@@ -9,8 +9,8 @@ class ProductForm extends HTMLElement {
 
     onSubmitHandler(evt) {
         evt.preventDefault();
-        this.cartNotification.setActiveElement(document.activeElement);
-    
+        if (this.cartNotification) this.cartNotification.setActiveElement(document.activeElement);
+
         const submitButton = this.querySelector('[type="submit"]');
 
         submitButton.setAttribute('disabled', true);
@@ -18,14 +18,16 @@ class ProductForm extends HTMLElement {
 
         const body = JSON.stringify({
             ...JSON.parse(serializeForm(this.form)),
-            sections: this.cartNotification.getSectionsToRender().map((section) => section.id),
+            sections: this.cartNotification ? this.cartNotification.getSectionsToRender().map((section) => section.id) : [],
             sections_url: window.location.pathname
         });
 
         fetch(`${routes.cart_add_url}`, { ...fetchConfig('javascript'), body })
         .then((response) => response.json())
         .then((parsedState) => {
-            this.cartNotification.renderContents(parsedState);
+            if (this.cartNotification) {
+                this.cartNotification.renderContents(parsedState);
+            }
         })
         .catch((e) => {
             console.error(e);

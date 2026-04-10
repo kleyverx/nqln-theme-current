@@ -1,0 +1,484 @@
+{% comment %}
+  Standalone predictive search form with grid layout.
+  No <details>, no <summary>, no <details-modal>.
+{% endcomment %}
+
+<style>
+  predictive-search {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  predictive-search form.predictive-search-form {
+    display: flex;
+    width: 100%;
+  }
+
+  predictive-search .predictive-search-form__field {
+    display: flex;
+    width: 100%;
+    position: relative;
+  }
+
+  predictive-search .predictive-search-form__input {
+    width: 100%;
+    padding: 8px 44px 8px 14px;
+    border: 1px solid var(--bg-search-color, #eee);
+    border-radius: var(--search-border-radius, 5px);
+    background: var(--bg-search-color, #fafafa);
+    color: var(--search-color, #323232);
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  predictive-search .predictive-search-form__input:focus {
+    border-color: #20b19e;
+  }
+
+  predictive-search .predictive-search-form__input::placeholder {
+    color: #999;
+  }
+
+  predictive-search .predictive-search-form__input::-webkit-search-cancel-button,
+  predictive-search .predictive-search-form__input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .predictive-search-form__clear {
+    position: absolute;
+    right: 44px;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #999;
+    transition: color 0.15s ease;
+  }
+
+  .predictive-search-form__clear:hover {
+    color: #232323;
+  }
+
+  .predictive-search-form__clear svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  predictive-search.has-value .predictive-search-form__clear {
+    display: flex;
+  }
+
+  predictive-search .predictive-search-form__button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--search-icon-color, #323232);
+    padding: 0;
+  }
+
+  predictive-search .predictive-search-form__button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Dropdown panels (shared) */
+  #predictive-search,
+  #predictive-search-trending {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 632px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    z-index: 100;
+    overflow: hidden;
+    animation: ps-dropdown-in 0.2s ease-out;
+  }
+
+  @keyframes ps-dropdown-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Grid de 3 columnas */
+  .predictive-search-results__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    padding: 12px;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  /* Card de producto */
+  .predictive-search-results__card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+    animation: ps-card-in 0.3s ease-out both;
+  }
+
+  .predictive-search-results__card:nth-child(1) { animation-delay: 0s; }
+  .predictive-search-results__card:nth-child(2) { animation-delay: 0.04s; }
+  .predictive-search-results__card:nth-child(3) { animation-delay: 0.08s; }
+  .predictive-search-results__card:nth-child(4) { animation-delay: 0.12s; }
+  .predictive-search-results__card:nth-child(5) { animation-delay: 0.16s; }
+  .predictive-search-results__card:nth-child(6) { animation-delay: 0.2s; }
+
+  @keyframes ps-card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .predictive-search-results__card:hover {
+    background-color: #f5f5f5;
+  }
+
+  .predictive-search-results__card-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .predictive-search-results__card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .predictive-search-results__no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .predictive-search-results__card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 8px;
+    text-align: center;
+  }
+
+  .predictive-search-results__card-title {
+    font-size: 13px;
+    color: #232323;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .predictive-search-results__card-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #20b19e;
+  }
+
+  .predictive-search-results__card-price--compare {
+    color: #969696;
+    font-weight: normal;
+    margin-right: 4px;
+    font-size: 12px;
+  }
+
+  /* Trending header */
+  .predictive-search-trending__header {
+    padding: 12px 16px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #969696;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* View all */
+  .predictive-search-results__view-all {
+    text-align: center;
+    padding: 12px;
+    border-top: 1px solid #eee;
+  }
+
+  .predictive-search-results__view-all a {
+    font-weight: 600;
+    color: #20b19e;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .predictive-search-results__view-all a:hover {
+    opacity: 0.8;
+  }
+
+  /* No results */
+  .predictive-search-results__empty {
+    text-align: center;
+    padding: 24px;
+    color: #969696;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .predictive-search-results__empty a {
+    display: block;
+    margin-top: 8px;
+    color: #20b19e;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Loading */
+  predictive-search[loading] #predictive-search {
+    display: block;
+  }
+
+  .predictive-search__loading-state {
+    display: none;
+  }
+
+  predictive-search[loading] .predictive-search__loading-state {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .predictive-search-spinner {
+    width: 28px;
+    height: 28px;
+    animation: ps-spin 0.8s linear infinite;
+  }
+
+  .predictive-search-spinner__path {
+    stroke: #20b19e;
+    stroke-linecap: round;
+    animation: ps-dash 1.5s ease-in-out infinite;
+  }
+
+  @keyframes ps-spin { 100% { transform: rotate(360deg); } }
+  @keyframes ps-dash {
+    0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+    50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+    100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+  }
+
+  /* Badge */
+  .predictive-search-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 5px;
+    line-height: 1.3;
+    z-index: 2;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  /* Accessibility */
+  .predictive-search-status {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    #predictive-search,
+    #predictive-search-trending {
+      width: 100%;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .predictive-search-results__grid {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 8px;
+    }
+
+    .predictive-search-results__card {
+      padding: 6px;
+    }
+
+    .predictive-search-results__card-title {
+      font-size: 12px;
+    }
+
+    .predictive-search-results__card-price {
+      font-size: 13px;
+    }
+  }
+</style>
+
+<predictive-search
+  data-loading-text="{{ 'accessibility.loading' | t }}"
+  data-product-to-show="{{ settings.quick_search_to_show | default: 6 }}"
+>
+  <form
+    action="{{ routes.search_url }}"
+    method="get"
+    role="search"
+    class="predictive-search-form"
+  >
+    <div class="predictive-search-form__field">
+      <input
+        class="predictive-search-form__input"
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ 'general.search.search_the_store' | t }}"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="false"
+        aria-owns="predictive-search"
+        aria-controls="predictive-search"
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+        aria-label="{{ 'general.search.search' | t }}"
+      >
+      <input type="hidden" name="options[prefix]" value="last">
+      <input type="hidden" name="type" value="product">
+      <button type="button" class="predictive-search-form__clear" aria-label="{{ 'general.common.close' | t }}">
+        <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M150 299.929C111.589 299.929 73.1756 285.308 43.9331 256.063C-14.5519 197.58-14.5519 102.418 43.9331 43.9331C72.2662 15.6038 109.933 0 150 0C190.067 0 227.734 15.6038 256.065 43.9369C284.396 72.2663 300 109.933 300 150.002C300 190.067 284.396 227.736 256.065 256.065C226.822 285.309 188.411 299.929 150 299.929ZM57.1931 242.809C108.367 293.979 191.634 293.979 242.809 242.809C267.598 218.018 281.25 185.059 281.25 150.002C281.25 114.943 267.598 81.9844 242.807 57.1931C218.017 32.4019 185.059 18.75 150 18.75C114.941 18.75 81.9825 32.4019 57.1912 57.1931C6.02059 108.364 6.02621 191.633 57.1931 242.809Z" fill="currentColor"/><path d="M201.585 210.958C199.185 210.958 196.787 210.043 194.955 208.211L91.7869 105.045C88.1251 101.385 88.1251 95.4488 91.7869 91.7888C95.4488 88.1269 101.383 88.1269 105.045 91.7888L208.213 194.955C211.875 198.615 211.875 204.551 208.213 208.211C206.383 210.043 203.985 210.958 201.585 210.958Z" fill="currentColor"/><path d="M98.415 210.958C96.015 210.958 93.6169 210.043 91.785 208.211C88.1231 204.551 88.1231 198.615 91.785 194.955L194.953 91.7888C198.617 88.1269 204.551 88.1288 208.211 91.7888C211.871 95.4488 211.873 101.385 208.211 105.045L105.043 208.211C103.213 210.043 100.815 210.958 98.415 210.958Z" fill="currentColor"/></svg>
+      </button>
+      <button class="predictive-search-form__button" type="submit" aria-label="{{ 'general.search.search' | t }}">
+        {% render 'icon-search-02' %}
+      </button>
+    </div>
+  </form>
+
+  <div id="predictive-search" tabindex="-1" role="listbox"></div>
+
+  {%- assign trending_collection = collections[settings.search_product_collection] -%}
+  {%- if trending_collection and trending_collection.products.size > 0 -%}
+    <div id="predictive-search-trending" style="display:none;">
+      <div class="predictive-search-trending__header">
+        {{ settings.search_product_title | default: 'Productos populares' }}
+      </div>
+      <div class="predictive-search-results__grid">
+        {%- assign trending_limit = settings.search_product_to_show | default: 3 -%}
+        {%- for product in trending_collection.products limit: trending_limit -%}
+          {%- liquid
+            assign t_badge_text = ''
+            assign t_badge_color = ''
+            assign t_badge_bg = ''
+            if settings.show_collection_badge
+              for col in product.collections
+                if col.handle == settings.collection_badge_collection.handle
+                  assign t_badge_text = settings.collection_badge_text
+                  assign t_badge_color = settings.collection_badge_color
+                  assign t_badge_bg = settings.collection_badge_bg
+                  break
+                endif
+              endfor
+            endif
+            if t_badge_text == '' and settings.show_collection_badge_2
+              for col in product.collections
+                if col.handle == settings.collection_badge_collection_2.handle
+                  assign t_badge_text = settings.collection_badge_text_2
+                  assign t_badge_color = settings.collection_badge_color_2
+                  assign t_badge_bg = settings.collection_badge_bg_2
+                  break
+                endif
+              endfor
+            endif
+            if t_badge_text == '' and settings.show_collection_badge_3
+              for col in product.collections
+                if col.handle == settings.collection_badge_collection_3.handle
+                  assign t_badge_text = settings.collection_badge_text_3
+                  assign t_badge_color = settings.collection_badge_color_3
+                  assign t_badge_bg = settings.collection_badge_bg_3
+                  break
+                endif
+              endfor
+            endif
+            if t_badge_text == '' and settings.show_collection_badge_4
+              for col in product.collections
+                if col.handle == settings.collection_badge_collection_4.handle
+                  assign t_badge_text = settings.collection_badge_text_4
+                  assign t_badge_color = settings.collection_badge_color_4
+                  assign t_badge_bg = settings.collection_badge_bg_4
+                  break
+                endif
+              endfor
+            endif
+          -%}
+          <a href="{{ product.url }}" class="predictive-search-results__card">
+            <div class="predictive-search-results__card-image">
+              {%- if t_badge_text != '' -%}
+                <span class="predictive-search-badge" style="color:{{ t_badge_color }};background:{{ t_badge_bg }}">{{ t_badge_text }}</span>
+              {%- endif -%}
+              {%- if product.featured_image -%}
+                {{ product.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: product.title, width: 400, height: 400 }}
+              {%- else -%}
+                <div class="predictive-search-results__no-image">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="predictive-search-results__card-info">
+              <span class="predictive-search-results__card-title">{{ product.title }}</span>
+              <span class="predictive-search-results__card-price">
+                {%- if product.compare_at_price > product.price -%}
+                  <s class="predictive-search-results__card-price--compare">{{ product.compare_at_price | money }}</s>
+                {%- endif -%}
+                {{ product.price | money }}
+              </span>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+      <div class="predictive-search-results__view-all">
+        <a href="{{ trending_collection.url }}">{{ 'general.search.view_all' | t: count: trending_collection.products_count }}</a>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <span class="predictive-search-status" role="status" aria-hidden="true"></span>
+</predictive-search>
+
+<script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>

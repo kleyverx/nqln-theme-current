@@ -1,0 +1,39 @@
+<div data-nqln-scan-widget class="header-mobile--icon" style="--i-color: #232323">
+  <div class="nqln-scan-widget__app" hidden>
+    <button type="button" data-nqln-barcode class="header__icon link link--text focus-inset" style="color: #000000; background: transparent; border: none; padding: 0; cursor: pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke: currentColor; width: 22px; height: 22px;">
+        <path d="M4 7V5a2 2 0 0 1 2-2h2M18 5a2 2 0 0 1 2 2v2M4 17v2a2 2 0 0 0 2 2h2M18 19a2 2 0 0 0 2-2v-2M9 12h.01M12 12h.01M15 12h.01M9 7v10M12 7v10M15 7v10"/>
+      </svg>
+    </button>
+  </div>
+</div>
+<script>
+  (function () {
+    var root = document.querySelector('[data-nqln-scan-widget]');
+    if (!root) return;
+    var appEl = root.querySelector('.nqln-scan-widget__app');
+    var parentItem = root.closest('.header-mobile__item');
+    var mq = window.matchMedia('(max-width: 989px)');
+
+    function apply() {
+      var mobile = mq.matches;
+      // Capacitator check for native app environment
+      var inApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.BarcodeScanner;
+      
+      if (!mobile || !inApp) {
+        root.hidden = true;
+        root.style.display = 'none';
+        if (parentItem) parentItem.style.display = 'none';
+        return;
+      }
+      root.hidden = false;
+      root.style.display = '';
+      if (parentItem) parentItem.style.display = '';
+      appEl.hidden = false;
+    }
+
+    apply();
+    if (mq.addEventListener) mq.addEventListener('change', apply);
+    else mq.addListener(apply);
+  })();
+</script>

@@ -8990,5 +8990,122 @@
       }
     ]
   },
-  {"name":"Protección de Checkout","settings":[{"type":"header","content":"Captcha antes de pagar"},{"type":"checkbox","id":"checkout_captcha_enable","label":"Habilitar captcha","default":true},{"type":"select","id":"checkout_captcha_provider","label":"Proveedor","default":"recaptcha_v2","options":[{"value":"recaptcha_v2","label":"Google reCAPTCHA v2"}]},{"type":"text","id":"checkout_captcha_site_key","label":"Site key"},{"type":"select","id":"checkout_captcha_theme","label":"Tema","default":"light","options":[{"value":"light","label":"Claro"},{"value":"dark","label":"Oscuro"}]},{"type":"select","id":"checkout_captcha_size","label":"Tamaño","default":"normal","options":[{"value":"normal","label":"Normal"},{"value":"compact","label":"Compacto"}]},{"type":"text","id":"checkout_captcha_message","label":"Mensaje","default":"Verifica que no eres un robot."}]}
+  {"name":"Protección de Checkout","settings":[{"type":"header","content":"Captcha antes de pagar"},{"type":"checkbox","id":"checkout_captcha_enable","label":"Habilitar captcha","default":true},{"type":"select","id":"checkout_captcha_provider","label":"Proveedor","default":"recaptcha_v2","options":[{"value":"recaptcha_v2","label":"Google reCAPTCHA v2"}]},{"type":"text","id":"checkout_captcha_site_key","label":"Site key"},{"type":"select","id":"checkout_captcha_theme","label":"Tema","default":"light","options":[{"value":"light","label":"Claro"},{"value":"dark","label":"Oscuro"}]},{"type":"select","id":"checkout_captcha_size","label":"Tamaño","default":"normal","options":[{"value":"normal","label":"Normal"},{"value":"compact","label":"Compacto"}]},{"type":"text","id":"checkout_captcha_message","label":"Mensaje","default":"Verifica que no eres un robot."}]},
+  {
+    "name": "Badges de Producto",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Badge: Tendencia"
+      },
+      {
+        "type": "text",
+        "id": "badge_trend_text",
+        "label": "Etiqueta",
+        "default": "PRODUCTO TENDENCIA"
+      },
+      {
+        "type": "textarea",
+        "id": "badge_trend_icon",
+        "label": "Icono (Emoji o SVG)",
+        "default": "🔥"
+      },
+      {
+        "type": "color",
+        "id": "badge_trend_bg",
+        "label": "Color de fondo",
+        "default": "#ff4d4d"
+      },
+      {
+        "type": "color",
+        "id": "badge_trend_color",
+        "label": "Color de texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Badge: Nuevo"
+      },
+      {
+        "type": "text",
+        "id": "badge_new_text",
+        "label": "Etiqueta",
+        "default": "PRODUCTO NUEVO"
+      },
+      {
+        "type": "textarea",
+        "id": "badge_new_icon",
+        "label": "Icono (Emoji o SVG)",
+        "default": "✨"
+      },
+      {
+        "type": "color",
+        "id": "badge_new_bg",
+        "label": "Color de fondo",
+        "default": "#00bcd4"
+      },
+      {
+        "type": "color",
+        "id": "badge_new_color",
+        "label": "Color de texto",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Badge: Semanal"
+      },
+      {
+        "type": "text",
+        "id": "badge_weekly_text",
+        "label": "Etiqueta",
+        "default": "PRODUCTO DE LA SEMANA"
+      },
+      {
+        "type": "textarea",
+        "id": "badge_weekly_icon",
+        "label": "Icono (Emoji o SVG)",
+        "default": "⭐"
+      },
+      {
+        "type": "color",
+        "id": "badge_weekly_bg",
+        "label": "Color de fondo",
+        "default": "#ffb800"
+      },
+      {
+        "type": "color",
+        "id": "badge_weekly_color",
+        "label": "Color de texto",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Badge: Mensual"
+      },
+      {
+        "type": "text",
+        "id": "badge_monthly_text",
+        "label": "Etiqueta",
+        "default": "PRODUCTO DEL MES"
+      },
+      {
+        "type": "textarea",
+        "id": "badge_monthly_icon",
+        "label": "Icono (Emoji o SVG)",
+        "default": "🏆"
+      },
+      {
+        "type": "color",
+        "id": "badge_monthly_bg",
+        "label": "Color de fondo",
+        "default": "#ffb800"
+      },
+      {
+        "type": "color",
+        "id": "badge_monthly_color",
+        "label": "Color de texto",
+        "default": "#000000"
+      }
+    ]
+  }
 ]

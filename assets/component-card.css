@@ -1646,6 +1646,20 @@ quickshop-update-quantity.disabled {
     opacity: 1;
 }
 
+/* Mobile: video hidden by default, shown on tap */
+@media (max-width: 1024px) {
+    .card-media>video {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .card-media.video-playing>video {
+        opacity: 1;
+    }
+    .card-media.video-playing>img:first-child {
+        opacity: 0;
+    }
+}
+
 @media (max-width: 1024px) {
 
     .product-card-layout-01 .product-item .card-action,

@@ -24,12 +24,14 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="canonical" href="{{ canonical_url }}">
     <link rel="canonical" href="{{ canonical_url }}" canonical-shop-url="{{ shop.url }}/">
     {%- if settings.favicon != blank -%}
-      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <title>
@@ -107,10 +109,166 @@
     -%}
 
     {% render 'reviews-importer-variable-js' %}
+
+    {%- comment -%} View Transitions API for page navigation (mobile only) {%- endcomment -%}
+    {%- comment -%} Note: <meta name="view-transition"> is obsolete. The CSS @view-transition rule below is all that's needed. {%- endcomment -%}
+    <style>
+      @media (max-width: 1024px) {
+        @view-transition {
+          navigation: auto;
+        }
+
+        /* Kill ALL root animation - no flash, no fade, nothing */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+          animation: none !important;
+          mix-blend-mode: normal !important;
+        }
+
+        /* Stack old and new on top of each other */
+        ::view-transition-group(root) {
+          animation-duration: 0s !important;
+        }
+
+        /* Header: frozen in place */
+        .section-header-single-line,
+        .section-header-mobile,
+        .section-header-navigation-vertical-menu {
+          view-transition-name: header;
+        }
+
+        ::view-transition-old(header),
+        ::view-transition-new(header) {
+          animation: none;
+        }
+
+        /* Toolbar mobile: frozen in place */
+        .halo-sticky-toolbar-mobile {
+          view-transition-name: toolbar;
+        }
+
+        ::view-transition-old(toolbar),
+        ::view-transition-new(toolbar) {
+          animation: none;
+        }
+
+        /* Marquee: frozen */
+        .section-marquee {
+          view-transition-name: marquee;
+        }
+
+        ::view-transition-old(marquee),
+        ::view-transition-new(marquee) {
+          animation: none;
+        }
+
+        /* Custom header banner (categories + info): frozen */
+        .custom-header-banner {
+          view-transition-name: header-banner;
+        }
+
+        ::view-transition-old(header-banner),
+        ::view-transition-new(header-banner) {
+          animation: none;
+        }
+
+        /* ONLY main content animates */
+        .content-for-layout {
+          view-transition-name: main-content;
+        }
+
+        ::view-transition-old(main-content) {
+          animation: vt-out 0.15s ease-out forwards;
+        }
+
+        ::view-transition-new(main-content) {
+          animation: vt-in 0.15s ease-out forwards;
+        }
+
+        @keyframes vt-out {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+
+        @keyframes vt-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      }
+    </style>
+    <style>
+      /* Ensure custom headers are visible and clean */
+      /* Mobile-only header overrides */
+      @media screen and (max-width: 989px) {
+        sticky-header-mobile, 
+        sticky-header, 
+        .section-header-mobile,
+        [id*="header-mobile"] {
+          display: block !important;
+          width: 100% !important;
+          border: 0 !important;
+          border-bottom: 0 !important;
+          box-shadow: none !important;
+          outline: none !important;
+          background-image: none !important;
+        }
+
+        .header-mobile--wrapper {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+        }
+
+        /* Prevent iOS Safari auto-zoom on input focus (triggers at font-size < 16px) */
+        input[type="search"],
+        input[type="text"],
+        input.search__input,
+        input.field__input,
+        textarea,
+        select {
+          font-size: 16px !important;
+        }
+      }
+
+      #page-loading-bar {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        height: 2px !important;
+        background-color: #20B19E !important;
+        z-index: 2147483647 !important;
+        width: 0;
+        visibility: hidden;
+        background-image: none !important;
+        box-shadow: none !important;
+        filter: none !important;
+        border: 0 !important;
+        outline: none !important;
+        transition: width 0.3s cubic-bezier(0.1, 0.05, 0.4, 1);
+        pointer-events: none;
+        display: block !important;
+      }
+      #page-loading-bar.is-loading {
+        visibility: visible !important;
+        width: 15%; /* Initial jump handled by JS usually but just in case */
+      }
+    </style>
+      <script>
+        // Fallback for standard reloads
+        window.addEventListener('beforeunload', function() {
+          var bar = document.getElementById('page-loading-bar');
+          if (bar) {
+            bar.classList.add('is-loading');
+            bar.style.transition = 'width 2s ease-out';
+            bar.style.width = '100%';
+          }
+        });
+      </script>
+      <script src="{{ 'page-transitions.js' | asset_url }}"></script>
   </head>
 
   <body class="template-{{ request.page_type }} {{layout_body}} {{style_dots}} {{style_text_size_varriant}} {{style_arrows}} {{product_card_layout}} {{ banner_animation }}{% if settings.enable_button_disable_arrows %} enable_button_disable_arrows{% endif %}{% if settings.display_text_color_title %} enable_text_color_title{% endif %}{% if settings.style_text_color_varriant == '02' %} style_2_text_color_varriant{% endif %}{% if settings.hide_compare_homepage %} hide_compare_homepage{% endif %} {{ quick_shop_type }}{% if settings.show_image_loading %} show_image_loading{% endif %}{% if settings.show_effect_close %} show_effect_close{% endif %}{% if settings.enable_layout_rtl and enable_iso_rtl %} layout_rtl{% endif %}">
-    
     <div class="body-content-wrapper">
       <!-- Letter Glitch Background Canvas - Fondo Global del Tema -->
       <div id="letter-glitch-background">
@@ -162,9 +320,9 @@
       <script src="{{ 'custom.js' | asset_url }}" defer></script>
     {%- endif -%}
 
-    <!-- Letter Glitch Background Script -->
-    <script src="{{ 'letter-glitch-background.js' | asset_url }}" defer></script>
-    {{ 'letter-glitch-global.css' | asset_url | stylesheet_tag }}
+    <!-- Letter Glitch Background Script (disabled - files missing, causing 404 errors) -->
+    <!-- <script src="{{ 'letter-glitch-background.js' | asset_url }}" defer></script> -->
+    <!-- {{ 'letter-glitch-global.css' | asset_url | stylesheet_tag }} -->
 
     <div class="background-overlay">
       {% if settings.show_effect_close %}
@@ -184,7 +342,7 @@
     <script>
         document.addEventListener("beforeScrollToReviewWidget", function (e) {
           let reviewButton= document.querySelector('.review-tab .tab-title:not(.is-open)');
-          reviewButton.click();
+          if (reviewButton) reviewButton.click();
       });
     </script>
 
@@ -192,6 +350,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       const popup = document.getElementById('popup-descuento');
       const closeBtn = document.getElementById('popup-close');
+      if (!popup || !closeBtn) return;
 
       // Verificar si existe la cookie popupShown
       function getCookie(name) {
@@ -231,7 +390,122 @@
     </style>
 
     {% section 'popup-descuento' %}
-    
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var els = document.querySelectorAll('.page-sidebar .sidebarBlock-heading, .page-sidebar .card-title a, .page-sidebar .card-information a');
+      els.forEach(function(el) {
+        if (el.scrollWidth > el.offsetWidth + 2) {
+          var s = parseFloat(getComputedStyle(el).fontSize);
+          while (el.scrollWidth > el.offsetWidth + 1 && s > 8) { s -= 0.5; el.style.fontSize = s + 'px'; }
+        }
+      });
+    });
+    </script>
+    <script>
+    (function() {
+      if (!window.quick_cart || !window.quick_cart.show) return;
+      if (!window.after_add_to_cart || window.after_add_to_cart.type !== 'quick_cart') return;
+
+      // Track when /cart/add happens via any method (fetch, XHR, form)
+      var lastAddTime = 0;
+
+      // Patch fetch to detect cart/add calls
+      var origFetch = window.fetch;
+      window.fetch = function() {
+        var url = typeof arguments[0] === 'string' ? arguments[0] : (arguments[0] && arguments[0].url ? arguments[0].url : '');
+        var isCartAdd = url.indexOf('/cart/add') !== -1;
+        if (isCartAdd) lastAddTime = Date.now();
+        var result = origFetch.apply(this, arguments);
+        if (isCartAdd) {
+          result.then(function() {
+            // After successful cart/add, open sidebar
+            setTimeout(function() {
+              if (typeof Shopify !== 'undefined' && Shopify.getCart && typeof halo !== 'undefined') {
+                Shopify.getCart(function(cart) {
+                  document.body.classList.add('cart-sidebar-show');
+                  halo.updateSidebarCart(cart);
+                  document.querySelectorAll('[data-cart-count]').forEach(function(el) {
+                    el.textContent = cart.item_count;
+                  });
+                });
+              }
+            }, 100);
+          });
+        }
+        return result;
+      };
+
+      // Patch XMLHttpRequest to detect cart/add calls
+      var origXHRSend = XMLHttpRequest.prototype.send;
+      var origXHROpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function() {
+        this._url = arguments[1] || '';
+        return origXHROpen.apply(this, arguments);
+      };
+      XMLHttpRequest.prototype.send = function() {
+        var xhr = this;
+        if (xhr._url && xhr._url.indexOf('/cart/add') !== -1) {
+          lastAddTime = Date.now();
+          xhr.addEventListener('load', function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              setTimeout(function() {
+                if (typeof Shopify !== 'undefined' && Shopify.getCart && typeof halo !== 'undefined') {
+                  Shopify.getCart(function(cart) {
+                    document.body.classList.add('cart-sidebar-show');
+                    halo.updateSidebarCart(cart);
+                    document.querySelectorAll('[data-cart-count]').forEach(function(el) {
+                      el.textContent = cart.item_count;
+                    });
+                  });
+                }
+              }, 100);
+            }
+          });
+        }
+        return origXHRSend.apply(this, arguments);
+      };
+
+      // Intercept redirects to /cart within 5s of a cart/add
+      // Override window.location assignment for /cart redirects
+      var origLocationDescriptor = Object.getOwnPropertyDescriptor(window, 'location');
+      // Can't override window.location directly, but we can intercept via halo.redirectTo
+      // The theme uses halo.redirectTo for all its redirects
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof halo !== 'undefined' && halo.redirectTo) {
+          var origRedirect = halo.redirectTo.bind(halo);
+          halo.redirectTo = function(url) {
+            if (url && url.indexOf('/cart') !== -1 && (Date.now() - lastAddTime) < 5000) {
+              // Instead of redirect, open sidebar
+              Shopify.getCart(function(cart) {
+                document.body.classList.add('cart-sidebar-show');
+                halo.updateSidebarCart(cart);
+                document.querySelectorAll('[data-cart-count]').forEach(function(el) {
+                  el.textContent = cart.item_count;
+                });
+              });
+              return;
+            }
+            origRedirect(url);
+          };
+        }
+      });
+
+      // Also intercept form submits
+      document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (!form || form.tagName !== 'FORM') return;
+        if (!form.action || form.action.indexOf('/cart/add') === -1) return;
+        if (form.closest('product-form')) return;
+
+        e.preventDefault();
+        var formData = new FormData(form);
+        fetch('/cart/add.js', { method: 'POST', body: formData })
+          .then(function(r) { return r.json(); })
+          .catch(function() { window.location.href = '/cart'; });
+      }, true);
+    })();
+    </script>
     <!-- Brevo SDK moved to footer for non-blocking load -->
     <script src="https://cdn.brevo.com/js/sdk-loader.js" async></script>
     <script>
@@ -244,6 +518,113 @@
       ]);
     </script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+    {%- comment -%} page-transitions.js moved to head for earlier click interception {%- endcomment -%}
+
+    <style>
+      /* Fix: collection filter sidebar & sort dropdown are trapped inside
+         body-content-wrapper and render behind .background-overlay on mobile.
+         Moving .page-sidebar to <body> fixes filters. For the sort dropdown,
+         we lift body-content-wrapper above the overlay only when it's open. */
+      body.toolbar-modal-open .body-content-wrapper {
+        position: relative;
+        z-index: 102;
+      }
+      body.toolbar-modal-open .background-overlay {
+        z-index: 101;
+      }
+    </style>
+    <script>
+    /* Wishlist count badge: hide bubble when count is 0 or empty */
+    (function () {
+      function update() {
+        document.querySelectorAll('.wishlist-count-bubble').forEach(function (b) {
+          var t = b.querySelector('[data-wishlist-count]');
+          b.style.display = (!t || !t.textContent || t.textContent === '0') ? 'none' : '';
+        });
+      }
+      function observe() {
+        update();
+        document.querySelectorAll('[data-wishlist-count]').forEach(function (el) {
+          if (el._wlOb) return;
+          el._wlOb = true;
+          new MutationObserver(update).observe(el, { childList: true, characterData: true, subtree: true });
+        });
+      }
+      observe();
+      document.addEventListener('DOMContentLoaded', observe);
+    })();
+    </script>
+    <script>
+    (function () {
+      if (window.innerWidth >= 1025) return;
+      var sidebar = document.querySelector('.page-sidebar');
+      if (sidebar && sidebar.parentElement !== document.body) {
+        document.body.appendChild(sidebar);
+      }
+    })();
+    </script>
+    <script>
+    /* Product card video: desktop=hover, mobile=tap to play (scroll-aware) */
+    (function () {
+      var isMobile = window.innerWidth < 1025;
+
+      if (!isMobile) {
+        document.addEventListener('mouseenter', function (e) {
+          var card = e.target.closest('.card-media.media--hover-effect');
+          if (!card) return;
+          var video = card.querySelector('video');
+          if (video) video.play();
+        }, true);
+        document.addEventListener('mouseleave', function (e) {
+          var card = e.target.closest('.card-media.media--hover-effect');
+          if (!card) return;
+          var video = card.querySelector('video');
+          if (video) { video.pause(); video.currentTime = 0; }
+        }, true);
+      } else {
+        var activeCard = null;
+        var touchStartY = 0;
+        var didScroll = false;
+
+        document.addEventListener('touchstart', function (e) {
+          touchStartY = e.touches[0].clientY;
+          didScroll = false;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function () {
+          didScroll = true;
+        }, { passive: true });
+
+        document.addEventListener('click', function (e) {
+          if (didScroll) return;
+          var card = e.target.closest('.card-media.media--hover-effect');
+          if (!card) {
+            if (activeCard) {
+              var v = activeCard.querySelector('video');
+              if (v) { v.pause(); v.currentTime = 0; }
+              activeCard.classList.remove('video-playing');
+              activeCard = null;
+            }
+            return;
+          }
+          var video = card.querySelector('video');
+          if (!video) return;
+          if (card === activeCard) return;
+          e.preventDefault();
+          e.stopPropagation();
+          if (activeCard && activeCard !== card) {
+            var prev = activeCard.querySelector('video');
+            if (prev) { prev.pause(); prev.currentTime = 0; }
+            activeCard.classList.remove('video-playing');
+          }
+          card.classList.add('video-playing');
+          video.play();
+          activeCard = card;
+        }, true);
+      }
+    })();
+    </script>
   </body>
 </html>
 

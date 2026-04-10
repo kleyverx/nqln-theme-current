@@ -1,295 +1,215 @@
-class PredictiveSearch extends HTMLElement {
-  constructor() {
-    super();
-    this.cachedResults = {};
-    this.input = this.querySelector('input[type="search"]');
-    this.predictiveSearchResults = this.querySelector('[data-predictive-search]');
-    this.trendingAndProductsBlock = this.querySelector('[data-quick-trending-products]');
-    this.closeStickySearchButton = document.querySelector('.header-search-close');
-    this.productToShow = this.dataset.productToShow;
-    this.searchDetails = this.querySelector('.search_details');
-    this.predictiveSearch = this.querySelector('predictive-search')
-    this.isOpen = false;
+if (!customElements.get('predictive-search')) {
+  class PredictiveSearch extends HTMLElement {
+    constructor() {
+      super();
+      this.cachedResults = {};
+      this.input = this.querySelector('input[type="search"]');
+      this.predictiveSearchResults = this.querySelector('#predictive-search');
+      this.trendingPanel = this.querySelector('#predictive-search-trending');
+      this.statusElement = this.querySelector('.predictive-search-status');
+      this.isOpen = false;
+      this.abortController = null;
 
-    this.setupEventListeners();
-  }
-  
-  setupEventListeners() {
-    const form = this.querySelector('form.search');
-    form.addEventListener('submit', this.onFormSubmit.bind(this));
-    
-    this.input.addEventListener('input', debounce((event) => {
-      this.onChange(event);
-    }, 500).bind(this));
-    this.input.addEventListener('focus', this.onFocus.bind(this));
-    this.addEventListener('focusout', this.onFocusOut.bind(this));
-    this.addEventListener('keyup', this.onKeyup.bind(this));
-    this.addEventListener('keydown', this.onKeydown.bind(this));
-    document.addEventListener('click', this.onDocClick.bind(this));
-    if (this.closeStickySearchButton != null) {
-      this.closeStickySearchButton.addEventListener('click', this.onCloseStickySearchClick.bind(this));
+      this.setupEventListeners();
     }
-  }
 
-  getQuery() {
-    return this.input.value.trim();
-  }
-
-  onChange() {
-    const searchTerm = this.getQuery();
-    
-    if (!searchTerm.length) {
-      this.close(true);
-      return;
+    debounce(fn, delay) {
+      let timer = null;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+      };
     }
-    
-    this.getSearchResults(searchTerm);
-  }
 
-  onFormSubmit(event) {
-    if (!this.getQuery().length || this.querySelector('[aria-selected="true"] a')) event.preventDefault();
-  }
+    setupEventListeners() {
+      const form = this.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', this.onFormSubmit.bind(this));
+      }
 
-  onFocus() {
-    const searchTerm = this.getQuery();
-    
-    if (!searchTerm.length) return this.showTrendingAndProducts();
+      this.clearButton = this.querySelector('.predictive-search-form__clear');
 
-    if (this.getAttribute('results') === 'true') {
-      this.open();
-    } else {
+      this.debouncedOnChange = this.debounce(this.onChange.bind(this), 300);
+      this.input.addEventListener('input', (e) => {
+        this.toggleClearButton();
+        this.debouncedOnChange(e);
+      });
+      this.input.addEventListener('focus', this.onFocus.bind(this));
+
+      if (this.clearButton) {
+        this.clearButton.addEventListener('click', () => {
+          this.input.value = '';
+          this.toggleClearButton();
+          this.close();
+          this.showTrending();
+          this.input.focus();
+        });
+      }
+
+      document.addEventListener('click', this.onDocumentClick.bind(this));
+      document.addEventListener('keydown', this.onKeydown.bind(this));
+    }
+
+    getQuery() {
+      return this.input.value.trim();
+    }
+
+    toggleClearButton() {
+      if (this.getQuery().length > 0) {
+        this.classList.add('has-value');
+      } else {
+        this.classList.remove('has-value');
+      }
+    }
+
+    onChange() {
+      const searchTerm = this.getQuery();
+      if (!searchTerm.length) {
+        this.close();
+        this.showTrending();
+        return;
+      }
+      this.hideTrending();
       this.getSearchResults(searchTerm);
     }
-  }
 
-  onFocusOut() {
-    setTimeout(() => {
-      if (!this.contains(document.activeElement)) {
+    onFormSubmit(event) {
+      if (!this.getQuery().length) {
+        event.preventDefault();
+      }
+    }
+
+    onFocus() {
+      const searchTerm = this.getQuery();
+
+      if (!searchTerm.length) {
+        this.showTrending();
+        return;
+      }
+
+      if (this.cachedResults[this.getCacheKey(searchTerm)]) {
+        this.hideTrending();
+        this.open();
+      } else {
+        this.hideTrending();
+        this.getSearchResults(searchTerm);
+      }
+    }
+
+    onDocumentClick(event) {
+      if (!this.contains(event.target)) {
         this.close();
-        // this.hideTrendingAndProducts();
-      };
-    })
-  }
-  
-  onKeyup(event) {
-    if (!this.getQuery().length) {
-      this.close(true);
-      this.showTrendingAndProducts();
-    };
-    event.preventDefault();
-    
-    switch (event.code) {
-      case 'ArrowUp':
-        this.switchOption('up')
-        break;
-      case 'ArrowDown':
-        this.switchOption('down');
-        break;
-      case 'Enter':
-        this.selectOption();
-        break;
-    }
-  }
-
-  onKeydown(event) {
-    // Prevent the cursor from moving in the input when using the up and down arrow keys
-    if (
-      event.code === 'ArrowUp' ||
-      event.code === 'ArrowDown'
-    ) {
-      event.preventDefault();
-    }
-  }
-
-  switchOption(direction) {
-    if (!this.getAttribute('open')) return;
-
-    const moveUp = direction === 'up';
-    const selectedElement = this.querySelector('[aria-selected="true"]');
-    const allElements = this.querySelectorAll('li');
-    let activeElement = this.querySelector('li');
-
-    if (moveUp && !selectedElement) return;
-
-    this.statusElement.textContent = '';
-    
-    if (!moveUp && selectedElement) {
-      activeElement = selectedElement.nextElementSibling || allElements[0];
-    } else if (moveUp) {
-      activeElement = selectedElement.previousElementSibling || allElements[allElements.length - 1];
+        this.hideTrending();
+      }
     }
 
-    if (activeElement === selectedElement) return;
-
-    activeElement.setAttribute('aria-selected', true);
-    if (selectedElement) selectedElement.setAttribute('aria-selected', false);
-
-    this.setLiveRegionText(activeElement.textContent);
-    this.input.setAttribute('aria-activedescendant', activeElement.id);
-  }
-    
-  selectOption() {
-    const selectedProduct = this.querySelector('[aria-selected="true"] a, [aria-selected="true"] button');
-
-    if (selectedProduct) selectedProduct.click();
-  }
-  
-  getSearchResults(searchTerm) {
-    const queryKey = searchTerm.replace(" ", "-").toLowerCase();
-    this.setLiveRegionLoadingState();
-    
-    if (this.cachedResults[queryKey]) {
-      this.renderSearchResults(this.cachedResults[queryKey]);
-      this.updateViewAllLink(searchTerm);
-      return;
+    onKeydown(event) {
+      if (event.key === 'Escape') {
+        this.close();
+        this.hideTrending();
+        this.input.blur();
+      }
     }
 
-    fetch(`${routes.predictive_search_url}?q=${encodeURIComponent(searchTerm)}&${encodeURIComponent('resources[type]')}=product&${encodeURIComponent('resources[limit]')}=${this.productToShow}&section_id=predictive-search`)
-      .then((response) => {
-        if (!response.ok) {
-          var error = new Error(response.status);
+    showTrending() {
+      if (!this.trendingPanel) return;
+      this.trendingPanel.style.display = 'block';
+    }
+
+    hideTrending() {
+      if (!this.trendingPanel) return;
+      this.trendingPanel.style.display = 'none';
+    }
+
+    getCacheKey(searchTerm) {
+      return searchTerm.replace(/\s+/g, '-').toLowerCase();
+    }
+
+    getSearchResults(searchTerm, retryCount = 0) {
+      const cacheKey = this.getCacheKey(searchTerm);
+
+      this.setLoadingState();
+
+      if (this.cachedResults[cacheKey]) {
+        this.renderSearchResults(this.cachedResults[cacheKey]);
+        return;
+      }
+
+      if (this.abortController) {
+        this.abortController.abort();
+      }
+      this.abortController = new AbortController();
+
+      const productsToShow = this.dataset.productToShow || 5;
+
+      fetch(
+        `${routes.predictive_search_url}?q=${encodeURIComponent(searchTerm)}&${encodeURIComponent('resources[type]')}=product&${encodeURIComponent('resources[limit]')}=${productsToShow}&section_id=predictive-search`,
+        { signal: this.abortController.signal }
+      )
+        .then((response) => {
+          if (response.status === 429 && retryCount < 3) {
+            const delay = Math.pow(2, retryCount) * 1000;
+            return new Promise((resolve) => setTimeout(resolve, delay)).then(() => {
+              return this.getSearchResults(searchTerm, retryCount + 1);
+            });
+          }
+          if (!response.ok) {
+            throw new Error(response.status);
+          }
+          return response.text();
+        })
+        .then((text) => {
+          if (!text) return;
+          const parsed = new DOMParser().parseFromString(text, 'text/html');
+          const section = parsed.querySelector('#shopify-section-predictive-search');
+          if (!section) return;
+          const resultsMarkup = section.innerHTML;
+          this.cachedResults[cacheKey] = resultsMarkup;
+          this.renderSearchResults(resultsMarkup);
+        })
+        .catch((error) => {
+          if (error.name === 'AbortError') return;
           this.close();
-          throw error;
-        }
-        
-        return response.text();
-      })  
-      .then((text) => {
-        const resultsMarkup = new DOMParser().parseFromString(text, 'text/html').querySelector('#shopify-section-predictive-search').innerHTML;
-        this.cachedResults[queryKey] = resultsMarkup;
-        this.renderSearchResults(resultsMarkup);
-        this.updateViewAllLink(searchTerm);
-      })
-      .catch((error) => {
-        this.close();
-        throw error;
-      });
-  }
-  
-  setLiveRegionLoadingState() {
-    this.statusElement = this.statusElement || this.querySelector('.predictive-search-status');
-    this.loadingText = this.loadingText || this.getAttribute('data-loading-text');
-    
-    this.setLiveRegionText(this.loadingText);
-    this.setAttribute('loading', true);
-  }
-
-  setLiveRegionText(statusText) {
-    this.statusElement.setAttribute('aria-hidden', 'false');
-    this.statusElement.textContent = statusText;
-    
-    setTimeout(() => {
-      this.statusElement.setAttribute('aria-hidden', 'true');
-    }, 1000);
-  }
-
-  renderSearchResults(resultsMarkup) {
-    this.predictiveSearchResults.innerHTML = resultsMarkup;
-    this.setAttribute('results', true);
-    this.setAttribute('open', true);
-    this.setLiveRegionResults();
-    this.open();
-    this.hideTrendingAndProducts();
-  }
-
-  setLiveRegionResults() {
-    this.removeAttribute('loading');
-    this.setLiveRegionText(this.querySelector('[data-predictive-search-live-region-count-value]').textContent);
-  }
-  
-  getResultsMaxHeight() {
-    this.resultsMaxHeight = window.innerHeight - document.querySelector('[class^="header-navigation"]').getBoundingClientRect().bottom;
-    return this.resultsMaxHeight;
-  }
-  
-  open() {
-    //this.predictiveSearchResults.style.maxHeight = this.resultsMaxHeight || `${this.getResultsMaxHeight()}px`;
-    this.setAttribute('open', true);
-    this.input.setAttribute('aria-expanded', true);
-    this.isOpen = true;
-  }
-
-  close(clearSearchTerm = false) {
-    if (clearSearchTerm) {
-      this.input.value = '';
-      this.removeAttribute('results');
+        });
     }
-    
-    const selected = this.querySelector('[aria-selected="true"]');
 
-    if (selected) selected.setAttribute('aria-selected', false);
+    setLoadingState() {
+      if (this.statusElement) {
+        this.statusElement.setAttribute('aria-hidden', 'false');
+        this.statusElement.textContent = this.getAttribute('data-loading-text') || 'Cargando...';
+      }
+      this.setAttribute('loading', '');
+    }
 
-    this.input.setAttribute('aria-activedescendant', '');
-    this.removeAttribute('open');
-    this.input.setAttribute('aria-expanded', false);
-    this.resultsMaxHeight = false;
-    this.predictiveSearchResults.removeAttribute('style');
+    renderSearchResults(resultsMarkup) {
+      this.predictiveSearchResults.innerHTML = resultsMarkup;
+      this.removeAttribute('loading');
+      this.open();
 
-    this.isOpen = false;
-  }
+      const liveRegion = this.predictiveSearchResults.querySelector(
+        '[data-predictive-search-live-region-count-value]'
+      );
+      if (liveRegion && this.statusElement) {
+        this.statusElement.textContent = liveRegion.textContent;
+        setTimeout(() => {
+          this.statusElement.setAttribute('aria-hidden', 'true');
+        }, 1000);
+      }
+    }
 
-  showTrendingAndProducts() {
-    if (!this.trendingAndProductsBlock) return 
-    this.trendingAndProductsBlock.classList.add('is-show')
-    this.trendingAndProductsBlock.classList.remove('hidden');
-  }
+    open() {
+      this.predictiveSearchResults.style.display = 'block';
+      this.input.setAttribute('aria-expanded', 'true');
+      this.isOpen = true;
+    }
 
-  hideTrendingAndProducts() {
-    if (!this.trendingAndProductsBlock) return 
-
-    this.trendingAndProductsBlock.classList.remove('is-show')
-    this.trendingAndProductsBlock.classList.add('hidden');
-  }
-
-  onDocClick(e) {
-    const isInModal = this.contains(e.target), $target = e.target
-
-    if (!isInModal || $target.closest('.header-search-popup-close') || $target.matches('.header-search-popup-close') || $target.closest('.header-search-close') || $target.matches('.header-search-close')) {
-      this.close();
-      this.hideTrendingAndProducts();
+    close() {
+      this.predictiveSearchResults.style.display = 'none';
+      this.input.setAttribute('aria-expanded', 'false');
+      this.isOpen = false;
+      this.removeAttribute('loading');
     }
   }
 
-  onCloseStickySearchClick() {
-    this.close();
-    this.hideTrendingAndProducts();
-    document.querySelector('body').classList.remove('sticky-search-open');
-    document.querySelector('body').classList.remove('sticky-search-menu-open');
-    this.closest('[class*="section-header-"]')?.classList.remove('sticky-search-menu-open')
-  }
-
-  updateViewAllLink(searchTerm) {
-    const qsViewAllLink = document.querySelector('[data-qs-view-all-link]');
-    if (!qsViewAllLink) return 
-
-    const linkTotal = `${routes.search_url}?q=${encodeURIComponent(searchTerm)}&${encodeURIComponent('resources[type]')}=product`
-    
-    qsViewAllLink.href = linkTotal
-    return this.getTotalResults(linkTotal).then(count => {
-      qsViewAllLink.innerHTML = qsViewAllLink.innerHTML.replace('()', `(${count})`)
-    });
-  }
-
-  getTotalResults(url) {
-    return fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          var error = new Error(response.status);
-          this.close();
-          throw error;
-        }
-
-        return response.text();
-      })  
-      .then((text) => {
-        const totalCount = new DOMParser().parseFromString(text, 'text/html').querySelector('[id^="SearchSection"]').dataset.searchCount;
-        return totalCount
-      })
-      .catch((error) => {
-        this.close();
-        throw error;
-      });
-  }
+  customElements.define('predictive-search', PredictiveSearch);
 }
-
-customElements.define('predictive-search', PredictiveSearch);

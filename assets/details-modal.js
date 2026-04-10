@@ -30,16 +30,23 @@ class DetailsModal extends HTMLElement {
     onSummaryClick(event) {
         event.preventDefault();
 
-        event.target.closest('details').hasAttribute('open') ? this.close() : this.open(event);
+        if (event.target.tagName === 'INPUT' || event.target.closest('form.search') || event.target.closest('[data-predictive-search]') || event.target.closest('.quickSearchResultsWrap') || event.target.closest('predictive-search')) {
+            if (!this.detailsContainer.hasAttribute('open')) {
+                this.open(event);
+            }
+            return;
+        }
+
+        this.detailsContainer.hasAttribute('open') ? this.close() : this.open(event);
     }
 
     onBodyClick(event) {
-        if (!this.contains(event.target)) this.close(false);
+        if (!this.contains(event.target) && !event.target.closest('predictive-search')) this.close(false);
     }
 
     open(event) {
         this.onBodyClickEvent = this.onBodyClickEvent || this.onBodyClick.bind(this);
-        event.target.closest('details').setAttribute('open', true);
+        this.detailsContainer.setAttribute('open', true);
         document.body.addEventListener('click', this.onBodyClickEvent);
 
         trapFocus(

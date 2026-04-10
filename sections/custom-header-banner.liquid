@@ -1,0 +1,480 @@
+{%- style -%}
+  #HeaderBanner-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {% if section.settings.bg_color != blank %}
+      background-color: {{ section.settings.bg_color }};
+    {% endif %}
+  }
+
+  @media (min-width: 991px) {
+    {% if section.settings.hide_on_desktop %}
+      #HeaderBanner-{{ section.id }} {
+        display: none !important;
+      }
+    {% endif %}
+  }
+
+  /* Mobile styles */
+  @media (max-width: 989px) {
+    .info-banner-outer {
+      display: block !important;
+      padding: 5px 0;
+      margin: 0 !important;
+    }
+  }
+
+  /* Info Banner */
+  .info-banner-outer {
+    background-color: {{ section.settings.banner_bg | default: '#faf5ef' }};
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .info-banner-wrapper {
+    height: 80px;
+    overflow: hidden;
+    position: relative;
+    padding: 0 15px;
+  }
+
+  .info-slider-inner {
+    width: 100%;
+    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  /* Desktop View */
+  @media (min-width: 990px) {
+    .info-slider-inner {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 35px;
+      transform: none !important;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-shrink: 0;
+    }
+    .info-divider {
+      width: 1px;
+      height: 30px;
+      background-color: rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+  }
+
+  /* Common Item Styles */
+  .info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .info-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .info-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .info-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #000;
+    margin: 0;
+    letter-spacing: -0.2px;
+  }
+
+  .info-subtitle {
+    font-size: 10px;
+    color: #666;
+    margin-top: 2px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .bcv-value {
+    color: #d12442;
+    font-weight: 900;
+  }
+
+  /* Mobile Grid View (2 columns rotated vertically) */
+  @media (max-width: 989px) {
+    .info-banner-wrapper {
+        height: 80px;
+        padding: 0;
+    }
+    .info-row {
+        height: 80px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        align-items: center;
+        position: relative;
+    }
+    .info-row::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        bottom: 20%;
+        width: 1px;
+        background-color: rgba(0,0,0,0.08);
+    }
+    .info-item-mob {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px 5px;
+      gap: 6px;
+      height: 80px;
+    }
+    .info-icon {
+        width: 18px;
+        height: 18px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .mobile-only-rows { display: none !important; }
+    .desktop-only-row { display: block !important; }
+  }
+  @media (max-width: 989px) {
+    .mobile-only-rows { display: flex !important; flex-direction: column; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); }
+    .desktop-only-row { display: none !important; }
+  }
+{%- endstyle -%}
+
+<div class="custom-header-banner" id="HeaderBanner-{{ section.id }}">
+  <div class="container container-{{ section.settings.container }}">
+    {% if section.blocks.size > 0 or section.settings.show_bcv %}
+      <div class="info-banner-outer">
+        <div class="info-banner-wrapper">
+          <div class="info-slider-inner">
+            <div class="desktop-only-row">
+              <div class="info-slider-inner">
+                {% if section.settings.show_bcv %}
+                  <div class="info-item">
+                    <div class="info-icon" style="color: #d12442">{% render 'icon-heart' %}</div>
+                    <div class="info-text">
+                      <span class="info-title">
+                        {{- section.settings.bcv_text }}
+                        <span class="bcv-value" id="bcv-rate-value-{{ section.id }}">
+                          {{- section.settings.bcv_rate -}}
+                        </span></span
+                      >
+                      <span class="info-subtitle">Banco Central</span>
+                    </div>
+                  </div>
+                  <div class="info-divider"></div>
+                {% endif %}
+                {% for block in section.blocks %}
+                  <div class="info-item" {{ block.shopify_attributes }}>
+                    <div class="info-icon" style="color: {{ block.settings.icon_color | default: '#000' }}">
+                      {% case block.settings.icon %}
+                        {% when 'checkmark' -%}
+                          {%- render 'icon-checkmark' %}
+                        {% when 'shipping' -%}
+                          {%- render 'icon-shipping-truck' %}
+                        {% when 'shield' -%}
+                          {%- render 'icon-shield-check' %}
+                        {% when 'heart' -%}
+                          {%- render 'icon-heart' -%}
+                        {%- else -%}
+                          {%- render 'icon-checkmark' %}
+                      {% endcase %}
+                    </div>
+                    <div class="info-text">
+                      <span class="info-title" style="color: {{ block.settings.title_color | default: '#000' }}">
+                        {{- block.settings.title -}}
+                      </span>
+                      {% if block.settings.subtitle != blank -%}
+                        <span class="info-subtitle">{{ block.settings.subtitle }}</span>
+                      {%- endif %}
+                    </div>
+                  </div>
+                  {% unless forloop.last %}<div class="info-divider"></div>{% endunless %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="mobile-only-rows" id="MobileRows-{{ section.id }}">
+              <div class="info-row">
+                {% if section.settings.show_bcv %}
+                  <div class="info-item-mob">
+                    <div class="info-icon" style="color: #d12442">{% render 'icon-heart' %}</div>
+                    <div class="info-text">
+                      <span class="info-title"
+                        >BCV:
+                        <span class="bcv-value" id="bcv-rate-value-mob-{{ section.id }}">
+                          {{- section.settings.bcv_rate -}}
+                        </span></span
+                      >
+                      <span class="info-subtitle">Oficial</span>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if section.blocks[0] %}
+                  <div class="info-item-mob">
+                    <div class="info-icon" style="color: {{ section.blocks[0].settings.icon_color }}">
+                      {% case section.blocks[0].settings.icon %}
+                        {% when 'checkmark' -%}
+                          {%- render 'icon-checkmark' %}
+                        {% when 'shipping' -%}
+                          {%- render 'icon-shipping-truck' %}
+                        {% when 'shield' -%}
+                          {%- render 'icon-shield-check' %}
+                        {% when 'heart' -%}
+                          {%- render 'icon-heart' %}
+                      {% endcase %}
+                    </div>
+                    <div class="info-text">
+                      <span class="info-title">{{ section.blocks[0].settings.title }}</span>
+                      <span class="info-subtitle">{{ section.blocks[0].settings.subtitle }}</span>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="info-row">
+                {% if section.blocks[1] %}
+                  <div class="info-item-mob">
+                    <div class="info-icon" style="color: {{ section.blocks[1].settings.icon_color }}">
+                      {% case section.blocks[1].settings.icon %}
+                        {% when 'checkmark' -%}
+                          {%- render 'icon-checkmark' %}
+                        {% when 'shipping' -%}
+                          {%- render 'icon-shipping-truck' %}
+                        {% when 'shield' -%}
+                          {%- render 'icon-shield-check' %}
+                        {% when 'heart' -%}
+                          {%- render 'icon-heart' %}
+                      {% endcase %}
+                    </div>
+                    <div class="info-text">
+                      <span class="info-title">{{ section.blocks[1].settings.title }}</span>
+                      <span class="info-subtitle">{{ section.blocks[1].settings.subtitle }}</span>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if section.blocks[2] %}
+                  <div class="info-item-mob">
+                    <div class="info-icon" style="color: {{ section.blocks[2].settings.icon_color }}">
+                      {% case section.blocks[2].settings.icon %}
+                        {% when 'checkmark' -%}
+                          {%- render 'icon-checkmark' %}
+                        {% when 'shipping' -%}
+                          {%- render 'icon-shipping-truck' %}
+                        {% when 'shield' -%}
+                          {%- render 'icon-shield-check' %}
+                        {% when 'heart' -%}
+                          {%- render 'icon-heart' %}
+                      {% endcase %}
+                    </div>
+                    <div class="info-text">
+                      <span class="info-title">{{ section.blocks[2].settings.title }}</span>
+                      <span class="info-subtitle">{{ section.blocks[2].settings.subtitle }}</span>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    {% if section.settings.show_bcv and section.settings.auto_update_bcv %}
+    const updateBCV = (id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            fetch('https://ve.dolarapi.com/v1/dolares/oficial')
+                .then(r => r.json())
+                .then(d => { if (d && d.promedio) el.textContent = parseFloat(d.promedio).toLocaleString('es-VE', { minimumFractionDigits: 2 }); });
+        }
+    };
+    updateBCV('bcv-rate-value-{{ section.id }}');
+    updateBCV('bcv-rate-value-mob-{{ section.id }}');
+    {% endif %}
+
+    const container = document.getElementById('MobileRows-{{ section.id }}');
+    if (container) {
+      let index = 0;
+      const rows = container.querySelectorAll('.info-row');
+      if (rows.length >= 2) {
+        setInterval(() => { if (window.innerWidth < 990) { index = (index + 1) % rows.length; container.style.transform = `translateY(-${index * 80}px)`; } }, 4000);
+      }
+    }
+
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Header Category & Banner",
+  "settings": [
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "1370",
+      "options": [
+        { "value": "1170", "label": "1170px" },
+        { "value": "1370", "label": "1370px" },
+        { "value": "1570", "label": "1570px" },
+        { "value": "full", "label": "Full Width" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "banner_bg",
+      "label": "Banner Background Color",
+      "default": "#faf5ef"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Ocultar en desktop",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Tasa BCV"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bcv",
+      "label": "Mostrar Tasa BCV",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_update_bcv",
+      "label": "Actualizar automáticamente vía API",
+      "default": true,
+      "info": "Si se activa, el valor se obtendrá de ve.dolarapi.com"
+    },
+    {
+      "type": "text",
+      "id": "bcv_rate",
+      "label": "Valor Manual (Respaldo)",
+      "default": "473,87"
+    },
+    {
+      "type": "text",
+      "id": "bcv_text",
+      "label": "Texto previo",
+      "default": "Tasa BCV:"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_item",
+      "name": "Info Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "checkmark",
+          "options": [
+            { "value": "checkmark", "label": "Checkmark" },
+            { "value": "shipping", "label": "Shipping Truck" },
+            { "value": "shield", "label": "Shield Check" },
+            { "value": "heart", "label": "Heart" }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon Color",
+          "default": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Compra Segura"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color",
+          "default": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "100% garantizado"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header Category & Banner",
+      "blocks": [
+        {
+          "type": "info_item",
+          "settings": { "icon": "checkmark", "title": "Pago Seguro", "subtitle": "Protección total 100%" }
+        },
+        {
+          "type": "info_item",
+          "settings": { "icon": "shipping", "title": "Envío Gratis x 20$", "subtitle": "En toda la Gran Caracas" }
+        },
+        {
+          "type": "info_item",
+          "settings": { "icon": "shield", "title": "Garantía de 15 Días", "subtitle": "15 días hábiles garantizados" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
