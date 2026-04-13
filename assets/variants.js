@@ -513,7 +513,7 @@ class VariantSelects extends HTMLElement {
                 input.innerText = input.getAttribute('value');
             } else {
                 input.classList.add('soldout');
-                optionInputsValue.includes(input.getAttribute('value')) ? input.innerText = input.getAttribute('value') + ' (Sold out)' : input.innerText = window.variantStrings.unavailable_with_option.replace('[value]', input.getAttribute('value'))
+                optionInputsValue.includes(input.getAttribute('value')) ? input.innerText = input.getAttribute('value') + ' (' + window.variantStrings.soldOut + ')' : input.innerText = window.variantStrings.unavailable_with_option.replace('[value]', input.getAttribute('value'))
             }
         });
     }
