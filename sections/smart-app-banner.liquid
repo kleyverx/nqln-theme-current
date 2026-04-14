@@ -201,7 +201,7 @@
     
     <div class="smart-banner-icon">
       {%- if section.settings.app_icon != blank -%}
-        <img src="{{ section.settings.app_icon | image_url: width: 100 }}" alt="{{ section.settings.app_name | escape }}" loading="lazy">
+        <img src="{{ section.settings.app_icon | image_url: width: 100 }}" alt="{{ section.settings.app_name | escape }}" width="50" height="50" loading="lazy">
       {%- else -%}
         {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}

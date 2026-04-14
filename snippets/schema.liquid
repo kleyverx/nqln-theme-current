@@ -88,7 +88,7 @@
                         "url": "{{ url }}{{ variant.url }}",
                         {%- if variant.image -%}
                             {%- assign variant_image_size = variant.image.width | append: 'x' -%}
-                            "image": "http:{{ variant.image.src | img_url: variant_image_size }}",
+                            "image": "https:{{ variant.image.src | img_url: variant_image_size }}",
                         {%- else -%}
                             "image": "https:{{ product.featured_image.src | img_url: 'grande' }}",
                         {%- endif -%}

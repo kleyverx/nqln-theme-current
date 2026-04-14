@@ -29,13 +29,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="canonical" href="{{ canonical_url }}">
-    <link rel="canonical" href="{{ canonical_url }}" canonical-shop-url="{{ shop.url }}/">
     {%- if settings.favicon != blank -%}
       <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://sibautomation.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <title>
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
@@ -47,6 +48,62 @@
     {% endif %}
     {% render 'meta-tags' %}
     <meta name="apple-itunes-app" content="app-id=6454723827">
+
+    {%- comment -%} hreflang for multilingual SEO {%- endcomment -%}
+    {%- if localization.available_languages.size > 1 -%}
+      {%- for lang in localization.available_languages -%}
+        <link rel="alternate" hreflang="{{ lang.iso_code }}" href="{{ canonical_url | replace: shop.url, '' | prepend: shop.url | replace: request.host, request.host }}">
+      {%- endfor -%}
+      <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
+    {%- endif -%}
+
+    {%- comment -%} Product/Breadcrumb JSON-LD {%- endcomment -%}
+    {% render 'schema' %}
+
+    {%- comment -%} Organization + LocalBusiness JSON-LD {%- endcomment -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      {%- if settings.favicon != blank -%}
+      "logo": "{{ settings.favicon | image_url: width: 512 }}",
+      {%- endif -%}
+      "sameAs": [
+        {%- assign social_links = '' -%}
+        {%- if settings.social_facebook_link != blank -%}{%- assign social_links = social_links | append: settings.social_facebook_link | append: ',' -%}{%- endif -%}
+        {%- if settings.social_instagram_link != blank -%}{%- assign social_links = social_links | append: settings.social_instagram_link | append: ',' -%}{%- endif -%}
+        {%- if settings.social_twitter_link != blank -%}{%- assign social_links = social_links | append: settings.social_twitter_link | append: ',' -%}{%- endif -%}
+        {%- if settings.social_youtube_link != blank -%}{%- assign social_links = social_links | append: settings.social_youtube_link | append: ',' -%}{%- endif -%}
+        {%- if settings.social_tiktok_link != blank -%}{%- assign social_links = social_links | append: settings.social_tiktok_link -%}{%- endif -%}
+        {%- assign social_arr = social_links | split: ',' -%}
+        {%- for s in social_arr -%}
+          {%- if s != blank -%}{{ s | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "image": "{{ settings.favicon | image_url: width: 512 }}",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "VE",
+        "addressLocality": "Caracas"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Venezuela"
+      }
+    }
+    </script>
+
     {{ content_for_header }}
 
     {% render 'variable' %}
@@ -268,7 +325,7 @@
           }
         });
       </script>
-      <script src="{{ 'page-transitions.js' | asset_url }}"></script>
+      <script src="{{ 'page-transitions.js' | asset_url }}" defer></script>
   </head>
 
   <body class="template-{{ request.page_type }} {{layout_body}} {{style_dots}} {{style_text_size_varriant}} {{style_arrows}} {{product_card_layout}} {{ banner_animation }}{% if settings.enable_button_disable_arrows %} enable_button_disable_arrows{% endif %}{% if settings.display_text_color_title %} enable_text_color_title{% endif %}{% if settings.style_text_color_varriant == '02' %} style_2_text_color_varriant{% endif %}{% if settings.hide_compare_homepage %} hide_compare_homepage{% endif %} {{ quick_shop_type }}{% if settings.show_image_loading %} show_image_loading{% endif %}{% if settings.show_effect_close %} show_effect_close{% endif %}{% if settings.enable_layout_rtl and enable_iso_rtl %} layout_rtl{% endif %}">
@@ -664,4 +721,4 @@
 </html>
 
   
-{% include 'gameball' %}
+{% render 'gameball' %}
