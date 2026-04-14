@@ -34,6 +34,8 @@
       <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {%- endif -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <title>
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
@@ -44,6 +46,7 @@
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
     {% render 'meta-tags' %}
+    <meta name="apple-itunes-app" content="app-id=6454723827">
     {{ content_for_header }}
 
     {% render 'variable' %}
@@ -623,6 +626,38 @@
           activeCard = card;
         }, true);
       }
+    })();
+    </script>
+
+    <script>
+    (function() {
+      var translate = function(root) {
+        var nodes = (root || document).querySelectorAll('select option');
+        for (var i = 0; i < nodes.length; i++) {
+          var t = nodes[i].textContent;
+          if (t.indexOf('Sold out') !== -1 || t.indexOf('sold out') !== -1) {
+            nodes[i].textContent = t.replace(/sold out/gi, 'Agotado');
+          }
+          if (t.indexOf('Unavailable') !== -1) {
+            nodes[i].textContent = nodes[i].textContent.replace(/Unavailable/g, 'No disponible');
+          }
+        }
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() { translate(); });
+      } else {
+        translate();
+      }
+      var obs = new MutationObserver(function(muts) {
+        for (var i = 0; i < muts.length; i++) {
+          for (var j = 0; j < muts[i].addedNodes.length; j++) {
+            var n = muts[i].addedNodes[j];
+            if (n.nodeType === 1) translate(n);
+          }
+          if (muts[i].target && muts[i].target.tagName === 'OPTION') translate(muts[i].target.parentNode);
+        }
+      });
+      obs.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
     })();
     </script>
   </body>

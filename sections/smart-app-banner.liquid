@@ -1,0 +1,465 @@
+{%- if section.settings.show_smart_banner -%}
+  <style>
+    :root {
+      --smart-banner-bg: {{ section.settings.bg_color | default: 'rgba(255, 255, 255, 0.8)' }};
+      --smart-banner-text: {{ section.settings.text_color | default: '#000000' }};
+      --smart-banner-btn-bg: {{ section.settings.btn_bg_color | default: '#000000' }};
+      --smart-banner-btn-text: {{ section.settings.btn_text_color | default: '#ffffff' }};
+    }
+
+    #SmartAppBanner-{{ section.id }} {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10000;
+      display: none; /* Initially hidden, shown by JS */
+      align-items: center;
+      padding: 10px 15px;
+      background: var(--smart-banner-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      font-family: var(--font-body-family), sans-serif;
+      view-transition-name: smart-app-banner-{{ section.id }};
+    }
+
+    ::view-transition-old(smart-app-banner-{{ section.id }}),
+    ::view-transition-new(smart-app-banner-{{ section.id }}) {
+      animation: none;
+    }
+
+    #SmartAppBanner-{{ section.id }}.banner-hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #SmartAppBanner-{{ section.id }}.banner-visible {
+      display: flex;
+      animation: slideInBanner 0.5s forwards;
+    }
+
+    @keyframes slideInBanner {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-close {
+      background: rgba(0, 0, 0, 0.08);
+      border: none;
+      padding: 0;
+      margin-right: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--smart-banner-text);
+      opacity: 1;
+      transition: background 0.2s, transform 0.1s;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+      touch-action: manipulation;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-close:hover,
+    #SmartAppBanner-{{ section.id }} .smart-banner-close:active {
+      background: rgba(0, 0, 0, 0.18);
+      transform: scale(0.92);
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-close svg {
+      width: 16px;
+      height: 16px;
+      pointer-events: none;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 11px;
+      overflow: hidden;
+      margin-right: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background: #eee;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-info {
+      flex-grow: 1;
+      overflow: hidden;
+      margin-right: 15px;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin: 0;
+      color: var(--smart-banner-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.02em;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-developer {
+      font-size: 11px;
+      margin: 0;
+      color: var(--smart-banner-text);
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-rating {
+      display: flex;
+      align-items: center;
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-stars {
+      display: flex;
+      color: #FF9500;
+      gap: 1px;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-stars svg {
+      width: 10px;
+      height: 10px;
+      fill: currentColor;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-rating-count {
+      font-size: 10px;
+      color: var(--smart-banner-text);
+      opacity: 0.6;
+      margin-left: 4px;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-price {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
+      opacity: 0.5;
+      margin-top: 2px;
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-button {
+      background: var(--smart-banner-btn-bg);
+      color: var(--smart-banner-btn-text);
+      border: none;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+    }
+
+    #SmartAppBanner-{{ section.id }} .smart-banner-button:active {
+      transform: scale(0.95);
+    }
+
+    /* Push body down when banner is visible */
+    body.has-smart-banner {
+      margin-top: 71px !important; /* Initial estimate, will be adjusted by JS if needed */
+    }
+
+    @media (min-width: 1025px) {
+      #SmartAppBanner-{{ section.id }}:not(.banner-visible) {
+        display: none !important;
+      }
+      body.has-smart-banner:not(.is-design-mode) {
+        margin-top: 0 !important;
+      }
+    }
+  </style>
+
+  <div id="SmartAppBanner-{{ section.id }}" class="banner-hidden">
+    <button type="button" class="smart-banner-close" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    
+    <div class="smart-banner-icon">
+      {%- if section.settings.app_icon != blank -%}
+        <img src="{{ section.settings.app_icon | image_url: width: 100 }}" alt="{{ section.settings.app_name | escape }}" loading="lazy">
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    <div class="smart-banner-info">
+      <h3 class="smart-banner-title">{{ section.settings.app_name | default: shop.name }}</h3>
+      <p class="smart-banner-developer">{{ section.settings.developer_name | default: 'Official App' }}</p>
+      
+      {%- if section.settings.show_stars -%}
+      <div class="smart-banner-rating">
+        <div class="smart-banner-stars">
+          {%- for i in (1..5) -%}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.rating_count != blank -%}
+          <span class="smart-banner-rating-count">({{ section.settings.rating_count }})</span>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+
+      <div class="smart-banner-price">{{ section.settings.price_label | default: 'Free' }}</div>
+    </div>
+
+    <a href="#" class="smart-banner-button" target="_blank">{{ section.settings.button_label | default: 'VIEW' }}</a>
+  </div>
+
+  <script>
+    (function() {
+      const sectionId = "{{ section.id }}";
+      
+      function closeSmartBanner(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        localStorage.setItem('smart-app-banner-closed-at', Date.now().toString());
+        document.body.classList.remove('has-smart-banner');
+        document.body.style.marginTop = '';
+        document.documentElement.style.removeProperty('--smart-banner-height');
+        const banner = document.getElementById('SmartAppBanner-' + sectionId);
+        if (banner && banner.parentNode) {
+          banner.parentNode.removeChild(banner);
+        }
+      }
+
+      function initSmartBanner(event) {
+        // If this is a shopify:section:load event, check if it's for THIS section
+        if (event && event.type === 'shopify:section:load') {
+          if (event.detail.sectionId !== sectionId) return;
+        }
+
+        const banner = document.getElementById('SmartAppBanner-' + sectionId);
+        if (!banner) return;
+        const bannerLink = banner.querySelector('.smart-banner-button');
+        const closeBtn = banner.querySelector('.smart-banner-close');
+        
+        if (closeBtn) {
+          closeBtn.addEventListener('click', closeSmartBanner);
+          closeBtn.addEventListener('touchend', closeSmartBanner, { passive: false });
+        }
+
+        const isDesignMode = (window.Shopify && window.Shopify.designMode);
+        const closedAt = parseInt(localStorage.getItem('smart-app-banner-closed-at') || '0', 10);
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+        const isClosed = closedAt && (Date.now() - closedAt) < ONE_DAY_MS;
+        
+        // Configuration from Schema
+        const iosId = "{{ section.settings.ios_app_id }}";
+        const androidId = "{{ section.settings.android_app_id }}";
+        const androidActivity = "{{ section.settings.android_main_activity }}";
+        const appleUrl = `https://apps.apple.com/app/id${iosId}`;
+        const playStoreUrl = `https://play.google.com/store/apps/details?id=${androidId}`;
+        // Intent URL tries to open the app, falls back to Play Store if not installed
+        const androidIntentUrl = androidId
+          ? `intent://#Intent;scheme=https;package=${androidId};${androidActivity ? 'component=' + androidId + '/' + androidActivity + ';' : ''}S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`
+          : '#';
+
+        // If in design mode, always show for configuration
+        if (isDesignMode) {
+          banner.classList.remove('banner-hidden');
+          banner.classList.add('banner-visible');
+          document.body.classList.add('has-smart-banner', 'is-design-mode');
+          // Set a default link for preview
+          if (bannerLink) bannerLink.href = "#";
+          return;
+        }
+
+        if (isClosed) return;
+
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        let platform = 'other';
+
+        // Detect if we're INSIDE the app's WebView (don't show banner there)
+        const isAndroidWebView = /; wv\)/.test(userAgent) || /Version\/[\d.]+.*Chrome\/[\d.]+ Mobile/.test(userAgent) === false && /Android.*Chrome\/[\d.]+/.test(userAgent) === false && /Android/i.test(userAgent);
+        const isIOSWebView = /iPhone|iPad|iPod/.test(userAgent) && !/Safari/.test(userAgent) && !/CriOS|FxiOS|EdgiOS/.test(userAgent);
+        const isCustomAppUA = /NQLN|nqln|ShopifyApp/i.test(userAgent);
+        const isInsideApp = isAndroidWebView || isIOSWebView || isCustomAppUA;
+
+        if (isInsideApp) return;
+
+        // Detect Safari on iOS specifically (it shows Apple's native banner via meta tag)
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(userAgent);
+        const isSafariIOS = isIOS && isSafari;
+
+        var targetUrl = null;
+
+        if (/android/i.test(userAgent)) {
+          platform = 'android';
+          targetUrl = androidIntentUrl;
+        } else if (isIOS && !isSafariIOS) {
+          // Chrome, Firefox, etc. on iOS (Safari shows its own native banner)
+          platform = 'ios';
+          targetUrl = iosId ? appleUrl : null;
+        }
+
+        if (bannerLink && targetUrl) {
+          bannerLink.href = targetUrl;
+          bannerLink.removeAttribute('target');
+          var goToApp = function(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            window.location.href = targetUrl;
+          };
+          bannerLink.addEventListener('click', goToApp);
+          bannerLink.addEventListener('touchend', goToApp, { passive: false });
+        }
+
+        if (platform === 'android' || platform === 'ios') {
+          banner.classList.remove('banner-hidden');
+          banner.classList.add('banner-visible');
+          document.body.classList.add('has-smart-banner');
+          
+          // Dynamic padding adjustment
+          setTimeout(() => {
+            const height = banner.offsetHeight;
+            document.documentElement.style.setProperty('--smart-banner-height', height + 'px');
+            document.body.style.marginTop = height + 'px';
+          }, 100);
+        }
+      }
+
+      // Check if document is already loaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSmartBanner);
+      } else {
+        initSmartBanner();
+      }
+      document.addEventListener('shopify:section:load', initSmartBanner);
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Smart App Banner",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_smart_banner",
+      "label": "Show Smart App Banner",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "app_icon",
+      "label": "App Icon"
+    },
+    {
+      "type": "text",
+      "id": "app_name",
+      "label": "App Name",
+      "default": "NQNL Store"
+    },
+    {
+      "type": "text",
+      "id": "developer_name",
+      "label": "Developer Name",
+      "default": "NQNL Official"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "Show Rating Stars",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_count",
+      "label": "Rating Count (e.g. 4.5K)",
+      "default": "12K"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price/Status Label",
+      "default": "Free - On App Store"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "VIEW"
+    },
+    {
+      "type": "header",
+      "content": "Links"
+    },
+    {
+      "type": "text",
+      "id": "ios_app_id",
+      "label": "iOS App ID (numeric)",
+      "placeholder": "e.g. 123456789"
+    },
+    {
+      "type": "text",
+      "id": "android_app_id",
+      "label": "Android Package Name",
+      "placeholder": "e.g. com.nqnlstore.app"
+    },
+    {
+      "type": "text",
+      "id": "android_main_activity",
+      "label": "Android Main Activity (optional)",
+      "info": "Leave blank to just open Play Store. Fill to try opening the app first (e.g. com.example.app.MainActivity)",
+      "placeholder": "e.g. com.example.app.MainActivity"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "rgba(255, 255, 255, 0.8)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Smart App Banner"
+    }
+  ]
+}
+{% endschema %}
