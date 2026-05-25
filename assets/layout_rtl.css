@@ -2624,7 +2624,7 @@
 @media (min-width: 1025px) {
 	/* START: Body */
 		body.layout_rtl.open_search_mobile, 
-		body.layout_rtl.menu_open, 
+		body.layout_rtl.menu_omenu_openpen, 
 		body.layout_rtl.quickshop-popup-show, 
 		body.layout_rtl.newsletter-show, 
 		body.layout_rtl.show-pickup-availability {

@@ -9,7 +9,6 @@
 -%}
 <link rel="stylesheet" href="{{ 'slideshow-lookbook-style.css' | asset_url }}" media="print" onload="this.media='all'">
 <noscript>{{ 'slideshow-lookbook-style.css' | asset_url | stylesheet_tag }}</noscript>
-<script src="{{ 'lookbook-script.js' | asset_url }}" defer async></script>
 <div class="slideshow-wrapper section-block-{{section.id}}" id="slideshow-wrapper-{{section.id}}" {% if section.blocks.size > 1 %}data-loader-script="{{ 'halo.slide-show.js' | asset_url }}"{% endif %} data-lazy-load="true">
     <div class="{% if container == '1170' %}container-1170{% elsif container == '1770' %}container-1770{% elsif container == 'fullwidth'%}container-full{% else %}container{% endif %}">
       {%- if section.settings.enable_categories or section.settings.enable_banner -%}
@@ -27,7 +26,7 @@
                             <li>
                                 <a class="item-menu"  href="{{ link.url }}">
                                     {% assign img = link.handle | downcase | replace: ' ', '-' | append: '.png' | file_url %}
-                                    <span class="icon-img image-zoom"><img src="{{ img }}" alt="{{ link.title }}" onError="style.display = 'none';" width="{{ img.width }}" height="{{ img.height }}" loading="lazy"/></span> <span class="text-menu">{{ link.title }}</span> </a>      
+                                    <span class="icon-img image-zoom"><img src="{{ img }}" alt="{{ link.title }}" onerror="this.style.display='none'" loading="lazy" decoding="async"/></span> <span class="text-menu">{{ link.title }}</span> </a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -77,21 +76,23 @@
                         <div class="images-contain lookbook-image-item {% if enable_lookbook_width %}width-restricted{% endif %}" data-lookbook-item-container style="--dot-desktop-size: {{ dot_desktop_size }};--dot-mobile-size: {{ dot_mobile_size }};--dot-shadow-color: {{ dot_shadow_color }};--dot-outer-color: {{ dot_outer_color }};--dot-inner-color: {{ dot_inner_color }};--dot-number-desktop-size: {{ number_desktop_size }};--dot-number-mobile-size: {{ number_mobile_size }};--max-width: {{ lookbook_width }};--des-max-width: {% if des_width > 0 %}{{ des_width | append: 'px' }}{% else %}unset{% endif %};--truncate-line: {{ lookbook_truncate }}">
                             {%- if block.settings.image_slide != blank -%}
                                 {%- assign img_url = block.settings.image_slide -%}
-                                {%- if forloop.first -%}
-                                <link rel="preload" as="image" href="{{ img_url | image_url: width: 1500 }}" imagesizes="100vw">
+                                {%- if forloop.first and block.settings.image_slide_mb == blank -%}
+                                <link rel="preload" as="image" imagesrcset="{{ img_url | image_url: width: 750 }} 750w, {{ img_url | image_url: width: 1100 }} 1100w, {{ img_url | image_url: width: 1500 }} 1500w" imagesizes="100vw" fetchpriority="high">
+                                {%- elsif forloop.first -%}
+                                <link rel="preload" as="image" imagesrcset="{{ img_url | image_url: width: 1100 }} 1100w, {{ img_url | image_url: width: 1500 }} 1500w" imagesizes="100vw" fetchpriority="high" media="(min-width: 768px)">
                                 {%- endif -%}
                                 <div class="adaptive_height{% if block.settings.image_slide_mb != blank %} slide-pc{% endif %}" style="padding-top: {{ 1 | divided_by: img_url.aspect_ratio | times: 100 }}%">
                                     <a {% if block.settings.link == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.link }}"{% endif %} title="{{ img_url.alt | default: shop.name | escape }}" class="slide-image">
                                         <img class="lazyload" loading="lazy" data-srcset="{%- if img_url.width < 320 -%}{{ img_url | image_url: width: img_url.width }} 320w,{%- endif -%}
                                             {%- if img_url.width >= 320 -%}{{ img_url | image_url: width: 375 }} 375w,{%- endif -%}
-                                            {%- if img_url.width >= 740 -%}{{ img_url | image_url: width: 740 }} 740w,{%- endif -%} 
+                                            {%- if img_url.width >= 740 -%}{{ img_url | image_url: width: 740 }} 740w,{%- endif -%}
                                             {%- if img_url.width >= 750 -%}{{ img_url | image_url: width: 750 }} 750w,{%- endif -%}
                                             {%- if img_url.width >= 1100 -%}{{ img_url | image_url: width: 1100 }} 1100w,{%- endif -%}
                                             {%- if img_url.width >= 1370 -%}{{ img_url | image_url: width: 1370 }} 1370w,{%- endif -%}
                                             {%- if img_url.width >= 1500 -%}{{ img_url | image_url: width: 1500 }} 1500w,{%- endif -%}"
-                                            data-sizes="{% if section.settings.image != blank and section.settings.stack_images_on_mobile %}(min-width: 750px) 50vw, 100vw{% elsif section.settings.image != blank %}50vw{% else %}100vw{% endif %}" 
+                                            data-sizes="{% if section.settings.image != blank and section.settings.stack_images_on_mobile %}(min-width: 750px) 50vw, 100vw{% elsif section.settings.image != blank %}50vw{% else %}100vw{% endif %}"
                                             {% if forloop.first %}src="{{ img_url | image_url: width: 750 }}" fetchpriority="high" loading="eager"{% endif %}
-                                            alt="{{ img_url.alt | escape }}" width="{{ img_url.width }}" height="{{ img_url.width | divided_by: img_url.aspect_ratio | round }}" 
+                                            alt="{{ img_url.alt | escape }}" width="{{ img_url.width }}" height="{{ img_url.width | divided_by: img_url.aspect_ratio | round }}"
                                             decoding="async"
                                         ><span class="data-lazy-loading"></span></a>
                                 </div>
@@ -102,7 +103,7 @@
                             {% if block.settings.image_slide_mb != blank %}
                                 {%- assign img_url_mb = block.settings.image_slide_mb -%}
                                 {%- if forloop.first -%}
-                                <link rel="preload" as="image" href="{{ img_url_mb | image_url: width: 1100 }}" imagesizes="100vw">
+                                <link rel="preload" as="image" imagesrcset="{{ img_url_mb | image_url: width: 375 }} 375w, {{ img_url_mb | image_url: width: 750 }} 750w" imagesizes="100vw" fetchpriority="high" media="(max-width: 767px)">
                                 {%- endif -%}
                                 <div class="adaptive_height slide-mobile" style="padding-top: {{ 1 | divided_by: img_url_mb.aspect_ratio | times: 100 }}%">
                                     <a {% if block.settings.link == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.link }}"{% endif %} title="{{ img_url_mb.alt | default: shop.name | escape }}" class="slide-image">
@@ -373,8 +374,8 @@
                     {%- assign img_url = block.settings.image | img_url: 'master' -%}
                     <div class="banner" data-animate="{{ settings.banner_animation }}">
                         {%- if block.settings.image != blank -%}
-                            <a {% if block.settings.link == blank %} role="link" aria-disabled="true"{% else %} href="{{ block.settings.link }}"{% endif %} class="adaptive_height" style="padding-top: {{ 1 | divided_by: preview_img.aspect_ratio | times: 100 }}%">
-                                <img {% if settings.enable_lazyload %}data-{% endif %}srcset="{{ img_url }}" {% unless settings.enable_lazyload %}src="{{ img_url }}"{% endunless %} alt="{{ preview_img.alt | escape }}" width="{{ preview_img.width }}" height="{{ preview_img.width | divided_by: preview_img.aspect_ratio }}" {% if settings.enable_lazyload and forloop.first == false %}class="lazyload" loading="lazy" {% elsif forloop.first %}src="{{ img_url }}"{% endif %}>
+                            <a {% if block.settings.link == blank %} role="link" aria-disabled="true"{% else %} href="{{ block.settings.link }}"{% endif %} aria-label="{{ preview_img.alt | default: block.settings.title | default: shop.name | escape }}" class="adaptive_height" style="padding-top: {{ 1 | divided_by: preview_img.aspect_ratio | times: 100 }}%">
+                                <img {% if settings.enable_lazyload %}data-{% endif %}srcset="{{ img_url }}" {% unless settings.enable_lazyload %}src="{{ img_url }}"{% endunless %} alt="{{ preview_img.alt | default: block.settings.title | default: shop.name | escape }}" width="{{ preview_img.width }}" height="{{ preview_img.width | divided_by: preview_img.aspect_ratio }}" {% if settings.enable_lazyload and forloop.first == false %}class="lazyload" loading="lazy" {% elsif forloop.first %}src="{{ img_url }}"{% endif %}>
                                 {% if settings.enable_lazyload and forloop.first == false %}<span class="data-lazy-loading"></span>{% endif %}</a>
                         {%- else -%}
                             <a {% if block.settings.link == blank %} role="link" aria-disabled="true"{% else %} href="{{ block.settings.link }}"{% endif %} class="banner"><div class="not_img" style="--height_not_img: 250px">250 x 250px</div></a>

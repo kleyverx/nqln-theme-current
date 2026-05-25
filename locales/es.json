@@ -252,8 +252,8 @@
         "unit_price": "Precio unitario",
         "saved_price_html": ""
       },
-      "read_less": "Leer Menos",
-      "read_more": "Lee Mas",
+      "read_less": "Ver menos",
+      "read_more": "Ver más",
       "share": "Comparte este producto",
       "sold_out": "Agotado",
       "sold_out_message": "¡Esta variante está agotada!",
@@ -455,8 +455,8 @@
       "max_price": "El precio más alto es {{ price }}",
       "min": "Mínimo",
       "product_count": "Mostrando {{ count }} de {{ total }} productos",
-      "read_more": "Lee mas",
-      "read_less": "Leer menos",
+      "read_more": "Ver más",
+      "read_less": "Ver menos",
       "refined_by": "Filtrado por",
       "reset": "Claro",
       "start_count": "Mostrando ",
@@ -874,7 +874,7 @@
     },
     "reviews_list": {
       "reply": "Respuesta",
-      "read_more": "Leer más",
+      "read_more": "Ver más",
       "view_product": "Ver producto",
       "button_load_more": "Cargar más",
       "purchased": "Purchased"

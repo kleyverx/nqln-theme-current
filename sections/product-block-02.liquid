@@ -65,91 +65,89 @@
                             {%- liquid
                                 assign product_limit = 0
                                 assign column = section.settings.product_block_per_row
-                                assign column_mobile = section.settings.product_block_per_row_mobile
                                 if infinite_scroll
                                     assign product_limit = limit
                                 endif
                             -%}
-                            <div class="products-grid column-{{ column }} column-mobile-{{ column_mobile }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}" data-item-to-show-mb="{{ column_mobile }}">
+                            <div class="products-grid column-{{ column }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}">
                         {%- elsif layout == 'slider' -%}
                             {%- liquid
                                 assign column = section.settings.product_block_show
-                                assign column_mobile = section.settings.product_block_per_row_mobile
                                 assign dots = section.settings.product_block_dots
                                 assign dots_mb = section.settings.product_block_dots_mb
                                 assign arrows = section.settings.product_block_arrows
                                 assign arrows_mb = section.settings.product_block_arrows_mb
                             -%}
-                            <div class="products-carousel column-{{ column }} column-mobile-{{ column_mobile }}"
+                            <div class="products-carousel column-{{ column }}"
                                 data-item-to-show="{{ column }}"
-                                data-item-to-show-mb="{{ column_mobile }}"
                                 data-item-dots="{{ dots }}"
                                 data-item-dots-mb="{{ dots_mb }}"
                                 data-item-arrows="{{ arrows }}"
                                 data-item-arrows-mb="{{ arrows_mb }}"
                             >
-                            {%- endif -%}
+                        {%- endif -%}
                             {%- for tag in current_tags -%}
-                            {%- if tag contains 'limit=' -%}
-                                {%- assign limit = tag | remove: 'limit=' -%}
-                            {%- elsif tag contains 'sectionId=' -%}
-                                {%- assign sectionId = tag | remove: 'sectionId=' -%}
-                            {%- elsif tag contains 'imageRatio=' -%}
-                                {%- assign image_ratio = tag | remove: 'imageRatio=' -%}
-                            {%- elsif tag contains 'swipe=' -%}
-                                {%- assign swipe = tag | remove: 'swipe=' -%}
-                            {%- elsif tag contains 'hasCountdown=' -%}
-                                {%- assign hasCountdown = tag | remove: 'hasCountdown=' -%}
-                            {%- endif -%}
+                                {%- if tag contains 'limit=' -%}
+                                    {%- assign limit = tag | remove: 'limit=' -%}
+                                {%- elsif tag contains 'sectionId=' -%}
+                                    {%- assign sectionId = tag | remove: 'sectionId=' -%}
+                                {%- elsif tag contains 'imageRatio=' -%}
+                                    {%- assign image_ratio = tag | remove: 'imageRatio=' -%}
+                                {%- elsif tag contains 'swipe=' -%}
+                                    {%- assign swipe = tag | remove: 'swipe=' -%}
+                                {%- elsif tag contains 'hasCountdown=' -%}
+                                    {%- assign hasCountdown = tag | remove: 'hasCountdown=' -%}
+                                {%- endif -%}
                             {%- endfor -%}
-
+                                
                             {%- if collection.products[0] != nil -%}
-                            {%- for product in collection.products limit: limit -%}
-                                <div class="product{% if swipe == 'true' or swipe == true %} slider__slide grid__item{% endif %}">
-                                    {% render 'product-grid-layout',
-                                        product_card_product: product,
-                                        portrait_aspect_ratio: '125',
-                                        serial: forloop.index,
-                                        sectionId: sectionId,
-                                        media_size: image_ratio,
-                                        hasCountdown: hasCountdown,
-                                        loading: true
-                                    %}
-                                </div>
-                            {%- endfor -%}
+                                {%- for product in collection.products limit: limit -%}
+                                    <div class="product{% if swipe == 'true' %} slider__slide grid__item{% endif %}">
+                                        {% render 'product-grid-layout',
+                                            product_card_product: product,
+                                            portrait_aspect_ratio: '125',
+                                            serial: forloop.index,
+                                            sectionId: sectionId,
+                                            media_size: image_ratio,
+                                            hasCountdown: hasCountdown,
+                                            loading: true
+                                        %}
+                                    </div>
+                                {%- endfor -%}
                             {%- else -%}
-                            {%- for product in (1..limit) -%}
-                                <div class="product{% if swipe == 'true' or swipe == true %} slider__slide grid__item{% endif %}">
-                                    {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
-                                    {% render 'product-card-placeholder',
-                                        index: current
-                                    %}
-                                </div>
-                            {%- endfor -%}
+                                {%- for product in (1..limit) -%}
+                                    <div class="product{% if swipe %} slider__slide grid__item{% endif %}">
+                                        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                                        {% render 'product-card-placeholder',
+                                            index: current
+                                        %}
+                                    </div>
+                                {%- endfor -%}
                             {%- endif -%}
-                            </div>
-                            {%- if swipe == 'true' or swipe == true -%}
+                        </div>
+                        {%- if swipe -%}
                             <div class="slider-buttons no-js-hidden{% if products_to_display < 4 %} medium-hide{% endif %}{% if products_to_display < 3 %} small-hide{% endif %}">
-                            <div class="slider-counter">
-                                <span class="slider-counter--current">1</span>
-                                <span aria-hidden="true"> / </span>
-                                <span class="visually-hidden">{{ 'accessibility.of' | t }}</span>
-                                <span class="slider-counter--total">{{ products_to_display }}</span>
+                                <div class="slider-counter">
+                                    <span class="slider-counter--current">1</span>
+                                    <span aria-hidden="true"> / </span>
+                                    <span class="visually-hidden">{{ 'accessibility.of' | t }}</span>
+                                    <span class="slider-counter--total">{{ products_to_display }}</span>
+                                </div>
+                                <div class="slider-action">
+                                    <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'accessibility.previous_slide' | t }}">
+                                        {% render 'icon-caret' %}
+                                    </button>
+                                    <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'accessibility.next_slide' | t }}">
+                                        {% render 'icon-caret' %}
+                                    </button>
+                                </div>
                             </div>
-                            <div class="slider-action">
-                                <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'accessibility.previous_slide' | t }}">
-                                    {% render 'icon-caret' %}
-                                </button>
-                                <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'accessibility.next_slide' | t }}">
-                                    {% render 'icon-caret' %}
-                                </button>
-                            </div>
-                            </div>
-                            {%- endif -%}
-                            {%- if infinite_scroll and collections[collection].handle != '' and layout == 'grid' -%}
+                        {%- endif -%}
+                        {%- if infinite_scroll and collections[collection].handle != '' and layout == 'grid' -%}
                             {%- assign product_total = collections[collection].all_products_count -%}
                             {%- if product_total > product_limit -%}
-                            <div class="product-infinite-scroll text-center {% if swipe == 'true' or swipe == true %}hidden-mobile{% endif %}" data-product-infinite>                                    <button type="button" class="button button--secondary"
+                                <div class="product-infinite-scroll text-center {% if swipe %}hidden-mobile{% endif %}" data-product-infinite>
+                                    <button type="button" class="button button--secondary"
                                         data-collection="{{ collection.handle }}"
                                         data-limit="{{ product_limit }}"
                                         data-swipe="{{ swipe }}"
@@ -197,24 +195,21 @@
                             {%- liquid
                                 assign product_limit = 0
                                 assign column = section.settings.product_block_per_row
-                                assign column_mobile = section.settings.product_block_per_row_mobile
                                 if infinite_scroll
                                     assign product_limit = limit
                                 endif
                             -%}
-                            <div class="products-grid column-{{ column }} column-mobile-{{ column_mobile }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}" data-item-to-show-mb="{{ column_mobile }}">
+                            <div class="products-grid column-{{ column }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}">
                         {%- elsif layout == 'slider' -%}
                             {%- liquid
                                 assign column = section.settings.product_block_show
-                                assign column_mobile = section.settings.product_block_per_row_mobile
                                 assign dots = section.settings.product_block_dots
                                 assign dots_mb = section.settings.product_block_dots_mb
                                 assign arrows = section.settings.product_block_arrows
                                 assign arrows_mb = section.settings.product_block_arrows_mb
                             -%}
-                            <div class="products-carousel column-{{ column }} column-mobile-{{ column_mobile }}"
+                            <div class="products-carousel column-{{ column }}"
                                 data-item-to-show="{{ column }}"
-                                data-item-to-show-mb="{{ column_mobile }}"
                                 data-item-dots="{{ dots }}"
                                 data-item-dots-mb="{{ dots_mb }}"
                                 data-item-arrows="{{ arrows }}"
@@ -237,7 +232,7 @@
 
                             {%- if collection_02.products[0] != nil -%}
                                 {%- for product in collection_02.products limit: limit -%}
-                                    <div class="product{% if swipe %} slider__slide grid__item{% endif %}">
+                                    <div class="product{% if swipe == 'true' %} slider__slide grid__item{% endif %}">
                                         {% render 'product-grid-layout',
                                             product_card_product: product,
                                             portrait_aspect_ratio: '125',
@@ -489,6 +484,12 @@
             align-items: flex-start;
         }
     }
+
+    @media (max-width: 767px) {
+        .section-block-{{section.id}} {
+            padding-top: {{ mg_top_mobile | append: 'px' }};
+            padding-bottom: {{ mg_bottom_mobile | append: 'px' }};
+        }
 
         .section-block-{{section.id}} .halo-block-header .title {
             font-size: {{ fontsize_title_mb | append: 'px'  }};
@@ -914,21 +915,6 @@
             "label": "5"
         }],
         "default": "4"
-    },
-    {
-        "type": "select",
-        "id": "product_block_per_row_mobile",
-        "label": "Columnas en móvil",
-        "options": [
-        {
-            "value": "1",
-            "label": "1"
-        },
-        {
-            "value": "2",
-            "label": "2"
-        }],
-        "default": "2"
     },
     {
         "type": "checkbox",

@@ -255,7 +255,7 @@
 
     @media (max-width: 1024px) {
         .section-block-{{ section.id }} .products-flex {
-            --count: {{ section.settings.product_block_per_row_mobile }}!important;
+            --count: 2!important;
             gap: 15px;
         }
         
@@ -420,7 +420,6 @@
                                     {%- liquid
                                         assign product_limit = 0
                                         assign column = section.settings.product_block_per_row
-                                        assign column_mobile = section.settings.product_block_per_row_mobile
                                         if infinite_scroll
                                             assign product_limit = limit
                                         endif
@@ -433,24 +432,21 @@
                                                         {%- liquid
                                                             assign product_limit = 0
                                                             assign column = section.settings.product_block_per_row
-                                                            assign column_mobile = section.settings.product_block_per_row_mobile
                                                             if infinite_scroll
                                                                 assign product_limit = limit
                                                             endif
                                                         -%}
-                                                        <div class="products-grid products-load column-{{ column }} column-mobile-{{ column_mobile }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}" data-item-to-show-mb="{{ column_mobile }}">
+                                                        <div class="products-grid products-load column-{{ column }}{% if swipe %} slider slider--tablet grid grid--peek{% endif %}" data-products-to-show="{{ limit }}">
                                                     {%- elsif layout == 'slider' -%}
                                                         {%- liquid
                                                             assign column = section.settings.product_block_show
-                                                            assign column_mobile = section.settings.product_block_per_row_mobile
                                                             assign dots = section.settings.product_block_dots
                                                             assign dots_mb = section.settings.product_block_dots_mb
                                                             assign arrows = section.settings.product_block_arrows
                                                             assign arrows_mb = section.settings.product_block_arrows_mb
                                                         -%}
-                                                        <div class="products-carousel products-load column-{{ column }} column-mobile-{{ column_mobile }}{% if show_banner %} has__banner_tab{% endif %}"
+                                                        <div class="products-carousel products-load column-{{ column }}{% if show_banner %} has__banner_tab{% endif %}"
                                                             data-item-to-show="{{ column }}"
-                                                            data-item-to-show-mb="{{ column_mobile }}"
                                                             data-item-dots="{{ dots }}"
                                                             data-item-dots-mb="{{ dots_mb }}"
                                                             data-item-arrows="{{ arrows }}"
@@ -459,9 +455,8 @@
                                                     {% elsif layout == 'scroll' %}
                                                         {% liquid
                                                             assign column = section.settings.product_block_per_view 
-                                                            assign column_mobile = section.settings.product_block_per_row_mobile
                                                             assign show_half = section.settings.show_half 
-
+                            
                                                             assign scroll_height = section.settings.scroll_height | append: 'px'
                                                             assign scroll_track_bg = section.settings.scroll_track_bg
                                                             assign scroll_thumb_color = section.settings.scroll_thumb_color
@@ -479,7 +474,7 @@
                                                             </div>
                                                         </div>
                                                         <div 
-                                                            class="products-load is-scroll products-flex disable-srollbar-mb column-{{ column }} column-mobile-{{ column_mobile }}{% if show_half %} show-half{% endif %}{% if swipe %} slider slider--tablet grid{% endif %}"
+                                                            class="products-load is-scroll products-flex disable-srollbar-mb column-{{ column }}{% if show_half %} show-half{% endif %}{% if swipe %} slider slider--tablet grid{% endif %}"
                                                             data-drag-parent
                                                             style="--count: {{ column }};
                                                                 --scrollbar-height: {{ scroll_height }};
@@ -508,8 +503,9 @@
 
                                                             {%- if collection.products[0] != nil -%}
                                                                 {%- for product in collection.products limit: limit -%}
-                                                                    <div class="product{% if swipe == 'true' or swipe == true %} slider__slide grid__item{% endif %}">
-                                                                        {% render 'product-grid-layout',                                                                            product_card_product: product,
+                                                                    <div class="product{% if swipe == 'true' %} slider__slide grid__item{% endif %}">
+                                                                        {% render 'product-grid-layout',
+                                                                            product_card_product: product,
                                                                             portrait_aspect_ratio: '125',
                                                                             serial: forloop.index,
                                                                             sectionId: sectionId,
@@ -931,21 +927,6 @@
                 "label": "5"
             }],
             "default": "4"
-        },
-        {
-            "type": "select",
-            "id": "product_block_per_row_mobile",
-            "label": "Columnas en móvil",
-            "options": [
-            {
-                "value": "1",
-                "label": "1"
-            },
-            {
-                "value": "2",
-                "label": "2"
-            }],
-            "default": "2"
         },
         {
             "type": "checkbox",

@@ -70,7 +70,7 @@
                     <div class="halo-item slidable-spotlight-slide">
                         {% if image != blank %}
                             <a class="adaptive_height image-zoom" {% if link != blank %}  href="{{ link }}" {% else %}role="link" aria-hidden="true"{% endif %}style="padding-top: {{ 1 | divided_by: image.aspect_ratio | times: 100 }}%"> 
-                                <img srcset="{{ image | img_url: 'master' }} 1x, {{ image | img_url: 'master', scale: 2 }} 2x" {% unless settings.enable_lazyload %}src="{{ image | img_url: 'master' }}"{% endunless %} alt="{{ image.alt | default: shop.name | escape }}" loading="lazy" 
+                                <img {% if settings.enable_lazyload %}data-{% endif %}srcset="{{ image | image_url: width: 200 }} 1x, {{ image | image_url: width: 300 }} 2x" {% unless settings.enable_lazyload %}src="{{ image | image_url: width: 200 }}"{% endunless %} alt="{{ image.alt | default: shop.name | escape }}" loading="lazy" decoding="async" width="{{ image.width | default: 200 }}" height="{{ image.height | default: 200 }}"
                                 {% if settings.enable_lazyload %}class="lazyload"{% endif %}>
                                 {% if settings.enable_lazyload %}<span class="data-lazy-loading"></span>{% endif %}
                             </a>

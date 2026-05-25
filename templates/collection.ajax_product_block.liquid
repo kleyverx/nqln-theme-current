@@ -15,7 +15,7 @@
 {%- endfor -%}
 
 {%- for product in collections[collection.handle].products limit: limit -%}
-    <div class="product{% if swipe == 'true' or swipe == true %} slider__slide grid__item{% endif %}">
+    <div class="product{% if swipe == 'true' %} slider__slide grid__item{% endif %}">
         {% render 'product-grid-layout',
             product_card_product: product,
             portrait_aspect_ratio: '125',

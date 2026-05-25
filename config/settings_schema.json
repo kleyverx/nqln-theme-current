@@ -8987,6 +8987,39 @@
         "id": "collection_badge_bg_4",
         "label": "Color de fondo del badge de colección (4)",
         "default": "#805AE6"
+      },
+      {
+        "type": "header",
+        "content": "Badge global 5"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_badge_5",
+        "label": "Mostrar badge para colección seleccionada (5)",
+        "default": false
+      },
+      {
+        "type": "collection",
+        "id": "collection_badge_collection_5",
+        "label": "Colección para mostrar badge (5)"
+      },
+      {
+        "type": "text",
+        "id": "collection_badge_text_5",
+        "label": "Texto del badge (5)",
+        "default": "Badge 5"
+      },
+      {
+        "type": "color",
+        "id": "collection_badge_color_5",
+        "label": "Color de texto del badge de colección (5)",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "collection_badge_bg_5",
+        "label": "Color de fondo del badge de colección (5)",
+        "default": "#805AE6"
       }
     ]
   },

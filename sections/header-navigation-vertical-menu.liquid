@@ -38,7 +38,7 @@
             {%- when 'logo' -%}
                 <div class="header-logo header-item header-item--side header-item fs-0 fg-0{% if block.settings.logo_position == 'main_menu'%} show-main-menu{% elsif block.settings.logo_position == 'sticky_menu'%} hide-main-menu{% else %}{% endif %}" style="--logo_font_size: {{block.settings.logo_font_size | append: 'px'}};--logo_font_weight: {{block.settings.logo_font_weight}};--logo_text_transform: {{block.settings.logo_text_transform}};--logo_text_color: {{block.settings.logo_color}};--logo_width: {{block.settings.logo_width | append: 'px'}};--logo_width_sticky: {{block.settings.logo_width_fixed | append: '%'}}">
                     <div class="header__heading">
-                        <a href="{{ routes.root_url }}" class="header__heading-link focus-inset">
+                        <a href="{{ routes.root_url }}" class="header__heading-link focus-inset" aria-label="{{ shop.name | escape }}">
                             {%- if block.settings.logo != blank -%}
                                 {%- assign logo = block.settings.logo -%}
                                 {%- assign logo_width = block.settings.logo_width -%}
@@ -168,7 +168,7 @@
                             {% else %}
                                 {% assign is_contained = false %}
                             {% endif %}
-                            <a href="{{ routes.account_login_url }}" class="header__icon header__icon--account link link--text stroke-icon h-100{% if block.settings.show_customer_sticky%}{% if block.settings.show_customer %}{% else %} hide-main-menu{% endif %}{% else %}{% if block.settings.show_customer %} show-main-menu{% endif %}{% endif %}"{% if is_contained %} data-open-auth-sidebar{% endif %}>
+                            <a href="{{ routes.account_login_url }}" class="header__icon header__icon--account link link--text stroke-icon h-100{% if block.settings.show_customer_sticky%}{% if block.settings.show_customer %}{% else %} hide-main-menu{% endif %}{% else %}{% if block.settings.show_customer %} show-main-menu{% endif %}{% endif %}" aria-label="Mi cuenta"{% if is_contained %} data-open-auth-sidebar{% endif %}>
                                 {% render 'icon-account-2', class: 'w-h-25 stroke-w-10' %}
                                 <span class="visually-hidden">
                                     {%- liquid
@@ -184,7 +184,7 @@
                     {%- endif -%}
                     {%- if settings.show_wishlist -%}
                         {%- if block.settings.show_wishlist or block.settings.show_wishlist_sticky -%}
-                            <a href="{{ pages['wish-list'].url }}" class="header__icon header__icon--wishlist link link--text focus-inset h-100{% if block.settings.show_wishlist_sticky %}{% if block.settings.show_wishlist %}{% else %} hide-main-menu{% endif %}{% else %}{% if block.settings.show_wishlist %} show-main-menu{% endif %}{% endif %}">
+                            <a href="{{ pages['wish-list'].url }}" class="header__icon header__icon--wishlist link link--text focus-inset h-100{% if block.settings.show_wishlist_sticky %}{% if block.settings.show_wishlist %}{% else %} hide-main-menu{% endif %}{% else %}{% if block.settings.show_wishlist %} show-main-menu{% endif %}{% endif %}" aria-label="Lista de deseos">
                                 {% render 'icon-heart-2', class: 'w-h-25' %}
                                 <span class="visually-hidden">{{ 'wishlist.general.wishlist' | t }}</span>
                             </a>

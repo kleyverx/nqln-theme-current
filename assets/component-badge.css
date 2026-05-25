@@ -62,6 +62,10 @@
   color: var(--collection-badge4-color);
   background-color: var(--collection-badge4-bg);
 }
+.halo-productBadges .badge.collection-badge--5 {
+  color: var(--collection-badge5-color);
+  background-color: var(--collection-badge5-bg);
+}
 
 .halo-productBadges .badge + .badge {
   margin-top: 5px;

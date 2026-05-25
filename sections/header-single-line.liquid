@@ -91,7 +91,7 @@
             {%- when 'logo' -%}
               <div class="header__logo text-left clearfix">
                 <div class="header__heading">
-                  <a href="{{ routes.root_url }}" class="header__heading-link focus-inset">
+                  <a href="{{ routes.root_url }}" class="header__heading-link focus-inset" aria-label="{{ shop.name | escape }}">
                     {%- if block.settings.lottie_json_url != blank -%}
                       <div
                         id="lottie-logo-{{ section.id }}-{{ forloop.index }}"
@@ -324,6 +324,7 @@
                   <a
                     href="{{ pages['wish-list'].url }}"
                     class="header__icon header__icon--wishlist link link--text focus-inset"
+                    aria-label="Lista de deseos"
                   >
                     {% render 'icon-heart-2' %}
                     <span class="wishlist-text">
@@ -360,6 +361,7 @@
                   <a
                     href="{{ routes.account_login_url }}"
                     class="header__icon header__icon--account link link--text"
+                    aria-label="Mi cuenta"
                     {% if is_contained %}
                       data-open-auth-sidebar
                     {% endif %}

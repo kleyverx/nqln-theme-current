@@ -98,15 +98,7 @@
 				endif
 
 				if block.type == 'description' or block.type == 'review' or block.type == 'custom'
-					assign style_mobile = false
-					if block.settings.open_tab_mobile
-						assign style_mobile = 'show-mobile'
-					endif
-					if tab_layout_mobile == 'popup'
-						assign style_mobile = 'popup-mobile'
-					elsif tab_layout_mobile == 'vertical_sidebar'
-						assign style_mobile = 'sidebar-mobile'
-					endif
+					assign style_mobile = 'show-mobile'
 				endif
 			-%}
 			{%- if has_tab and title != blank -%}
@@ -129,7 +121,14 @@
 		                    {% endif %}
 		                </a>
 		            </div>
-		            <div class="toggle-content{% if style_mobile %} {{ style_mobile }}{% endif %}{% if block.settings.enable_btn_show_more %} toggle-content--height{% endif %}" id="tab-{{ title | escape | handleize }}-mobile"{% if block.settings.enable_btn_show_more %} style="--maximum-des-to-show: {{ block.settings.maximum_des_to_show | append: 'px'}}"{% endif %}{% if block.type == 'description' %} product-description-tab data-product-description-{{ product.id }}{% endif %}>
+		            {%- liquid
+		              assign force_show_more = false
+		              if block.type == 'description' or block.type == 'custom'
+		                assign force_show_more = true
+		              endif
+		              assign max_des_height = block.settings.maximum_des_to_show | default: 300
+		            -%}
+		            <div class="toggle-content{% if style_mobile %} {{ style_mobile }}{% endif %}{% if block.settings.enable_btn_show_more or force_show_more %} toggle-content--height{% endif %}" id="tab-{{ title | escape | handleize }}-mobile"{% if block.settings.enable_btn_show_more or force_show_more %} style="--maximum-des-to-show: {{ max_des_height | append: 'px'}}"{% endif %}{% if block.type == 'description' %} product-description-tab data-product-description-{{ product.id }}{% endif %}>
 						{%- if tab_layout == 'vertical_sidebar' or style_mobile == 'sidebar-mobile' or style_mobile == 'popup-mobile' -%}
 							<div class="tab-popup-header">
 								<h5>
@@ -148,10 +147,10 @@
                                   </div>
 							{%- endif -%}
 							{{ content }}
-							{%- if block.settings.enable_btn_show_more -%}
+							{%- if block.settings.enable_btn_show_more or force_show_more -%}
 								{% assign letter = content | size %}
-								<div class="tab-showMore is-show" data-letter="{{ letter }}" data-des-max="{{ block.settings.maximum_des_to_show }}">
-									<a class="button button--secondary" href="#tab-{{ title | escape | handleize }}-mobile" data-show-more-text="{{ 'products.product.read_more' | t }}" data-show-less-text="{{ 'products.product.read_less' | t }}" data-show-more-toogle> 
+								<div class="tab-showMore is-show" data-letter="{{ letter }}" data-des-max="{{ max_des_height }}">
+									<a class="button button--secondary" href="#tab-{{ title | escape | handleize }}-mobile" data-show-more-text="{{ 'products.product.read_more' | t }}" data-show-less-text="{{ 'products.product.read_less' | t }}" data-show-more-toogle>
 										{{ 'products.product.read_more' | t }}
 									</a>
 								</div>

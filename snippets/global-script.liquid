@@ -1,7 +1,16 @@
 
-    <script src="{{ 'vendor.js' | asset_url }}"></script>
-    <script src="{{ 'global.js' | asset_url }}"></script>
-    <script onload="loadLazy()" src="{{ 'lazysizes.min.js' | asset_url }}" async></script>
+    <script>
+      window.lazySizesConfig = window.lazySizesConfig || {};
+      window.lazySizesConfig.loadMode = 1;
+      window.lazySizesConfig.expand = 100;
+      window.lazySizesConfig.expFactor = 1.2;
+      window.lazySizesConfig.hFac = 0.5;
+      window.lazySizesConfig.ricTimeout = 500;
+      window.lazySizesConfig.throttleDelay = 250;
+    </script>
+    <script src="{{ 'vendor.js' | asset_url }}" defer></script>
+    <script src="{{ 'global.js' | asset_url }}" defer></script>
+    <script src="{{ 'lazysizes.min.js' | asset_url }}" async></script>
 
 {%- if settings.show_quick_search -%}
     <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
@@ -48,14 +57,6 @@
 %}
 
 <script>
-  function loadLazy () {
-    window.lazySizesConfig = window.lazySizesConfig || {};
-    lazySizesConfig.loadMode = 1;
-    window.lazySizesConfig.init = false;
-    lazySizes.init();
-  }
-    
-
     window.rtl_slick = {{ enable_iso_rtl }};
     window.mobile_menu = '{{ settings.mobile_menu }}';
     window.money_format = '{{ shop.money_format }}';

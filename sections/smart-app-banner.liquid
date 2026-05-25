@@ -271,11 +271,15 @@
         const iosId = "{{ section.settings.ios_app_id }}";
         const androidId = "{{ section.settings.android_app_id }}";
         const androidActivity = "{{ section.settings.android_main_activity }}";
+        const urlScheme = "{{ section.settings.url_scheme | default: 'nqln' }}";
         const appleUrl = `https://apps.apple.com/app/id${iosId}`;
         const playStoreUrl = `https://play.google.com/store/apps/details?id=${androidId}`;
-        // Intent URL tries to open the app, falls back to Play Store if not installed
+        // iOS deep link: try to open the app via custom scheme
+        const iosDeepLink = urlScheme ? `${urlScheme}://` : null;
+        // Android intent: try app first via scheme, fallback to Play Store
+        // Note: omitting component for better compatibility - package + scheme is enough
         const androidIntentUrl = androidId
-          ? `intent://#Intent;scheme=https;package=${androidId};${androidActivity ? 'component=' + androidId + '/' + androidActivity + ';' : ''}S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`
+          ? `intent://open/#Intent;scheme=${urlScheme};package=${androidId};S.browser_fallback_url=${encodeURIComponent(playStoreUrl)};end`
           : '#';
 
         // If in design mode, always show for configuration
@@ -306,26 +310,51 @@
         const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(userAgent);
         const isSafariIOS = isIOS && isSafari;
 
-        var targetUrl = null;
+        var fallbackUrl = null;
+        var clickHandler = null;
 
         if (/android/i.test(userAgent)) {
           platform = 'android';
-          targetUrl = androidIntentUrl;
+          // Android intent URL handles app-or-store automatically
+          fallbackUrl = androidIntentUrl;
+          clickHandler = function(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            window.location.href = androidIntentUrl;
+          };
         } else if (isIOS && !isSafariIOS) {
           // Chrome, Firefox, etc. on iOS (Safari shows its own native banner)
           platform = 'ios';
-          targetUrl = iosId ? appleUrl : null;
+          fallbackUrl = iosId ? appleUrl : null;
+          // Try to open app first via deep link, fallback to App Store if not installed
+          clickHandler = function(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            if (!iosDeepLink) {
+              if (fallbackUrl) window.location.href = fallbackUrl;
+              return;
+            }
+            var startTime = Date.now();
+            var timeout = setTimeout(function() {
+              // If we're still here after 1.5s, app didn't open → go to App Store
+              if (Date.now() - startTime < 2000 && document.visibilityState === 'visible') {
+                if (fallbackUrl) window.location.href = fallbackUrl;
+              }
+            }, 1500);
+            // If page hides (app opened), cancel the fallback
+            document.addEventListener('visibilitychange', function onHide() {
+              if (document.visibilityState === 'hidden') {
+                clearTimeout(timeout);
+                document.removeEventListener('visibilitychange', onHide);
+              }
+            });
+            window.location.href = iosDeepLink;
+          };
         }
 
-        if (bannerLink && targetUrl) {
-          bannerLink.href = targetUrl;
+        if (bannerLink && clickHandler) {
+          bannerLink.href = fallbackUrl || '#';
           bannerLink.removeAttribute('target');
-          var goToApp = function(ev) {
-            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-            window.location.href = targetUrl;
-          };
-          bannerLink.addEventListener('click', goToApp);
-          bannerLink.addEventListener('touchend', goToApp, { passive: false });
+          bannerLink.addEventListener('click', clickHandler);
+          bannerLink.addEventListener('touchend', clickHandler, { passive: false });
         }
 
         if (platform === 'android' || platform === 'ios') {
@@ -426,6 +455,14 @@
       "label": "Android Main Activity (optional)",
       "info": "Leave blank to just open Play Store. Fill to try opening the app first (e.g. com.example.app.MainActivity)",
       "placeholder": "e.g. com.example.app.MainActivity"
+    },
+    {
+      "type": "text",
+      "id": "url_scheme",
+      "label": "URL Scheme (Deep Link)",
+      "info": "Custom scheme registered in your app to open it from web (without ://). Example: nqln",
+      "default": "nqln",
+      "placeholder": "nqln"
     },
     {
       "type": "header",

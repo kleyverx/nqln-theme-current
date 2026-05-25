@@ -110,6 +110,9 @@
                         "
                       >
                       </span>
+                      <span class="variant-check" aria-hidden="true">
+                        <svg viewBox="0 0 15 15" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"/></svg>
+                      </span>
                       {% if swatch_type == 'variant_image' %}
                         <span class="expand">
                           <img
@@ -122,12 +125,33 @@
                       {% endif %}
                     </label>
                   {%- else -%}
+                    {%- comment -%} Find variant for this option value, prefer one with image {%- endcomment -%}
+                    {%- assign value_variant_image = blank -%}
+                    {%- for v in product.variants -%}
+                      {%- if v.options[option_index] == value and v.image -%}
+                        {%- assign value_variant_image = v.image -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
                     <label
-                      class="product-form__label {{ option_stock }}"
+                      class="product-form__label {{ option_stock }}{% if value_variant_image != blank %} has-variant-image{% endif %}"
                       for="option-{{ product.id }}-{{ option.name }}-{{ forloop.index0 }}"
                       data-variant-id="{{ variant.id }}"
                     >
+                      {%- if value_variant_image != blank -%}
+                        <img
+                          class="variant-thumb"
+                          src="{{ value_variant_image | image_url: width: 80 }}"
+                          alt="{{ value | escape }}"
+                          loading="lazy"
+                          width="40"
+                          height="40"
+                        >
+                      {%- endif -%}
                       <span class="text">{{ value }}</span>
+                      <span class="variant-check" aria-hidden="true">
+                        <svg viewBox="0 0 15 15" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"/></svg>
+                      </span>
                     </label>
                   {%- endif -%}
                 {%- endunless -%}
@@ -211,3 +235,300 @@
     </noscript>
   {%- endif -%}
 </div>
+
+<style>
+  /* Variant picker improvements: image + name + clear selected state */
+  .productView-variants fieldset.product-form__input,
+  fieldset.product-form__input {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 12px 14px;
+    border: 0;
+    padding: 12px 0 0 0 !important;
+    margin: 0 0 18px 0 !important;
+    width: 100%;
+  }
+  .productView-variants fieldset.product-form__input legend.form__label,
+  fieldset.product-form__input legend.form__label {
+    width: 100%;
+    margin-bottom: 8px;
+    flex-basis: 100%;
+  }
+  .product-form__input .product-form__label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 2px solid #e6e6e6;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+    margin: 0;
+    min-height: 60px;
+    min-width: 0;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+  .product-form__input .product-form__label.has-variant-image {
+    padding: 5px 12px 5px 5px;
+    gap: 10px;
+  }
+  .product-form__input .product-form__label .variant-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    background: #fafafa;
+    border: 0;
+    box-shadow: none;
+  }
+  /* Force no border/background on the text span (override theme defaults) */
+  .product-form__input .product-form__label .text {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #232323;
+    letter-spacing: 0.2px;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    align-self: center;
+  }
+  /* Ensure inner spans don't inherit theme button styles */
+  .product-form__input .product-form__label > span:not(.variant-check):not(.pattern) {
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .product-form__input .product-form__label .variant-check {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    background: #20b19e !important;
+    color: #fff;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(32,177,158,0.45) !important;
+    border: 2.5px solid #fff !important;
+    z-index: 3;
+  }
+  .product-form__input .product-form__label .variant-check svg {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+  }
+  /* Selected state */
+  .product-form__input input[type="radio"]:checked + .product-form__label,
+  .product-form__input .product-form__label.is-selected {
+    border-color: #20b19e;
+    background: #f0fbf8;
+  }
+  .product-form__input input[type="radio"]:checked + .product-form__label .variant-check,
+  .product-form__input .product-form__label.is-selected .variant-check {
+    display: flex;
+  }
+  /* Sold out — clickable but visually marked (diagonal line) */
+  .product-form__input .product-form__label.soldout {
+    position: relative;
+    opacity: 0.65;
+  }
+  .product-form__input .product-form__label.soldout .text {
+    text-decoration: line-through;
+    color: #888;
+  }
+  .product-form__input .product-form__label.soldout .variant-thumb,
+  .product-form__input .product-form__label.soldout .pattern {
+    filter: grayscale(0.6) opacity(0.8);
+  }
+  .product-form__input .product-form__label.soldout::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 6%;
+    right: 6%;
+    height: 1.5px;
+    background: rgba(220, 53, 69, 0.7);
+    transform: translateY(-50%) rotate(-12deg);
+    pointer-events: none;
+    border-radius: 2px;
+  }
+  /* Unavailable — fully disabled */
+  .product-form__input .product-form__label.unavailable {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .product-form__input .product-form__label.unavailable .variant-thumb,
+  .product-form__input .product-form__label.unavailable .pattern {
+    filter: grayscale(1);
+  }
+  /* Disable radio for unavailable */
+  .product-form__input input[type="radio"]:disabled + .product-form__label,
+  .product-form__input .unavailable input[type="radio"] {
+    pointer-events: none;
+  }
+  /* Hover (desktop only) */
+  @media (hover: hover) and (pointer: fine) {
+    .product-form__input .product-form__label:hover:not(.unavailable):not(.soldout) {
+      border-color: #20b19e;
+      background: #f8fcfb;
+    }
+    .product-form__input .product-form__label:active {
+      transform: scale(0.97);
+    }
+  }
+  /* Active feedback on touch (mobile) */
+  .product-form__input .product-form__label:active {
+    transform: scale(0.97);
+  }
+  /* Mobile tweaks */
+  @media (max-width: 768px) {
+    .productView-variants fieldset.product-form__input,
+    fieldset.product-form__input {
+      gap: 10px 12px;
+      margin-bottom: 16px !important;
+    }
+    .product-form__input .product-form__label {
+      min-height: 44px;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+    .product-form__input .product-form__label.has-variant-image {
+      padding: 4px 12px 4px 4px;
+      gap: 6px;
+    }
+    .product-form__input .product-form__label .variant-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+    }
+    .product-form__input .product-form__label .text {
+      font-size: 12px;
+    }
+    .product-form__input .product-form__label .variant-check {
+      width: 24px;
+      height: 24px;
+      top: -7px;
+      right: -7px;
+    }
+    .product-form__input .product-form__label .variant-check svg {
+      width: 14px;
+      height: 14px;
+    }
+    /* Legend (option name like "Color:") */
+    .productView-variants fieldset.product-form__input legend.form__label {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+  }
+  /* Very small screens — allow text-only labels to be more compact */
+  @media (max-width: 380px) {
+    .product-form__input .product-form__label:not(.has-variant-image) {
+      padding: 6px 10px;
+      min-height: 40px;
+    }
+    .product-form__input .product-form__label .text {
+      font-size: 11.5px;
+    }
+  }
+  /* Swatch: rounded square card that fits any product image (color/size/model) */
+  .product-form__swatch .product-form__label {
+    width: 60px;
+    height: 60px;
+    padding: 4px;
+    border-radius: 12px;
+    overflow: visible;
+    background: #fff;
+    min-height: unset;
+  }
+  .product-form__swatch .product-form__label .pattern {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #fafafa;
+    display: block;
+  }
+  /* Selected swatch — same border as model (consistent) */
+  .product-form__swatch input[type="radio"]:checked + .product-form__label {
+    border-color: #20b19e;
+    background: #f0fbf8;
+  }
+  /* Hover preview popup (bigger image card) */
+  .product-form__swatch .product-form__label .expand {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    width: 120px;
+    height: 120px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .product-form__swatch .product-form__label .expand::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.06);
+  }
+  .product-form__swatch .product-form__label .expand img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 10px;
+    display: block;
+    background: #fafafa;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .product-form__swatch .product-form__label:hover {
+      border-color: #20b19e;
+    }
+    .product-form__swatch .product-form__label:hover .expand {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) scale(1);
+    }
+  }
+  /* Hide preview on mobile, swatch slightly smaller */
+  @media (max-width: 768px) {
+    .product-form__swatch .product-form__label .expand {
+      display: none !important;
+    }
+    .product-form__swatch .product-form__label {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+    }
+  }
+</style>

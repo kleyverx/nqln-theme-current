@@ -25,6 +25,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="google-site-verification" content="QNwjxtYbP79VqvjgoZ-QjmmDVhnTGgM8RwgaBc05tIg" />
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -59,6 +60,24 @@
 
     {%- comment -%} Product/Breadcrumb JSON-LD {%- endcomment -%}
     {% render 'schema' %}
+
+    {%- comment -%} WebSite + SearchAction (Sitelinks Search Box in Google) {%- endcomment -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 
     {%- comment -%} Organization + LocalBusiness JSON-LD {%- endcomment -%}
     <script type="application/ld+json">
@@ -113,7 +132,310 @@
       .card-information .scm-reviews-rate{
             margin-top: -12px;
       }
+
+      /* === Z-index fixes: enforce stacking order so content never overlaps fixed UI === */
+      /* Sticky add to cart bar (bottom) must stay on top — keep its native position: fixed */
+      .halo-sticky-toolbar-mobile,
+      [class*="halo-sticky-add-to-cart"],
+      .product-sticky-add-to-cart,
+      [class*="sticky-add-to-cart"],
+      .productView-stickyCart,
+      .sticky-product-mobile,
+      sticky-add-to-cart {
+        z-index: 9999 !important;
+      }
+      .show-mobile-options .productView-stickyCart.style-1,
+      .productView-stickyCart.style-1.is-show,
+      .sticky-product-mobile.is-show {
+        z-index: 9999 !important;
+      }
+      /* Footer must never create a stacking context above the sticky bar */
+      .wrapper-footer,
+      .wrapper-footer *,
+      .section-footer,
+      [class*="footer"]:not([class*="sticky"]) {
+        z-index: auto;
+      }
+      .wrapper-footer {
+        position: relative;
+        z-index: 1;
+        isolation: auto;
+      }
+      /* Marquee must stay below modals/headers but above content */
+      .section-marquee,
+      [class*="marquee"] {
+        z-index: 5 !important;
+        position: relative;
+      }
+      /* Product description content stays in flow, never above sticky UI */
+      .product-description,
+      .product-tab-content,
+      .product__description,
+      [class*="product-tab"],
+      [class*="halo-product-tab"] {
+        position: relative;
+        z-index: 1;
+      }
+      /* Mobile sticky payment buttons (Shop Pay, etc.) */
+      .shopify-payment-button,
+      [class*="payment-button"] {
+        position: relative;
+        z-index: 10;
+      }
+      /* Newsletter inputs/buttons should never be covered */
+      .newsletter-form,
+      .newsletter-form__field-wrapper,
+      [class*="newsletter"] form {
+        position: relative;
+        z-index: 2;
+      }
+      /* Headers always on top */
+      .section-header-mobile,
+      .section-header-single-line,
+      .section-header-navigation-vertical-menu,
+      sticky-header,
+      sticky-header-mobile {
+        z-index: 100;
+      }
+      /* === Variant picker (global — applies on product page, cart drawer, edit popup) === */
+      .productView-variants fieldset.product-form__input,
+      fieldset.product-form__input {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 12px 14px;
+        border: 0;
+        padding: 12px 0 0 0 !important;
+        margin: 0 0 18px 0 !important;
+        width: 100%;
+      }
+      fieldset.product-form__input legend.form__label {
+        width: 100%;
+        margin-bottom: 8px;
+        flex-basis: 100%;
+      }
+      .product-form__input .product-form__label {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 2px solid #e6e6e6;
+        border-radius: 12px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+        margin: 0;
+        min-height: 60px;
+        min-width: 0;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+        box-sizing: border-box;
+      }
+      .product-form__input .product-form__label.has-variant-image {
+        padding: 5px 12px 5px 5px;
+        gap: 10px;
+      }
+      .product-form__input .product-form__label .variant-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        display: block;
+        flex-shrink: 0;
+        background: #fafafa;
+        border: 0;
+        box-shadow: none;
+      }
+      .product-form__input .product-form__label .text {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.2;
+        color: #232323;
+        letter-spacing: 0.2px;
+        border: 0 !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .product-form__input .product-form__label > span:not(.variant-check):not(.pattern) {
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      .product-form__input .product-form__label .variant-check {
+        display: none;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 26px;
+        height: 26px;
+        background: #20b19e !important;
+        color: #fff;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 8px rgba(32,177,158,0.45) !important;
+        border: 2.5px solid #fff !important;
+        z-index: 3;
+      }
+      .product-form__input .product-form__label .variant-check svg {
+        width: 16px;
+        height: 16px;
+        fill: #fff;
+      }
+      .product-form__input input[type="radio"]:checked + .product-form__label,
+      .product-form__input .product-form__label.is-selected {
+        border-color: #20b19e;
+        background: #f0fbf8;
+      }
+      .product-form__input input[type="radio"]:checked + .product-form__label .variant-check,
+      .product-form__input .product-form__label.is-selected .variant-check {
+        display: flex;
+      }
+      .product-form__input .product-form__label.soldout {
+        position: relative;
+        opacity: 0.65;
+      }
+      .product-form__input .product-form__label.soldout .text {
+        text-decoration: line-through;
+        color: #888;
+      }
+      .product-form__input .product-form__label.soldout .variant-thumb,
+      .product-form__input .product-form__label.soldout .pattern {
+        filter: grayscale(0.6) opacity(0.8);
+      }
+      .product-form__input .product-form__label.soldout::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 6%;
+        right: 6%;
+        height: 1.5px;
+        background: rgba(220, 53, 69, 0.7);
+        transform: translateY(-50%) rotate(-12deg);
+        pointer-events: none;
+        border-radius: 2px;
+      }
+      .product-form__input .product-form__label.unavailable {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      .product-form__input .product-form__label.unavailable .variant-thumb,
+      .product-form__input .product-form__label.unavailable .pattern {
+        filter: grayscale(1);
+      }
+      .product-form__swatch .product-form__label {
+        width: 60px;
+        height: 60px;
+        padding: 4px;
+        border-radius: 12px;
+        overflow: visible;
+        background: #fff;
+        min-height: unset;
+      }
+      .product-form__swatch .product-form__label .pattern {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #fafafa;
+        display: block;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .product-form__input .product-form__label:hover:not(.unavailable):not(.soldout) {
+          border-color: #20b19e;
+          background: #f8fcfb;
+        }
+      }
+      @media (max-width: 768px) {
+        fieldset.product-form__input {
+          gap: 10px 12px;
+          margin-bottom: 16px !important;
+        }
+        .product-form__input .product-form__label {
+          min-height: 44px;
+          padding: 6px 12px;
+          border-radius: 8px;
+        }
+        .product-form__input .product-form__label.has-variant-image {
+          padding: 4px 12px 4px 4px;
+          gap: 6px;
+        }
+        .product-form__input .product-form__label .variant-thumb {
+          width: 36px;
+          height: 36px;
+        }
+        .product-form__input .product-form__label .text {
+          font-size: 12px;
+        }
+        .product-form__input .product-form__label .variant-check {
+          width: 24px;
+          height: 24px;
+          top: -7px;
+          right: -7px;
+        }
+        .product-form__input .product-form__label .variant-check svg {
+          width: 14px;
+          height: 14px;
+        }
+        .product-form__swatch .product-form__label {
+          width: 56px;
+          height: 56px;
+        }
+      }
+      /* Performance: defer rendering of below-the-fold sections (faster LCP) */
+      main > section:nth-of-type(n+4),
+      main > .shopify-section:nth-of-type(n+4) {
+        content-visibility: auto;
+        contain-intrinsic-size: 0 500px;
+      }
+      /* Never apply content-visibility to fixed/sticky elements (banners, headers, modals) */
+      [id*="SmartAppBanner"],
+      [class*="smart-banner"],
+      [class*="header"],
+      [class*="sticky"],
+      [style*="position: fixed"],
+      [style*="position:fixed"] {
+        content-visibility: visible !important;
+      }
     </style>
+
+    <script>
+    (function(){
+      var run = function(){
+        var candidates = document.querySelectorAll('.slideshow img, .slide-show img, .image-banner img, [class*="banner"] img:not([loading="lazy"]), .product-media img, .product__media img, .product-single__photo img');
+        for (var i = 0; i < candidates.length; i++) {
+          var img = candidates[i];
+          if (img.hasAttribute('fetchpriority')) continue;
+          img.setAttribute('fetchpriority', 'high');
+          img.setAttribute('loading', 'eager');
+          img.setAttribute('decoding', 'sync');
+          if (img.dataset && img.dataset.srcset && !img.srcset) img.srcset = img.dataset.srcset;
+          if (img.dataset && img.dataset.src && !img.src) img.src = img.dataset.src;
+          break;
+        }
+      };
+      if (document.readyState !== 'loading') run();
+      else {
+        document.addEventListener('readystatechange', function(){
+          if (document.readyState === 'interactive' || document.readyState === 'complete') run();
+        });
+      }
+      var mo = new MutationObserver(function(){ run(); });
+      mo.observe(document.documentElement, { childList: true, subtree: true });
+      setTimeout(function(){ mo.disconnect(); }, 3000);
+    })();
+    </script>
     <script>
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
     </script>
@@ -311,7 +633,7 @@
       }
       #page-loading-bar.is-loading {
         visibility: visible !important;
-        width: 15%; /* Initial jump handled by JS usually but just in case */
+        width: 15%;
       }
     </style>
       <script>
@@ -566,18 +888,37 @@
       }, true);
     })();
     </script>
-    <!-- Brevo SDK moved to footer for non-blocking load -->
-    <script src="https://cdn.brevo.com/js/sdk-loader.js" async></script>
     <script>
-      window.Brevo = window.Brevo || [];
-      Brevo.push([
-        "init",
-        {
-          client_key: "j7kp4gz1gjm426qmi5thuxd3",
-        }
-      ]);
+    /* Defer non-critical third-party scripts until browser is idle or user interacts */
+    (function() {
+      var loaded = false;
+      function loadThirdParty() {
+        if (loaded) return;
+        loaded = true;
+        window.Brevo = window.Brevo || [];
+        Brevo.push(["init", { client_key: "j7kp4gz1gjm426qmi5thuxd3" }]);
+        var brevo = document.createElement('script');
+        brevo.src = 'https://cdn.brevo.com/js/sdk-loader.js';
+        brevo.async = true;
+        document.head.appendChild(brevo);
+        var lottie = document.createElement('script');
+        lottie.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js';
+        lottie.defer = true;
+        document.head.appendChild(lottie);
+      }
+      var triggers = ['mousemove', 'touchstart', 'scroll', 'keydown'];
+      function onInteract() {
+        triggers.forEach(function(e) { window.removeEventListener(e, onInteract, { passive: true }); });
+        loadThirdParty();
+      }
+      triggers.forEach(function(e) { window.addEventListener(e, onInteract, { passive: true, once: true }); });
+      if (window.requestIdleCallback) {
+        requestIdleCallback(loadThirdParty, { timeout: 5000 });
+      } else {
+        setTimeout(loadThirdParty, 3000);
+      }
+    })();
     </script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 
     {%- comment -%} page-transitions.js moved to head for earlier click interception {%- endcomment -%}
 
@@ -597,10 +938,19 @@
     <script>
     /* Wishlist count badge: hide bubble when count is 0 or empty */
     (function () {
+      var pending = false;
       function update() {
         document.querySelectorAll('.wishlist-count-bubble').forEach(function (b) {
           var t = b.querySelector('[data-wishlist-count]');
           b.style.display = (!t || !t.textContent || t.textContent === '0') ? 'none' : '';
+        });
+      }
+      function scheduleUpdate() {
+        if (pending) return;
+        pending = true;
+        (window.requestIdleCallback || window.requestAnimationFrame)(function() {
+          pending = false;
+          update();
         });
       }
       function observe() {
@@ -608,11 +958,14 @@
         document.querySelectorAll('[data-wishlist-count]').forEach(function (el) {
           if (el._wlOb) return;
           el._wlOb = true;
-          new MutationObserver(update).observe(el, { childList: true, characterData: true, subtree: true });
+          new MutationObserver(scheduleUpdate).observe(el, { characterData: true, childList: true, subtree: true });
         });
       }
-      observe();
-      document.addEventListener('DOMContentLoaded', observe);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', observe);
+      } else {
+        observe();
+      }
     })();
     </script>
     <script>
@@ -688,17 +1041,26 @@
 
     <script>
     (function() {
+      var pending = false;
       var translate = function(root) {
-        var nodes = (root || document).querySelectorAll('select option');
+        var ctx = (root && typeof root.querySelectorAll === 'function') ? root : document;
+        var nodes = ctx.querySelectorAll('select option');
         for (var i = 0; i < nodes.length; i++) {
           var t = nodes[i].textContent;
           if (t.indexOf('Sold out') !== -1 || t.indexOf('sold out') !== -1) {
             nodes[i].textContent = t.replace(/sold out/gi, 'Agotado');
-          }
-          if (t.indexOf('Unavailable') !== -1) {
-            nodes[i].textContent = nodes[i].textContent.replace(/Unavailable/g, 'No disponible');
+          } else if (t.indexOf('Unavailable') !== -1) {
+            nodes[i].textContent = t.replace(/Unavailable/g, 'No disponible');
           }
         }
+      };
+      var scheduleTranslate = function() {
+        if (pending) return;
+        pending = true;
+        (window.requestIdleCallback || window.requestAnimationFrame)(function() {
+          pending = false;
+          translate();
+        });
       };
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() { translate(); });
@@ -709,14 +1071,17 @@
         for (var i = 0; i < muts.length; i++) {
           for (var j = 0; j < muts[i].addedNodes.length; j++) {
             var n = muts[i].addedNodes[j];
-            if (n.nodeType === 1) translate(n);
+            if (n.nodeType === 1 && (n.tagName === 'SELECT' || n.querySelector && n.querySelector('select'))) {
+              scheduleTranslate();
+              return;
+            }
           }
-          if (muts[i].target && muts[i].target.tagName === 'OPTION') translate(muts[i].target.parentNode);
         }
       });
-      obs.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+      obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
     })();
     </script>
+
   </body>
 </html>
 

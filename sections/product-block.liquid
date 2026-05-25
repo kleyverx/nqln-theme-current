@@ -1227,7 +1227,7 @@
                                 <div class="product-block__collection--list">
                                     <div class="product-block__collection--list_info">
                                     {%- if block.settings.text_collections != blank -%}
-                                        <h5>{{ block.settings.text_collections }}</h5>
+                                        <h3 class="h5">{{ block.settings.text_collections }}</h3>
                                     {%- endif -%}
                                     {%- if block.settings.button_text_collections != blank -%}
                                         <a {% if block.settings.button_link_collections == blank %} role="link" aria-disabled="true"{% else %} href="{{ block.settings.button_link_collections }}"{% endif %}>{{ block.settings.button_text_collections }}</a>

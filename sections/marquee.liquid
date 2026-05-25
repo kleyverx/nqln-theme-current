@@ -5,7 +5,10 @@
         assign padding_top = section.settings.padding_top
         assign padding_bottom = section.settings.padding_bottom
         assign icon = section.settings.icon
-        assign limitItems = 12 | divided_by: section.blocks.size
+        assign limitItems = 4 | divided_by: section.blocks.size
+        if limitItems < 2
+            assign limitItems = 2
+        endif
     -%}
 
     <div class="marquee marque-border--{{ section.settings.border }}" data-limitItems="{{ limitItems }}" style="--padding-top: {{ padding_top }}px; --padding-bottom: {{ padding_bottom }}px; --padding-top-tablet: {{ padding_top | times: 0.75 | round: 0 }}px; --padding-bottom-tablet: {{ padding_bottom | times: 0.75 | round: 0 }}px; --padding-top-mobile: {{ padding_top | times: 0.5 | round: 0 }}px; --padding-bottom-mobile: {{ padding_bottom | times: 0.5 | round: 0 }}px; --minus-spacing-top: {{ section.settings.minus_spacing_top }}px; --background: {% if section.settings.mq_gradient != blank %}{{ section.settings.mq_gradient }}{% else %}{{ section.settings.mq_background }}{% endif %}; --text-size: {{ section.settings.text_size }}px; --text-size-mb: {{ section.settings.text_size_mb }}px; --gap-blocks: {{ section.settings.gap_blocks | times: 0.5 }}px; --border-color: {{ section.settings.border_color }}; --border-color-mb: {{ section.settings.border_color_mb }}; --icon-color: {{ section.settings.icon_color }}; --icon-color-mb: {{ section.settings.icon_color_mb }}; --time-scroll: {{ 5 | times: section.blocks.size }}s">
