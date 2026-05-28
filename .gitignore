@@ -1,0 +1,16 @@
+# Brainstorming visual companion (auto-generated, do not commit)
+.superpowers/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (in case any tooling is added)
+node_modules/
+npm-debug.log*
