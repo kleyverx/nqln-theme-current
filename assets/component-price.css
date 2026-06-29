@@ -240,7 +240,6 @@
   white-space: nowrap;
   letter-spacing: 0.8px; /* Un poco más de aire */
   text-transform: uppercase;
-  margin-top: 6px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.2); /* Más pronunciada */
 }
 
@@ -310,10 +309,26 @@
   color: var(--badge-monthly-color);
 }
 
+/* Badge Regalo */
+.price-item--tag-gift {
+  background: var(--badge-gift-bg);
+  border: 1px solid var(--badge-gift-bg);
+  box-shadow: 0 2px 6px rgba(233, 30, 99, 0.3);
+  color: var(--badge-gift-color);
+  animation: pulse-light 2s infinite;
+}
+
 @keyframes pulse-light {
   0% { transform: scale(1); }
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
+}
+
+/* Contenedor de badges: permite varios en línea con salto y separación */
+.price__free-shipping {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 /* Ocultar solo en página de producto */

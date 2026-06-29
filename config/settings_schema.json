@@ -9138,6 +9138,34 @@
         "id": "badge_monthly_color",
         "label": "Color de texto",
         "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Badge: Regalo"
+      },
+      {
+        "type": "text",
+        "id": "badge_gift_text",
+        "label": "Etiqueta",
+        "default": "INCLUYE REGALO"
+      },
+      {
+        "type": "textarea",
+        "id": "badge_gift_icon",
+        "label": "Icono (Emoji o SVG)",
+        "default": "🎁"
+      },
+      {
+        "type": "color",
+        "id": "badge_gift_bg",
+        "label": "Color de fondo",
+        "default": "#e91e63"
+      },
+      {
+        "type": "color",
+        "id": "badge_gift_color",
+        "label": "Color de texto",
+        "default": "#ffffff"
       }
     ]
   }
