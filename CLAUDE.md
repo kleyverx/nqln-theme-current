@@ -2,6 +2,20 @@
 
 Este archivo proporciona orientación a Claude Code (claude.ai/code) al trabajar con el código de este repositorio.
 
+## Puntero al Cerebro (Obsidian Vault)
+
+Este proyecto (tema Shopify Liquid del storefront **nqlnstore.com**, "Ella"/Halothemes) también está
+documentado en el **Cerebro**, un wiki de todos los proyectos del escritorio (bóveda de Obsidian).
+Para contexto de negocio, arquitectura resumida, conexiones con otros proyectos y mejoras
+sugeridas, consulta primero:
+
+- `C:/Users/Kley Marg/Documents/Obsidian Vault/Cerebro/proyectos/nqln-theme-current.md`
+- Panorama general: `C:/Users/Kley Marg/Documents/Obsidian Vault/Cerebro/index.md` y
+  `C:/Users/Kley Marg/Documents/Obsidian Vault/Cerebro/conexiones/mapa-general.md`
+
+El Cerebro se mantiene desde su propia bóveda, no desde este repo. Tras cambios relevantes aquí,
+abre Claude Code en la bóveda y pide: "re-analiza nqln-theme-current".
+
 ## Qué es esto
 
 Un **tema de Shopify** — el storefront en vivo de "INV MARG", una tienda venezolana. Es el **tema Ella de Halothemes (v6.5.0)** que ha sido fuertemente personalizado in situ. No hay paso de build, gestor de paquetes ni servidor de desarrollo local en este repo; es el código fuente crudo del tema que se sube/baja desde la tienda de Shopify en vivo.
