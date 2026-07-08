@@ -1,0 +1,249 @@
+{%- comment -%}
+  Product Hero Carousel (METRIKASA / HYDRO LOKO)
+  Carrusel de productos: cada slide (block "Producto") trae SU PROPIA imagen de
+  fondo (full-width) + overlay, título decorativo (SVG/img), producto central que
+  entra desde la derecha, flechas de navegación y acordeones por slide.
+  El fondo cambia por producto; el color/intensidad del overlay es global.
+{%- endcomment -%}
+
+{{ 'component-product-hero-carousel.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign s = section.settings
+  assign accent = s.accent_color | default: '#ffcd11'
+  assign btn_text = s.btn_text_color | default: '#1a1a1a'
+  assign text_color = s.text_color | default: '#1a1a1a'
+  assign title_text_color = s.title_text_color | default: '#ffffff'
+
+  # Overlay global: color sólido del picker + intensidad del slider (0-100)
+  # convertido a rgba con color_modify alpha (0-1).
+  assign ov_alpha = s.overlay_opacity | default: 45 | divided_by: 100.0
+  assign overlay_rgba = s.overlay_color | default: '#787878' | color_modify: 'alpha', ov_alpha
+-%}
+
+{%- style -%}
+  #phc-{{ section.id }} {
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    isolation: isolate;
+    color: {{ text_color }};
+    min-height: {{ s.min_height | default: 520 }}px;
+    margin-top: {{ s.margin_top | default: 0 }}px;
+    margin-bottom: {{ s.margin_bottom | default: 0 }}px;
+  }
+  @media (max-width: 749px) {
+    #phc-{{ section.id }} {
+      margin-top: {{ s.margin_top | default: 0 | times: 0.6 | round: 0 }}px;
+      margin-bottom: {{ s.margin_bottom | default: 0 | times: 0.6 | round: 0 }}px;
+    }
+  }
+  #phc-{{ section.id }} .phc__btn { background: {{ accent }}; color: {{ btn_text }}; }
+  #phc-{{ section.id }} .phc__arrow { background: {{ accent }}; color: {{ btn_text }}; }
+  #phc-{{ section.id }} .phc__arrow svg { fill: {{ btn_text }}; }
+  #phc-{{ section.id }} .phc__title--text { color: {{ title_text_color }}; }
+  #phc-{{ section.id }} .phc__acc-sign { color: {{ accent }}; }
+  @media (max-width: 749px) {
+    #phc-{{ section.id }} { min-height: {{ s.min_height_mobile | default: 600 }}px; }
+  }
+{%- endstyle -%}
+
+<product-hero-carousel
+  id="phc-{{ section.id }}"
+  class="phc"
+  style="display:block;position:relative;width:100%;overflow:hidden;min-height:{{ s.min_height | default: 520 }}px;"
+  {% if s.autoplay and s.autoplay_speed > 0 %}data-autoplay="{{ s.autoplay_speed | times: 1000 }}"{% endif %}
+>
+  <div class="phc__viewport">
+    {%- for block in section.blocks -%}
+      {%- assign b = block.settings -%}
+      {%- assign slide_bg = b.bg_image | default: s.bg_image -%}
+      <article
+        class="phc__slide {% if forloop.first %}is-active{% endif %}"
+        {{ block.shopify_attributes }}
+        aria-roledescription="slide"
+        aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
+      >
+        {%- comment -%}
+          Fondo + overlay POR SLIDE (inline). display:block vence la regla global
+          del tema `:empty { display:none }` (base.css) que oculta divs vacíos.
+        {%- endcomment -%}
+        <div class="phc__slide-bg" style="display:block;position:absolute;inset:0;z-index:0;background-color:{{ s.bg_fallback_color | default: '#1a1a1a' }};{% if slide_bg != blank %}background-image:url({{ slide_bg | image_url: width: 2200 }});background-size:cover;background-position:center;background-repeat:no-repeat;{% endif %}"></div>
+        <div class="phc__slide-overlay" style="display:block;position:absolute;inset:0;z-index:1;background:{{ overlay_rgba }};"></div>
+
+        <div class="phc__slide-content">
+          {%- comment -%} IZQUIERDA: título decorativo + texto + botón {%- endcomment -%}
+          <div class="phc__left">
+            {%- if b.title_svg != blank -%}
+              <div class="phc__title">{{ b.title_svg }}</div>
+            {%- elsif b.title_image != blank -%}
+              <div class="phc__title">
+                {{ b.title_image | image_url: width: 720 | image_tag: alt: b.title_text | default: 'Producto', loading: 'eager', widths: '300,480,720' }}
+              </div>
+            {%- elsif b.title_text != blank -%}
+              <div class="phc__title phc__title--text" style="font-size:{{ b.title_size | default: 56 }}px;">{{ b.title_text }}</div>
+            {%- endif -%}
+
+            {%- if b.description != blank -%}
+              <p class="phc__desc">{{ b.description }}</p>
+            {%- endif -%}
+
+            {%- if b.btn_label != blank -%}
+              <a class="phc__btn" href="{{ b.btn_link | default: '#' }}">{{ b.btn_label }}</a>
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} CENTRO: producto {%- endcomment -%}
+          <div class="phc__product">
+            {%- if b.product_image != blank -%}
+              {{ b.product_image | image_url: width: 1000 | image_tag: alt: b.title_text | default: 'Producto', loading: 'eager', widths: '400,600,800,1000' }}
+            {%- else -%}
+              {%- if request.design_mode -%}
+                <div style="color:#fff;opacity:.7;font-size:13px;">Sube la imagen del producto →</div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+
+          {%- comment -%} DERECHA: flechas + acordeones {%- endcomment -%}
+          <div class="phc__right">
+            {%- if section.blocks.size > 1 -%}
+              <div class="phc__nav">
+                <button type="button" class="phc__arrow" data-phc-prev aria-label="Anterior">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button type="button" class="phc__arrow" data-phc-next aria-label="Siguiente">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            {%- endif -%}
+
+            <div class="phc__acc">
+              {%- if b.acc1_title != blank -%}
+                <div class="phc__acc-item">
+                  <button type="button" class="phc__acc-head" aria-expanded="false">
+                    <span>{{ b.acc1_title }}</span><span class="phc__acc-sign" aria-hidden="true">+</span>
+                  </button>
+                  <div class="phc__acc-body"><div class="phc__acc-body-inner">{{ b.acc1_text }}</div></div>
+                </div>
+              {%- endif -%}
+              {%- if b.acc2_title != blank -%}
+                <div class="phc__acc-item">
+                  <button type="button" class="phc__acc-head" aria-expanded="false">
+                    <span>{{ b.acc2_title }}</span><span class="phc__acc-sign" aria-hidden="true">+</span>
+                  </button>
+                  <div class="phc__acc-body"><div class="phc__acc-body-inner">{{ b.acc2_text }}</div></div>
+                </div>
+              {%- endif -%}
+              {%- if b.acc3_title != blank -%}
+                <div class="phc__acc-item">
+                  <button type="button" class="phc__acc-head" aria-expanded="false">
+                    <span>{{ b.acc3_title }}</span><span class="phc__acc-sign" aria-hidden="true">+</span>
+                  </button>
+                  <div class="phc__acc-body"><div class="phc__acc-body-inner">{{ b.acc3_text }}</div></div>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </article>
+    {%- else -%}
+      {%- if request.design_mode -%}
+        <p style="position:relative;z-index:2;color:#fff;text-align:center;padding:40px;">Agrega un bloque "Producto" para empezar el carrusel.</p>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</product-hero-carousel>
+
+<script src="{{ 'product-hero-carousel.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Carrusel hero producto",
+  "tag": "section",
+  "class": "section section-product-hero-carousel",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "header", "content": "Fondo" },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Imagen de fondo (respaldo)",
+      "info": "Se usa solo si un producto no define su propia imagen de fondo. El fondo principal se configura en cada bloque Producto."
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del overlay",
+      "default": "#787878",
+      "info": "Color que se mezcla sobre la imagen de fondo (global para todos los productos)."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Intensidad del overlay",
+      "min": 0, "max": 100, "step": 5, "unit": "%", "default": 45,
+      "info": "0% = imagen totalmente visible · 100% = color totalmente sólido."
+    },
+
+    { "type": "header", "content": "Colores" },
+    { "type": "color", "id": "accent_color", "label": "Color de acento (botón, flechas, +)", "default": "#ffcd11" },
+    { "type": "color", "id": "btn_text_color", "label": "Texto del botón / flechas", "default": "#1a1a1a" },
+    { "type": "color", "id": "text_color", "label": "Color de texto general", "default": "#1a1a1a" },
+    { "type": "color", "id": "title_text_color", "label": "Color del título de texto", "default": "#ffffff" },
+
+    { "type": "header", "content": "Tamaño" },
+    { "type": "range", "id": "min_height", "label": "Alto mínimo (escritorio)", "min": 300, "max": 800, "step": 10, "unit": "px", "default": 520 },
+    { "type": "range", "id": "min_height_mobile", "label": "Alto mínimo (móvil)", "min": 300, "max": 900, "step": 10, "unit": "px", "default": 600 },
+
+    { "type": "header", "content": "Espaciado (margen exterior)" },
+    { "type": "range", "id": "margin_top", "label": "Margen superior", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0, "info": "Separa la sección de la de arriba. En móvil se reduce al 60%." },
+    { "type": "range", "id": "margin_bottom", "label": "Margen inferior", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+
+    { "type": "header", "content": "Reproducción automática" },
+    { "type": "checkbox", "id": "autoplay", "label": "Avanzar solo", "default": false },
+    { "type": "range", "id": "autoplay_speed", "label": "Velocidad (segundos)", "min": 3, "max": 12, "step": 1, "unit": "s", "default": 6 }
+  ],
+  "blocks": [
+    {
+      "type": "product_slide",
+      "name": "Producto",
+      "settings": [
+        { "type": "header", "content": "Fondo de este producto" },
+        { "type": "image_picker", "id": "bg_image", "label": "Imagen de fondo del slide", "info": "Cada producto puede tener su propio fondo. Si lo dejas vacío se usa el fondo de respaldo de la sección." },
+
+        { "type": "header", "content": "Título decorativo (elige uno)" },
+        { "type": "textarea", "id": "title_svg", "label": "Código SVG del título", "info": "Pega el <svg>…</svg>. Tiene prioridad. Ideal para lettering de marca (HYDRO LOKO)." },
+        { "type": "image_picker", "id": "title_image", "label": "O imagen del título (PNG)" },
+        { "type": "text", "id": "title_text", "label": "O texto del título", "default": "HYDRO LOKO" },
+        { "type": "range", "id": "title_size", "label": "Tamaño del título de texto", "min": 24, "max": 96, "step": 2, "unit": "px", "default": 56 },
+
+        { "type": "header", "content": "Texto y botón" },
+        { "type": "textarea", "id": "description", "label": "Descripción corta", "default": "Más cualidades del producto. Más cualidades del producto." },
+        { "type": "text", "id": "btn_label", "label": "Texto del botón", "default": "COMPRAR" },
+        { "type": "url", "id": "btn_link", "label": "Enlace del botón" },
+
+        { "type": "header", "content": "Imagen del producto" },
+        { "type": "image_picker", "id": "product_image", "label": "Imagen del producto (PNG con fondo transparente)" },
+
+        { "type": "header", "content": "Desplegables" },
+        { "type": "text", "id": "acc1_title", "label": "Desplegable 1 · título", "default": "Detalles" },
+        { "type": "richtext", "id": "acc1_text", "label": "Desplegable 1 · contenido" },
+        { "type": "text", "id": "acc2_title", "label": "Desplegable 2 · título", "default": "Materiales" },
+        { "type": "richtext", "id": "acc2_text", "label": "Desplegable 2 · contenido" },
+        { "type": "text", "id": "acc3_title", "label": "Desplegable 3 · título", "default": "Info" },
+        { "type": "richtext", "id": "acc3_text", "label": "Desplegable 3 · contenido" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carrusel hero producto",
+      "blocks": [
+        { "type": "product_slide" },
+        { "type": "product_slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

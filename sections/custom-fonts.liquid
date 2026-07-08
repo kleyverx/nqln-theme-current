@@ -1,0 +1,266 @@
+{%- comment -%}
+  Custom Fonts (por página) — carga fuentes personalizadas SOLO en las páginas
+  donde se coloque esta sección, y las aplica a toda la página sobrescribiendo
+  las variables del tema (--font-body-family / --font-heading-family).
+
+  Soporta 4 orígenes, todos opcionales (rellena el que uses, deja vacío el resto):
+    1) Google Fonts  → pega la URL del <link> de fonts.googleapis.com
+    2) URL externa / CDN (Adobe Fonts, tu hosting) → URL de un CSS con @font-face
+    3) Assets del tema → sube .woff2/.woff a assets/ y escribe el nombre del archivo
+    4) Fuente nativa de Shopify → font_picker (se carga con | font_face)
+
+  No imprime nada visible: solo inyecta <link>/<style>. Si no configuras nada,
+  no hace daño (no rompe la página).
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign body_name = s.body_family_name | default: 'CustomBody'
+  assign heading_name = s.heading_family_name | default: 'CustomHeading'
+-%}
+
+{%- comment -%} ----- 1) GOOGLE FONTS ----- {%- endcomment -%}
+{%- if s.google_fonts_url != blank -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ s.google_fonts_url | escape }}">
+{%- endif -%}
+
+{%- comment -%} ----- 2) URL EXTERNA / CDN (CSS con @font-face) ----- {%- endcomment -%}
+{%- if s.external_css_url != blank -%}
+  <link rel="stylesheet" href="{{ s.external_css_url | escape }}">
+{%- endif -%}
+
+{%- comment -%}
+  ----- 4) FUENTE NATIVA SHOPIFY (font_picker) -----
+  El font_picker SIEMPRE tiene valor (no puede quedar blank), por eso se activa
+  con el checkbox `use_shopify_fonts`. Si está apagado, esta vía se ignora.
+{%- endcomment -%}
+{%- if s.use_shopify_fonts -%}
+  {%- style -%}
+    {{ s.shopify_body_font | font_face: font_display: 'swap' }}
+    {{ s.shopify_heading_font | font_face: font_display: 'swap' }}
+  {%- endstyle -%}
+{%- endif -%}
+
+{%- comment -%} ----- 3) ASSETS DEL TEMA (@font-face manual) ----- {%- endcomment -%}
+{%- style -%}
+  {%- if s.body_woff2 != blank or s.body_woff != blank -%}
+    @font-face {
+      font-family: "{{ body_name }}";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src:
+        {%- assign body_srcs = '' -%}
+        {%- if s.body_woff2 != blank -%}
+          {%- assign body_srcs = body_srcs | append: 'url("' | append: s.body_woff2 | asset_url | append: '") format("woff2")' -%}
+        {%- endif -%}
+        {%- if s.body_woff != blank -%}
+          {%- if body_srcs != blank -%}{%- assign body_srcs = body_srcs | append: ', ' -%}{%- endif -%}
+          {%- assign body_srcs = body_srcs | append: 'url("' | append: s.body_woff | asset_url | append: '") format("woff")' -%}
+        {%- endif -%}
+        {{ body_srcs }};
+    }
+  {%- endif -%}
+
+  {%- if s.heading_woff2 != blank or s.heading_woff != blank -%}
+    @font-face {
+      font-family: "{{ heading_name }}";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src:
+        {%- assign head_srcs = '' -%}
+        {%- if s.heading_woff2 != blank -%}
+          {%- assign head_srcs = head_srcs | append: 'url("' | append: s.heading_woff2 | asset_url | append: '") format("woff2")' -%}
+        {%- endif -%}
+        {%- if s.heading_woff != blank -%}
+          {%- if head_srcs != blank -%}{%- assign head_srcs = head_srcs | append: ', ' -%}{%- endif -%}
+          {%- assign head_srcs = head_srcs | append: 'url("' | append: s.heading_woff | asset_url | append: '") format("woff")' -%}
+        {%- endif -%}
+        {{ head_srcs }};
+    }
+  {%- endif -%}
+{%- endstyle -%}
+
+{%- comment -%}
+  ----- APLICAR A TODA LA PÁGINA -----
+  Sobrescribe las variables del tema y, como refuerzo, fuerza la familia en los
+  elementos comunes. `apply_body`/`apply_heading` resuelven qué nombre usar según
+  el origen elegido. Se prioriza: assets > shopify font_picker > nombre manual
+  (para Google/CDN escribes el nombre exacto de la familia en los campos de nombre).
+{%- endcomment -%}
+{%- liquid
+  assign apply_body = ''
+  if s.body_woff2 != blank or s.body_woff != blank
+    assign apply_body = body_name
+  elsif s.use_shopify_fonts
+    assign apply_body = s.shopify_body_font.family
+  elsif s.body_family_name != blank and s.body_family_name != 'CustomBody'
+    assign apply_body = s.body_family_name
+  endif
+
+  assign apply_heading = ''
+  if s.heading_woff2 != blank or s.heading_woff != blank
+    assign apply_heading = heading_name
+  elsif s.use_shopify_fonts
+    assign apply_heading = s.shopify_heading_font.family
+  elsif s.heading_family_name != blank and s.heading_family_name != 'CustomHeading'
+    assign apply_heading = s.heading_family_name
+  endif
+-%}
+
+{%- if apply_body != blank or apply_heading != blank -%}
+  {%- style -%}
+    :root {
+      {%- if apply_body != blank -%}
+        --font-body-family: "{{ apply_body }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+      {%- endif -%}
+      {%- if apply_heading != blank -%}
+        --font-heading-family: "{{ apply_heading }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+        --font-menu-lv1-family: "{{ apply_heading }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+        --font-menu-lv2-family: "{{ apply_heading }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+      {%- endif -%}
+    }
+
+    {%- if s.force_all and apply_body != blank -%}
+      body, p, span, a, li, td, input, button, textarea, select, label, div {
+        font-family: "{{ apply_body }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+      }
+    {%- endif -%}
+    {%- if s.force_all and apply_heading != blank -%}
+      h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+        font-family: "{{ apply_heading }}", {{ s.fallback_stack | default: 'system-ui, sans-serif' }} !important;
+      }
+    {%- endif -%}
+  {%- endstyle -%}
+{%- endif -%}
+
+{%- if request.design_mode -%}
+  <div style="padding:10px 14px;background:#fffbe9;border:1px dashed #e6b800;color:#6b5400;font-size:12.5px;border-radius:8px;margin:8px 0;">
+    <strong>Fuentes personalizadas (solo esta página).</strong>
+    {% if apply_body == blank and apply_heading == blank %}
+      Aún no configuraste ninguna fuente — elige un origen en los ajustes.
+    {% else %}
+      Cuerpo: <code>{{ apply_body | default: '(sin cambio)' }}</code> ·
+      Títulos: <code>{{ apply_heading | default: '(sin cambio)' }}</code>
+    {% endif %}
+    Este aviso solo se ve en el editor.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Fuentes personalizadas",
+  "tag": "section",
+  "class": "section section-custom-fonts",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Carga fuentes SOLO en las páginas que tengan esta sección y las aplica a toda la página. Usa UN origen (o varios) y deja vacío el resto."
+    },
+    {
+      "type": "checkbox",
+      "id": "force_all",
+      "label": "Forzar en todos los textos de la página",
+      "default": true,
+      "info": "Si lo desactivas, solo cambia las variables del tema (más suave)."
+    },
+    {
+      "type": "text",
+      "id": "fallback_stack",
+      "label": "Fuentes de respaldo (fallback)",
+      "default": "system-ui, sans-serif",
+      "info": "Se usan mientras carga / si falla la fuente."
+    },
+
+    { "type": "header", "content": "1) Google Fonts" },
+    {
+      "type": "url",
+      "id": "google_fonts_url",
+      "label": "URL del CSS de Google Fonts",
+      "info": "Ej: https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap"
+    },
+
+    { "type": "header", "content": "2) URL externa / CDN (Adobe Fonts, hosting)" },
+    {
+      "type": "url",
+      "id": "external_css_url",
+      "label": "URL de un CSS con @font-face",
+      "info": "Pega la URL del .css que define las fuentes (ej. kit de Adobe Fonts o tu CDN)."
+    },
+
+    { "type": "header", "content": "3) Archivos subidos a assets/" },
+    {
+      "type": "paragraph",
+      "content": "Sube los .woff2/.woff a la carpeta assets del tema y escribe el nombre EXACTO del archivo (con extensión)."
+    },
+    {
+      "type": "text",
+      "id": "body_woff2",
+      "label": "Cuerpo · archivo .woff2",
+      "info": "Ej: metrikasa-regular.woff2"
+    },
+    {
+      "type": "text",
+      "id": "body_woff",
+      "label": "Cuerpo · archivo .woff (respaldo, opcional)"
+    },
+    {
+      "type": "text",
+      "id": "heading_woff2",
+      "label": "Títulos · archivo .woff2"
+    },
+    {
+      "type": "text",
+      "id": "heading_woff",
+      "label": "Títulos · archivo .woff (respaldo, opcional)"
+    },
+
+    { "type": "header", "content": "4) Fuente nativa de Shopify" },
+    {
+      "type": "checkbox",
+      "id": "use_shopify_fonts",
+      "label": "Usar estas fuentes nativas de Shopify",
+      "default": false,
+      "info": "Actívalo solo si quieres usar la vía 4. Si lo dejas apagado, se ignora."
+    },
+    {
+      "type": "font_picker",
+      "id": "shopify_body_font",
+      "label": "Fuente del cuerpo (Shopify)",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "shopify_heading_font",
+      "label": "Fuente de títulos (Shopify)",
+      "default": "assistant_n4"
+    },
+
+    { "type": "header", "content": "Nombre de la familia (para Google / CDN)" },
+    {
+      "type": "paragraph",
+      "content": "Si usas Google Fonts o CDN, escribe aquí el nombre EXACTO de la familia tal como la define la fuente (ej. Oswald). Para archivos subidos puedes dejar el valor por defecto."
+    },
+    {
+      "type": "text",
+      "id": "body_family_name",
+      "label": "Nombre familia · cuerpo",
+      "default": "CustomBody"
+    },
+    {
+      "type": "text",
+      "id": "heading_family_name",
+      "label": "Nombre familia · títulos",
+      "default": "CustomHeading"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fuentes personalizadas"
+    }
+  ]
+}
+{% endschema %}

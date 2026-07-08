@@ -1,0 +1,513 @@
+{%- comment -%}
+  Video Showcase Carousel (estilo Pegatanke / METRIKASA)
+  Banda izquierda (título + flechas) · a la derecha un carrusel que muestra
+  2 videos por slide (pares). Cada video es un iframe de YouTube/Vimeo directo,
+  con la imagen del producto (enlace a su página) montada en la esquina.
+
+  Fuente de video por bloque (prioridad): YouTube/Vimeo (URL) > video subido.
+  GOTCHA :empty — el tema oculta cualquier <div> vacío (base.css); los
+  elementos visuales llevan display:block forzado.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign band = s.band_color | default: '#1a1a1a'
+  assign band_text = s.band_text_color | default: '#ffffff'
+  assign accent = s.accent_color | default: '#ffcd11'
+  assign accent_text = s.accent_text_color | default: '#1a1a1a'
+-%}
+
+{%- style -%}
+  #vsc-{{ section.id }} {
+    --vsc-band: {{ band }};
+    --vsc-band-text: {{ band_text }};
+    --vsc-accent: {{ accent }};
+    --vsc-accent-text: {{ accent_text }};
+    --vsc-product-w: {{ s.product_size | default: 90 }}px;
+    --vsc-video-h: {{ s.video_height | default: 390 }}px;
+    background: {{ s.section_bg | default: '#ffffff' }};
+    margin-top: {{ s.margin_top | default: 0 }}px;
+    margin-bottom: {{ s.margin_bottom | default: 0 }}px;
+  }
+  @media (max-width: 749px) {
+    #vsc-{{ section.id }} {
+      margin-top: {{ s.margin_top | default: 0 | times: 0.6 | round: 0 }}px;
+      margin-bottom: {{ s.margin_bottom | default: 0 | times: 0.6 | round: 0 }}px;
+    }
+  }
+{%- endstyle -%}
+
+<video-showcase-carousel
+  id="vsc-{{ section.id }}"
+  class="vsc"
+  data-per-slide="2"
+  {% if s.autoplay and s.autoplay_speed > 0 %}data-autoplay="{{ s.autoplay_speed | times: 1000 }}"{% endif %}
+>
+  <div class="vsc__grid">
+    {%- comment -%} IZQUIERDA: banda con título + flechas {%- endcomment -%}
+    <div class="vsc__band" style="display:block;">
+      <div class="vsc__band-inner">
+        {%- if s.title != blank -%}<h2 class="vsc__title">{{ s.title }}</h2>{%- endif -%}
+        {%- if s.subtitle != blank -%}<p class="vsc__subtitle">{{ s.subtitle }}</p>{%- endif -%}
+        {%- liquid
+          assign per_nav = 2
+          assign slide_count = section.blocks.size | divided_by: per_nav
+          assign slide_rem = section.blocks.size | modulo: per_nav
+          if slide_rem > 0
+            assign slide_count = slide_count | plus: 1
+          endif
+        -%}
+        {%- if slide_count > 1 -%}
+          <div class="vsc__nav">
+            <button type="button" class="vsc__arrow" data-vsc-prev aria-label="Anterior">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="vsc__arrow" data-vsc-next aria-label="Siguiente">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%}
+      DERECHA: pista del carrusel. Cada <li class="vsc__slide"> AGRUPA
+      per_slide videos (como Pegatanke). El carrusel avanza un slide completo.
+    {%- endcomment -%}
+    {%- assign per = 2 -%}
+    <div class="vsc__viewport">
+      <ul class="vsc__track" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign b = block.settings
+            assign yt_id = ''
+            assign vimeo_id = ''
+            assign url = b.video_url
+            if url contains 'youtube.com/watch?v='
+              assign yt_id = url | split: 'v=' | last | split: '&' | first
+            elsif url contains 'youtu.be/'
+              assign yt_id = url | split: 'youtu.be/' | last | split: '?' | first
+            elsif url contains 'youtube.com/shorts/'
+              assign yt_id = url | split: 'shorts/' | last | split: '?' | first
+            elsif url contains 'youtube.com/embed/'
+              assign yt_id = url | split: 'embed/' | last | split: '?' | first
+            endif
+            if yt_id == blank and url contains 'vimeo.com/'
+              assign vimeo_id = url | split: 'vimeo.com/' | last | split: '?' | first | split: '/' | first
+            endif
+            assign pos = forloop.index0 | modulo: per
+            assign last_pos = per | minus: 1
+            assign vsc_alt = b.badge_title | default: 'Producto'
+            assign vsc_corner = b.product_corner | default: 'top-right'
+          -%}
+          {%- if pos == 0 -%}<li class="vsc__slide" {{ block.shopify_attributes }}>{%- endif -%}
+            <div class="vsc__cell">
+              <div class="vsc__frame" style="display:block;">
+              <div class="vsc__video" style="display:block;">
+                {%- if yt_id != blank -%}
+                  <iframe class="vsc__iframe" src="https://www.youtube.com/embed/{{ yt_id }}?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist={{ yt_id }}&iv_load_policy=3"
+                    title="{{ b.badge_title | default: 'Video' | escape }}" loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                {%- elsif vimeo_id != blank -%}
+                  <iframe class="vsc__iframe" src="https://player.vimeo.com/video/{{ vimeo_id }}?background=1&autoplay=1&muted=1&loop=1&byline=0&title=0&portrait=0"
+                    title="{{ b.badge_title | default: 'Video' | escape }}" loading="lazy"
+                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                {%- elsif b.mp4_video != blank -%}
+                  {{ b.mp4_video | video_tag: controls: false, autoplay: true, loop: true, muted: true, playsinline: true, class: 'vsc__native-video' }}
+                {%- else -%}
+                  {%- if request.design_mode -%}
+                    <span class="vsc__ph" style="display:block;">Pega la URL de YouTube/Vimeo →</span>
+                  {%- else -%}
+                    <span class="vsc__ph vsc__ph--fill" style="display:block;" aria-hidden="true"></span>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>{%- comment -%} /.vsc__video {%- endcomment -%}
+
+              {%- comment -%}
+                Producto en la esquina — FUERA de .vsc__video (que tiene
+                overflow:hidden y lo recortaría). Va en .vsc__cell para poder
+                sobresalir montado en la esquina del video.
+              {%- endcomment -%}
+              {%- if b.product_image != blank -%}
+                {%- if b.product_link != blank -%}
+                  <a href="{{ b.product_link }}" class="vsc__product vsc__product--{{ vsc_corner }}" style="display:block;" aria-label="{{ vsc_alt | escape }}">
+                    {{ b.product_image | image_url: width: 600 | image_tag: widths: '180,280,400,600', sizes: '180px', alt: vsc_alt, loading: 'lazy', class: 'vsc__product-img' }}
+                  </a>
+                {%- else -%}
+                  <span class="vsc__product vsc__product--{{ vsc_corner }}" style="display:block;">
+                    {{ b.product_image | image_url: width: 600 | image_tag: widths: '180,280,400,600', sizes: '180px', alt: vsc_alt, loading: 'lazy', class: 'vsc__product-img' }}
+                  </span>
+                {%- endif -%}
+              {%- endif -%}
+              </div>{%- comment -%} /.vsc__frame {%- endcomment -%}
+            </div>{%- comment -%} /.vsc__cell {%- endcomment -%}
+          {%- comment -%} cierra el slide cuando se completa el grupo o es el último {%- endcomment -%}
+          {%- if pos == last_pos or forloop.last -%}</li>{%- endif -%}
+        {%- else -%}
+          {%- if request.design_mode -%}
+            <li class="vsc__slide"><div class="vsc__cell"><div class="vsc__video" style="display:block;"><span class="vsc__ph" style="display:block;">Agrega un bloque "Video"</span></div></div></li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</video-showcase-carousel>
+
+<script src="{{ 'video-showcase-carousel.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+/* =========================================================================
+   Video Showcase Carousel — estilo Pegatanke / METRIKASA
+   Banda izquierda (título + flechas) + carrusel de reels a la derecha.
+   El JS setea --vsc-per (videos por slide) y --vsc-gap (separación) en el
+   host, y traslada la pista con translateX(-page * viewport.clientWidth).
+   CLAVE: el paso del JS = viewport.clientWidth, así que el viewport NO puede
+   tener padding lateral (rompería el cálculo). El respiro lateral va dentro
+   del track/celdas.
+   ========================================================================= */
+video-showcase-carousel,
+.vsc {
+  display: block;
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+  --vsc-radius: 15px;
+}
+
+.vsc__grid {
+  display: grid;
+  /* Banda con ancho suficiente para que el título no se corte; carrusel al lado. */
+  grid-template-columns: minmax(340px, 1fr) 1.6fr;
+  align-items: stretch;
+}
+
+/* ---- Banda izquierda ---- */
+.vsc__band {
+  background: var(--vsc-band, #1a1a1a) !important;
+  color: var(--vsc-band-text, #fff);
+  align-self: stretch;
+  display: flex !important;
+  align-items: center;
+  padding: 32px 30px;
+  min-width: 0;        /* no comprimir su contenido */
+  overflow: visible;   /* nunca recortar el texto */
+}
+.vsc__band-inner {
+  max-width: 440px;
+  margin-left: auto;
+  padding-right: 20px;
+  min-width: 0;
+}
+.vsc__title {
+  font-family: 'Oswald', 'Anton', Impact, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(26px, 3vw, 44px);
+  line-height: 1.02;
+  letter-spacing: 0.3px;
+  color: var(--vsc-accent, #ffcd11);
+  margin: 0 0 14px;
+  overflow-wrap: break-word;   /* el título largo envuelve, no se corta */
+  word-break: normal;
+}
+.vsc__subtitle {
+  font-family: 'Oswald', 'Anton', Impact, sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: clamp(14px, 1.4vw, 18px);
+  line-height: 1.25;
+  letter-spacing: 0.6px;
+  margin: 0 0 28px;
+  opacity: 0.95;
+}
+.vsc__nav {
+  display: flex;
+  gap: 14px;
+}
+.vsc__arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--vsc-accent, #ffcd11);
+  color: var(--vsc-accent-text, #1a1a1a);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.vsc__arrow:hover {
+  transform: scale(1.07);
+  filter: brightness(1.05);
+}
+.vsc__arrow:active { transform: scale(0.96); }
+.vsc__arrow:focus-visible {
+  outline: 3px solid var(--vsc-accent, #ffcd11);
+  outline-offset: 3px;
+}
+.vsc__arrow svg { width: 20px; height: 20px; display: block; }
+.vsc__arrow[disabled] { opacity: 0.4; cursor: default; }
+
+/* ---- Viewport + pista ----
+   overflow-x: clip recorta los slides fuera de pantalla en horizontal,
+   pero overflow-y: visible deja ASOMAR la foto del producto por arriba/abajo
+   (con overflow:hidden se recortaría). El padding vertical da aire para el
+   overhang; el horizontal es 0 para no romper el paso del JS. */
+.vsc__viewport {
+  overflow-x: clip;
+  overflow-y: visible;
+  padding: 40px 0;
+  /* min-width:0 evita que el track (con TODOS los slides en fila = 200/300%…)
+     fuerce el ancho del grid y empuje/comprima la banda de texto. Así el
+     viewport respeta su columna sin importar cuántos videos haya. */
+  min-width: 0;
+}
+.vsc__track {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  will-change: transform;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Cada slide = 100% del viewport y AGRUPA los videos CENTRADOS y juntos
+   (no estirados a todo el ancho). Así no se crea espacio vacío enorme entre
+   los videos ni a los lados en pantallas anchas. */
+.vsc__slide {
+  flex: 0 0 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start;   /* videos pegados a la izquierda (junto a la banda) */
+  align-items: flex-start;
+  gap: 140px;   /* ~100px más de aire entre los 2 videos */
+  padding: 0 34px;
+}
+/* Cada celda toma solo el ancho de su video (no la mitad del slide). */
+.vsc__cell {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Frame: contenedor del TAMAÑO EXACTO del video ----
+   Es el ancla del producto: mide lo mismo que el video (mismo cálculo), es
+   position:relative y SIN overflow. Así el producto se posiciona respecto a la
+   esquina REAL del video y queda pegado a ella sea cual sea el tamaño. */
+.vsc__frame {
+  position: relative;
+  display: block !important;
+  width: calc(var(--vsc-video-h, 390px) * 9 / 16);
+  max-width: 100%;
+}
+
+/* ---- Video (reel vertical 9/16) ----
+   El alto MANDA: mide --vsc-video-h y el ancho se deriva de 9/16. Nunca crece
+   más de lo definido → la sección se mantiene pequeña. overflow:hidden recorta
+   el iframe a las esquinas redondeadas (por eso el producto va en el frame). */
+.vsc__video {
+  position: relative;
+  display: block !important;
+  height: var(--vsc-video-h, 390px);
+  width: 100%;
+  border-radius: var(--vsc-radius, 15px);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+.vsc__iframe,
+.vsc__native-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: cover;
+}
+.vsc__ph {
+  position: absolute;
+  inset: 0;
+  display: grid !important;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  color: #cfcfcf;
+  font-size: 13px;
+  background: #2a2a2a;
+}
+.vsc__ph--fill { background: #2a2a2a; }
+
+/* ---- Foto del producto en la esquina (montada POR FUERA del marco) ----
+   Cuadro fijo cuadrado (width == height) para que object-fit:contain NUNCA
+   deforme el PNG. Offsets negativos ≈ 42% del tamaño → asoma por fuera del
+   video. display:block por el gotcha :empty (base.css oculta vacíos). */
+.vsc__product {
+  position: absolute;
+  z-index: 4;
+  display: block !important;
+  width: var(--vsc-product-w, 90px);
+  height: var(--vsc-product-w, 90px);
+  line-height: 0;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+  pointer-events: auto;
+}
+.vsc__product-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: none;
+}
+.vsc__product--top-right {
+  top: calc(var(--vsc-product-w, 90px) * -0.42);
+  right: calc(var(--vsc-product-w, 90px) * -0.42);
+}
+.vsc__product--top-left {
+  top: calc(var(--vsc-product-w, 90px) * -0.42);
+  left: calc(var(--vsc-product-w, 90px) * -0.42);
+}
+.vsc__product--bottom-right {
+  bottom: calc(var(--vsc-product-w, 90px) * -0.42);
+  right: calc(var(--vsc-product-w, 90px) * -0.42);
+}
+.vsc__product--bottom-left {
+  bottom: calc(var(--vsc-product-w, 90px) * -0.42);
+  left: calc(var(--vsc-product-w, 90px) * -0.42);
+}
+
+/* ---- Tablet: banda arriba, carrusel abajo ---- */
+@media (max-width: 989px) {
+  .vsc__grid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .vsc__band {
+    padding: 32px 22px;
+    align-items: flex-start;
+  }
+  .vsc__band-inner {
+    max-width: none;
+    margin: 0;
+    padding-right: 0;
+  }
+  .vsc__viewport { padding: 52px 0; }
+  .vsc__slide { padding: 0 22px; }
+}
+
+/* ---- Móvil: 1 video por vista, navegado con FLECHAS (rota de uno en uno) ----
+   El slide deja de agrupar (display:contents) y cada celda ocupa el 100% del
+   viewport. El JS traslada el track de celda en celda (un video por paso). Las
+   flechas se muestran (ya no swipe-only). overflow-y:visible para que el
+   producto siga asomando por las esquinas. */
+@media (max-width: 749px) {
+  .vsc__viewport {
+    overflow-x: clip;
+    overflow-y: visible;
+    padding: 54px 0;
+  }
+  /* Las flechas SÍ se ven en móvil: bajan bajo el texto de la banda, centradas. */
+  .vsc__nav {
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .vsc__track {
+    /* el JS controla el transform (paso = ancho de una celda) */
+    gap: 0;
+  }
+  /* desagrupa: las celdas del slide fluyen directamente en el track */
+  .vsc__slide {
+    display: contents;
+  }
+  /* cada video ocupa TODO el viewport → 1 por vista */
+  .vsc__cell {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 12vw;   /* aire lateral para que el video no toque los bordes */
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .vsc__cell {
+    padding: 0 8vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vsc__track,
+  .vsc__arrow {
+    transition: none !important;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Carrusel de videos",
+  "tag": "section",
+  "class": "section section-video-showcase-carousel",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "header", "content": "Banda (texto e íconos)" },
+    { "type": "text", "id": "title", "label": "Título", "default": "ADHESIVOS PROFESIONALES" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtítulo", "default": "Que puedes usar en cualquier situación" },
+    { "type": "color", "id": "band_color", "label": "Color de la banda", "default": "#1a1a1a" },
+    { "type": "color", "id": "band_text_color", "label": "Color del texto de la banda", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Color de acento (flechas)", "default": "#ffcd11" },
+    { "type": "color", "id": "accent_text_color", "label": "Texto sobre el acento", "default": "#1a1a1a" },
+
+    { "type": "header", "content": "Sección" },
+    { "type": "color", "id": "section_bg", "label": "Color de fondo de la sección", "default": "#ffffff" },
+    { "type": "range", "id": "product_size", "label": "Tamaño de la foto del producto", "min": 40, "max": 160, "step": 5, "unit": "px", "default": 90 },
+    { "type": "range", "id": "video_height", "label": "Altura de los videos", "min": 200, "max": 560, "step": 10, "unit": "px", "default": 390 },
+
+    { "type": "header", "content": "Espaciado (margen exterior)" },
+    { "type": "range", "id": "margin_top", "label": "Margen superior", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0, "info": "Separa la sección de la de arriba. En móvil se reduce al 60%." },
+    { "type": "range", "id": "margin_bottom", "label": "Margen inferior", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+
+    { "type": "header", "content": "Reproducción automática" },
+    { "type": "checkbox", "id": "autoplay", "label": "Avanzar solo", "default": false },
+    { "type": "range", "id": "autoplay_speed", "label": "Velocidad (segundos)", "min": 3, "max": 12, "step": 1, "unit": "s", "default": 5 }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        { "type": "url", "id": "video_url", "label": "URL de YouTube o Vimeo", "info": "El video se embebe directo (youtube.com, youtu.be, shorts o vimeo.com)." },
+        { "type": "video", "id": "mp4_video", "label": "O video subido a Shopify" },
+        { "type": "text", "id": "badge_title", "label": "Nombre del video (accesibilidad)" },
+
+        { "type": "header", "content": "Producto en la esquina" },
+        { "type": "image_picker", "id": "product_image", "label": "Imagen del producto (cuadrada, PNG transparente)" },
+        { "type": "url", "id": "product_link", "label": "Enlace del producto", "info": "Al hacer clic en la imagen del producto lleva aquí." },
+        {
+          "type": "select", "id": "product_corner", "label": "Esquina del producto", "default": "top-right",
+          "options": [
+            { "value": "top-right", "label": "Arriba derecha" },
+            { "value": "top-left", "label": "Arriba izquierda" },
+            { "value": "bottom-right", "label": "Abajo derecha" },
+            { "value": "bottom-left", "label": "Abajo izquierda" }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carrusel de videos",
+      "blocks": [
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" }
+      ]
+    }
+  ]
+}
+{% endschema %}

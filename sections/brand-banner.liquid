@@ -1,0 +1,241 @@
+{%- comment -%}
+  Brand Banner — banda de marca con fondo sólido + logo (SVG o imagen) centrado.
+  Pensado para co-branding (p. ej. METRIKASA dentro de NQ). Sección del grupo body.
+  El logo acepta SVG inline (textarea) o una imagen subida; el SVG inline tiene
+  prioridad si está presente, porque Shopify suele bloquear la subida de .svg.
+{%- endcomment -%}
+
+{%- style -%}
+  #BrandBanner-{{ section.id }} {
+    background-color: {{ section.settings.bg_color | default: '#000000' }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: {{ section.settings.padding_horizontal }}px;
+    padding-right: {{ section.settings.padding_horizontal }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    {%- if section.settings.min_height > 0 -%}
+      min-height: {{ section.settings.min_height }}px;
+    {%- endif -%}
+  }
+
+  #BrandBanner-{{ section.id }} .brand-banner__logo {
+    display: block;
+    width: {{ section.settings.logo_width }}px;
+    max-width: 100%;
+    height: auto;
+    line-height: 0;
+  }
+
+  /* El SVG inline hereda el ancho del contenedor */
+  #BrandBanner-{{ section.id }} .brand-banner__logo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  #BrandBanner-{{ section.id }} .brand-banner__logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 989px) {
+    #BrandBanner-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+      {%- if section.settings.min_height > 0 -%}
+        min-height: {{ section.settings.min_height | times: 0.7 | round: 0 }}px;
+      {%- endif -%}
+    }
+    #BrandBanner-{{ section.id }} .brand-banner__logo {
+      width: {{ section.settings.logo_width_mobile }}px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    {%- if section.settings.hide_on_desktop -%}
+      #BrandBanner-{{ section.id }} { display: none !important; }
+    {%- endif -%}
+  }
+  @media (max-width: 989px) {
+    {%- if section.settings.hide_on_mobile -%}
+      #BrandBanner-{{ section.id }} { display: none !important; }
+    {%- endif -%}
+  }
+{%- endstyle -%}
+
+<div id="BrandBanner-{{ section.id }}" class="brand-banner">
+  {%- liquid
+    assign has_svg = false
+    if section.settings.svg_code != blank
+      assign has_svg = true
+    endif
+  -%}
+
+  {%- if section.settings.link != blank -%}
+    <a href="{{ section.settings.link }}" class="brand-banner__logo" aria-label="{{ section.settings.alt_text | default: shop.name | escape }}">
+  {%- else -%}
+    <span class="brand-banner__logo" role="img" aria-label="{{ section.settings.alt_text | default: shop.name | escape }}">
+  {%- endif -%}
+
+  {%- if has_svg -%}
+    {{ section.settings.svg_code }}
+  {%- elsif section.settings.logo_image != blank -%}
+    {{ section.settings.logo_image
+      | image_url: width: 1200
+      | image_tag:
+        widths: '300, 500, 700, 900, 1200',
+        sizes: '(max-width: 989px) 80vw, 600px',
+        alt: section.settings.alt_text | default: shop.name,
+        loading: 'eager',
+        fetchpriority: 'high'
+    }}
+  {%- else -%}
+    {%- comment -%} Placeholder visible solo en el editor cuando no hay logo {%- endcomment -%}
+    {%- if request.design_mode -%}
+      <span style="color:#fff;font-size:14px;opacity:.6;">Sube un logo o pega el código SVG en los ajustes →</span>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if section.settings.link != blank -%}
+    </a>
+  {%- else -%}
+    </span>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Banner de marca",
+  "tag": "section",
+  "class": "section section-brand-banner",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Banda con fondo sólido y un logo centrado (ideal para marcas externas como METRIKASA). El logo puede ser una imagen subida o código SVG pegado."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Imagen del logo (PNG/JPG/WEBP)"
+    },
+    {
+      "type": "textarea",
+      "id": "svg_code",
+      "label": "Código SVG (opcional)",
+      "info": "Pega aquí el <svg>…</svg> completo. Si lo rellenas, tiene prioridad sobre la imagen. Útil porque Shopify suele bloquear la subida de archivos .svg."
+    },
+    {
+      "type": "text",
+      "id": "alt_text",
+      "label": "Texto alternativo (accesibilidad)",
+      "default": "METRIKASA"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace al hacer clic (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Ancho del logo (escritorio)",
+      "min": 80,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Ancho del logo (móvil)",
+      "min": 60,
+      "max": 400,
+      "step": 5,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Alto mínimo de la banda",
+      "min": 0,
+      "max": 400,
+      "step": 5,
+      "unit": "px",
+      "default": 120,
+      "info": "0 = se ajusta al logo y al padding."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Espacio lateral",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Visibilidad"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_desktop",
+      "label": "Ocultar en escritorio",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Ocultar en móvil",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner de marca"
+    }
+  ]
+}
+{% endschema %}
