@@ -18,7 +18,11 @@
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__emulate",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__performance_start_trace",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__performance_analyze_insight",
-      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__performance_stop_trace"
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__performance_stop_trace",
+      "Skill(shopify-plugin:shopify-liquid)",
+      "Skill(shopify-plugin:shopify-liquid:*)",
+      "Bash(rm -rf actual)",
+      "Bash(ls -d actual)"
     ]
   }
 }

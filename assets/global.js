@@ -269,7 +269,10 @@ Shopify.formatMoney = function(cents, format) {
 }
 
 Shopify.getCart = function(callback) {
-    $.getJSON('/cart.js', function (cart, textStatus) {
+    // Use canonical `jQuery` (not the `$` alias). On /cart some apps (FB pixel,
+    // GA, GSC) overwrite the global `$`, leaving `$.getJSON` undefined when this
+    // runs from theme.js initQuickCart / free-shipping-message connectedCallback.
+    (window.jQuery || $).getJSON('/cart.js', function (cart, textStatus) {
         if ((typeof callback) === 'function') {
             callback(cart);
         } else {
@@ -300,7 +303,7 @@ Shopify.changeItem = function(variant_id, quantity, callback) {
         }
     };
 
-    $.ajax(params);
+    (window.jQuery || $).ajax(params);
 }
 
 Shopify.removeItem = function(variant_id, callback) {
@@ -321,7 +324,7 @@ Shopify.removeItem = function(variant_id, callback) {
         }
     };
 
-    $.ajax(params);
+    (window.jQuery || $).ajax(params);
 }
 
 Shopify.addItem = function(variant_id, quantity, callback, input = null) {
@@ -351,7 +354,7 @@ Shopify.addItem = function(variant_id, quantity, callback, input = null) {
             target?.classList.remove('is-loading');
         }
     };
-    $.ajax(params);
+    (window.jQuery || $).ajax(params);
 }
 
 Shopify.onItemAdded = function(line_item) {

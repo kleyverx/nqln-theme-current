@@ -161,11 +161,14 @@
         z-index: 1;
         isolation: auto;
       }
-      /* Marquee must stay below modals/headers but above content */
-      .section-marquee,
-      [class*="marquee"] {
-        z-index: 5 !important;
+      /* Marquee is normal in-flow content: keep it in place, never let it
+         overlap or trap sibling sections. Scope to the section wrapper only
+         (NOT [class*="marquee"], which also matched .marquee__list/__item and
+         made every child create its own stacking context). */
+      .section-marquee {
         position: relative;
+        z-index: 0;
+        isolation: isolate;
       }
       /* Product description content stays in flow, never above sticky UI */
       .product-description,
@@ -534,15 +537,10 @@
           animation: none;
         }
 
-        /* Marquee: frozen */
-        .section-marquee {
-          view-transition-name: marquee;
-        }
-
-        ::view-transition-old(marquee),
-        ::view-transition-new(marquee) {
-          animation: none;
-        }
+        /* Marquee: NOT pinned. A view-transition-name must be unique per page;
+           when a page has more than one marquee they collide and the element
+           gets stuck / floats over content during navigation. Let it scroll
+           with the page as normal in-flow content instead. */
 
         /* Custom header banner (categories + info): frozen */
         .custom-header-banner {
@@ -784,110 +782,20 @@
       });
     });
     </script>
-    <script>
-    (function() {
-      if (!window.quick_cart || !window.quick_cart.show) return;
-      if (!window.after_add_to_cart || window.after_add_to_cart.type !== 'quick_cart') return;
-
-      // Track when /cart/add happens via any method (fetch, XHR, form)
-      var lastAddTime = 0;
-
-      // Patch fetch to detect cart/add calls
-      var origFetch = window.fetch;
-      window.fetch = function() {
-        var url = typeof arguments[0] === 'string' ? arguments[0] : (arguments[0] && arguments[0].url ? arguments[0].url : '');
-        var isCartAdd = url.indexOf('/cart/add') !== -1;
-        if (isCartAdd) lastAddTime = Date.now();
-        var result = origFetch.apply(this, arguments);
-        if (isCartAdd) {
-          result.then(function() {
-            // After successful cart/add, open sidebar
-            setTimeout(function() {
-              if (typeof Shopify !== 'undefined' && Shopify.getCart && typeof halo !== 'undefined') {
-                Shopify.getCart(function(cart) {
-                  document.body.classList.add('cart-sidebar-show');
-                  halo.updateSidebarCart(cart);
-                  document.querySelectorAll('[data-cart-count]').forEach(function(el) {
-                    el.textContent = cart.item_count;
-                  });
-                });
-              }
-            }, 100);
-          });
-        }
-        return result;
-      };
-
-      // Patch XMLHttpRequest to detect cart/add calls
-      var origXHRSend = XMLHttpRequest.prototype.send;
-      var origXHROpen = XMLHttpRequest.prototype.open;
-      XMLHttpRequest.prototype.open = function() {
-        this._url = arguments[1] || '';
-        return origXHROpen.apply(this, arguments);
-      };
-      XMLHttpRequest.prototype.send = function() {
-        var xhr = this;
-        if (xhr._url && xhr._url.indexOf('/cart/add') !== -1) {
-          lastAddTime = Date.now();
-          xhr.addEventListener('load', function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              setTimeout(function() {
-                if (typeof Shopify !== 'undefined' && Shopify.getCart && typeof halo !== 'undefined') {
-                  Shopify.getCart(function(cart) {
-                    document.body.classList.add('cart-sidebar-show');
-                    halo.updateSidebarCart(cart);
-                    document.querySelectorAll('[data-cart-count]').forEach(function(el) {
-                      el.textContent = cart.item_count;
-                    });
-                  });
-                }
-              }, 100);
-            }
-          });
-        }
-        return origXHRSend.apply(this, arguments);
-      };
-
-      // Intercept redirects to /cart within 5s of a cart/add
-      // Override window.location assignment for /cart redirects
-      var origLocationDescriptor = Object.getOwnPropertyDescriptor(window, 'location');
-      // Can't override window.location directly, but we can intercept via halo.redirectTo
-      // The theme uses halo.redirectTo for all its redirects
-      document.addEventListener('DOMContentLoaded', function() {
-        if (typeof halo !== 'undefined' && halo.redirectTo) {
-          var origRedirect = halo.redirectTo.bind(halo);
-          halo.redirectTo = function(url) {
-            if (url && url.indexOf('/cart') !== -1 && (Date.now() - lastAddTime) < 5000) {
-              // Instead of redirect, open sidebar
-              Shopify.getCart(function(cart) {
-                document.body.classList.add('cart-sidebar-show');
-                halo.updateSidebarCart(cart);
-                document.querySelectorAll('[data-cart-count]').forEach(function(el) {
-                  el.textContent = cart.item_count;
-                });
-              });
-              return;
-            }
-            origRedirect(url);
-          };
-        }
-      });
-
-      // Also intercept form submits
-      document.addEventListener('submit', function(e) {
-        var form = e.target;
-        if (!form || form.tagName !== 'FORM') return;
-        if (!form.action || form.action.indexOf('/cart/add') === -1) return;
-        if (form.closest('product-form')) return;
-
-        e.preventDefault();
-        var formData = new FormData(form);
-        fetch('/cart/add.js', { method: 'POST', body: formData })
-          .then(function(r) { return r.json(); })
-          .catch(function() { window.location.href = '/cart'; });
-      }, true);
-    })();
-    </script>
+    {%- comment -%}
+      REMOVIDO (causaba el bug de /cart): este bloque parcheaba window.fetch,
+      XMLHttpRequest.prototype.open/send y halo.redirectTo de forma GLOBAL para
+      abrir el mini-cart tras /cart/add. El tema ya hace esto de forma nativa
+      en theme.js (case 'quick_cart' -> cart-sidebar-show) cuando
+      quick_cart.show es true, así que era redundante. Al reescribir el
+      prototipo de XMLHttpRequest rompía las llamadas de jQuery que el carrito
+      usa para Shopify.getCart ($.getJSON /cart.js) y para cambiar/eliminar
+      items (/cart/change.js), provocando: no abrir el sidebar (redirigía a
+      /cart) y no poder actualizar cantidades. Además el patch de redirectTo
+      iba dentro de un DOMContentLoaded que ya había disparado, por lo que
+      nunca se aplicaba. Si se necesita reintroducir, hacerlo SIN reemplazar
+      los prototipos globales de XHR/fetch.
+    {%- endcomment -%}
     <script>
     /* Defer non-critical third-party scripts until browser is idle or user interacts */
     (function() {
