@@ -3231,6 +3231,218 @@
           "default": 0
         }
       ]
+    },
+    {
+      "type": "benefits",
+      "name": "Beneficios del producto",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Lista compacta de beneficios que aparece junto al precio y los botones de compra. Precargado con los beneficios de HydroLoko; cambia los textos, íconos y colores para usarla en cualquier producto."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título (opcional)",
+          "default": "¿Por qué elegir este producto?"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_card",
+          "label": "Mostrar cada beneficio en su propia tarjeta",
+          "default": true,
+          "info": "Cada beneficio queda en un recuadro individual con fondo suave. Si lo desactivas, se muestran como una lista simple."
+        },
+        {
+          "type": "header",
+          "content": "Colores"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Color del texto",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Color del ícono/acento",
+          "default": "#20b19e"
+        },
+        {
+          "type": "color",
+          "id": "card_bg",
+          "label": "Color de fondo de la tarjeta",
+          "default": "#f6f5f1"
+        },
+        {
+          "type": "header",
+          "content": "Tamaño"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Tamaño del ícono",
+          "min": 24,
+          "max": 96,
+          "step": 2,
+          "unit": "px",
+          "default": 44,
+          "info": "Afecta el ancho y alto del ícono (emoji o SVG) en cada tarjeta."
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 1"
+        },
+        {
+          "type": "textarea",
+          "id": "b1_icon",
+          "label": "Ícono (emoji o código SVG)",
+          "info": "Pega un emoji (✅) o un bloque <svg>…</svg> completo. Los SVG heredan el color del acento vía currentColor.",
+          "default": "✅"
+        },
+        {
+          "type": "text",
+          "id": "b1_title",
+          "label": "Título",
+          "default": "Sella grietas y huecos"
+        },
+        {
+          "type": "textarea",
+          "id": "b1_desc",
+          "label": "Descripción",
+          "default": "Aplicación fácil. Para grietas mayores a 1 mm, rellenar antes de aplicar."
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 2"
+        },
+        {
+          "type": "textarea",
+          "id": "b2_icon",
+          "label": "Ícono (emoji o SVG)",
+          "default": "✅"
+        },
+        {
+          "type": "text",
+          "id": "b2_title",
+          "label": "Título",
+          "default": "Barrera duradera"
+        },
+        {
+          "type": "textarea",
+          "id": "b2_desc",
+          "label": "Descripción",
+          "default": "Crea una capa protectora que resiste la humedad continua."
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 3"
+        },
+        {
+          "type": "textarea",
+          "id": "b3_icon",
+          "label": "Ícono (emoji o SVG)",
+          "default": "✅"
+        },
+        {
+          "type": "text",
+          "id": "b3_title",
+          "label": "Título",
+          "default": "Uso interior y exterior"
+        },
+        {
+          "type": "textarea",
+          "id": "b3_desc",
+          "label": "Descripción",
+          "default": "Techos, paredes, baños, ventanas, juntas y más."
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 4"
+        },
+        {
+          "type": "textarea",
+          "id": "b4_icon",
+          "label": "Ícono (emoji o SVG)",
+          "default": "✅"
+        },
+        {
+          "type": "text",
+          "id": "b4_title",
+          "label": "Título",
+          "default": "Fórmula de alta eficiencia"
+        },
+        {
+          "type": "textarea",
+          "id": "b4_desc",
+          "label": "Descripción",
+          "default": "Diseñada para superficies de alta exposición al agua."
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 5 (opcional)"
+        },
+        {
+          "type": "textarea",
+          "id": "b5_icon",
+          "label": "Ícono (emoji o SVG)"
+        },
+        {
+          "type": "text",
+          "id": "b5_title",
+          "label": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "b5_desc",
+          "label": "Descripción"
+        },
+        {
+          "type": "header",
+          "content": "Beneficio 6 (opcional)"
+        },
+        {
+          "type": "textarea",
+          "id": "b6_icon",
+          "label": "Ícono (emoji o SVG)"
+        },
+        {
+          "type": "text",
+          "id": "b6_title",
+          "label": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "b6_desc",
+          "label": "Descripción"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-product.settings.general.spacing"
+        },
+        {
+          "type": "range",
+          "id": "spacing_top",
+          "label": "t:sections.general.settings.aligmnent.options__5",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "t:sections.layout.mg_desktop.unit",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "label": "t:sections.general.settings.aligmnent.options__6",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "t:sections.layout.mg_desktop.unit",
+          "default": 15
+        }
+      ]
     }
   ]
 }

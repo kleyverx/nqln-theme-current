@@ -1,0 +1,455 @@
+{%- comment -%}
+  Product Benefits Pop — tarjetas de beneficios para páginas de producto.
+  Diseño "¿Por qué elegir HydroLoko?": ícono ✅/emoji/SVG grande arriba-izquierda,
+  título fuerte y descripción corta. Layout grid 2×2 (default) o stacked vertical.
+  Estética METRIKASA/HydroLoko: hueso #f6f5f1, negro #1a1a1a, acento verde #20b19e.
+  Cada block acepta SVG inline (textarea, prioridad) o emoji de texto como fallback.
+  Sin JS, solo CSS. Sutil hover con elevación de tarjeta.
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  Por eso el contenedor del ícono siempre lleva contenido (SVG, emoji o placeholder
+  en el editor). Los elementos puramente visuales fuerzan display:block.
+
+  currentColor — el SVG del ícono hereda color del acento vía `color: var(--pbp-accent)`
+  en `.product-benefits-pop__icon`, así que un `<svg fill="currentColor">` se pinta solo.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductBenefitsPop-{{ section.id }} {
+    --pbp-bg: {{ section.settings.bg_color | default: '#f6f5f1' }};
+    --pbp-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pbp-accent: {{ section.settings.accent_color | default: '#20b19e' }};
+    background-color: var(--pbp-bg);
+    color: var(--pbp-text);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div id="ProductBenefitsPop-{{ section.id }}" class="product-benefits-pop">
+  <div class="product-benefits-pop__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-benefits-pop__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <div class="product-benefits-pop__subheading rte">
+        {{ section.settings.subheading }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul
+        class="product-benefits-pop__grid product-benefits-pop__grid--{{ section.settings.layout | default: 'grid_2' }}"
+        role="list"
+      >
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign has_svg = false
+            if block.settings.svg_code != blank
+              assign has_svg = true
+            endif
+          -%}
+          <li
+            class="product-benefits-pop__item"
+            style="--pbp-index: {{ forloop.index0 }};"
+            {{ block.shopify_attributes }}
+          >
+            <div class="product-benefits-pop__card">
+              <span class="product-benefits-pop__icon" style="display:block;" aria-hidden="true">
+                {%- if has_svg -%}
+                  {{ block.settings.svg_code }}
+                {%- elsif block.settings.icon_emoji != blank -%}
+                  <span class="product-benefits-pop__emoji" style="display:block;">{{ block.settings.icon_emoji }}</span>
+                {%- else -%}
+                  {%- if request.design_mode -%}
+                    <span class="product-benefits-pop__placeholder" style="display:block;">
+                      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+                        <path d="M4 12l5 5L20 6"></path>
+                      </svg>
+                    </span>
+                  {%- else -%}
+                    <span class="product-benefits-pop__placeholder product-benefits-pop__placeholder--dot" style="display:block;"></span>
+                  {%- endif -%}
+                {%- endif -%}
+              </span>
+
+              <div class="product-benefits-pop__body">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="product-benefits-pop__title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+                {%- if block.settings.description != blank -%}
+                  <p class="product-benefits-pop__desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-benefits-pop__inner {
+    text-align: left;
+  }
+
+  .product-benefits-pop__heading {
+    margin: 0 0 1.2rem;
+    font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: inherit;
+  }
+
+  .product-benefits-pop__subheading {
+    margin: 0 0 3.2rem;
+    font-size: clamp(1.5rem, 1.8vw, 1.7rem);
+    line-height: 1.5;
+    max-width: 62ch;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .product-benefits-pop__grid {
+    display: grid;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .product-benefits-pop__grid--grid_2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .product-benefits-pop__grid--stacked {
+    grid-template-columns: 1fr;
+  }
+
+  .product-benefits-pop__item {
+    width: 100%;
+    /* Entrada escalonada al cargar */
+    animation: product-benefits-pop-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: calc(var(--pbp-index, 0) * 80ms);
+  }
+
+  .product-benefits-pop__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.6rem;
+    padding: 2rem 2.2rem;
+    height: 100%;
+    background-color: color-mix(in srgb, var(--pbp-bg) 85%, #ffffff 15%);
+    border: 1px solid color-mix(in srgb, var(--pbp-text) 8%, transparent);
+    border-radius: 12px;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease;
+    box-sizing: border-box;
+  }
+
+  .product-benefits-pop__card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--pbp-accent) 45%, transparent);
+    box-shadow: 0 12px 28px -18px color-mix(in srgb, var(--pbp-text) 60%, transparent);
+    background-color: color-mix(in srgb, var(--pbp-bg) 70%, #ffffff 30%);
+  }
+
+  .product-benefits-pop__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(4.4rem, 5vw, 5.6rem);
+    height: clamp(4.4rem, 5vw, 5.6rem);
+    color: var(--pbp-accent);
+    line-height: 1;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .product-benefits-pop__icon > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .product-benefits-pop__emoji {
+    font-size: clamp(3.2rem, 4vw, 4rem);
+    line-height: 1;
+    /* Emojis en color siempre; el color:currentColor solo aplica a SVG mono */
+  }
+
+  .product-benefits-pop__placeholder {
+    width: 100%;
+    height: 100%;
+    color: var(--pbp-accent);
+  }
+
+  .product-benefits-pop__placeholder > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .product-benefits-pop__placeholder--dot {
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.18;
+  }
+
+  /* Sutil bounce del ícono en hover de la tarjeta */
+  .product-benefits-pop__card:hover .product-benefits-pop__icon {
+    animation: product-benefits-pop-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .product-benefits-pop__body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .product-benefits-pop__title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.6rem, 1.8vw, 1.9rem);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: inherit;
+  }
+
+  .product-benefits-pop__desc {
+    margin: 0;
+    font-size: clamp(1.4rem, 1.6vw, 1.55rem);
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  @keyframes product-benefits-pop-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes product-benefits-pop-bounce {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(0.9);
+    }
+    75% {
+      transform: scale(1.08);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Tablet: 1 columna siempre */
+  @media (max-width: 989px) {
+    .product-benefits-pop__grid--grid_2,
+    .product-benefits-pop__grid--stacked {
+      grid-template-columns: 1fr;
+    }
+    .product-benefits-pop__subheading {
+      margin-bottom: 2.4rem;
+    }
+  }
+
+  /* Móvil: layout más compacto */
+  @media (max-width: 749px) {
+    .product-benefits-pop__card {
+      padding: 1.6rem 1.6rem;
+      gap: 1.2rem;
+      border-radius: 10px;
+    }
+    .product-benefits-pop__heading {
+      margin-bottom: 0.8rem;
+    }
+  }
+
+  /* Respeta prefers-reduced-motion: sin animaciones */
+  @media (prefers-reduced-motion: reduce) {
+    .product-benefits-pop__item,
+    .product-benefits-pop__card,
+    .product-benefits-pop__card:hover,
+    .product-benefits-pop__card:hover .product-benefits-pop__icon {
+      animation: none;
+      transition: none;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Beneficios del producto",
+  "tag": "section",
+  "class": "section section-product-benefits-pop",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Rejilla de beneficios con ícono grande a la izquierda, título y descripción corta. Pensada para páginas de producto (¿Por qué elegir…?). Usa emoji ✅, un SVG pegado, o deja el default."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "¿Por qué elegir HydroLoko?"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subtítulo (opcional)"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Diseño",
+      "options": [
+        { "value": "grid_2", "label": "Rejilla 2×2 (desktop)" },
+        { "value": "stacked", "label": "Lista vertical (1 columna)" }
+      ],
+      "default": "grid_2"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#f6f5f1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (íconos y borde hover)",
+      "default": "#20b19e"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "beneficio",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "svg_code",
+          "label": "Código SVG (opcional)",
+          "info": "Pega aquí un <svg>…</svg> completo. Si lo rellenas, tiene prioridad sobre el emoji. Usa fill=\"currentColor\" para heredar el color de acento."
+        },
+        {
+          "type": "text",
+          "id": "icon_emoji",
+          "label": "Emoji del ícono",
+          "default": "✅",
+          "info": "Se muestra si no pegaste un SVG."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título del beneficio",
+          "default": "Sella grietas y huecos"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Descripción corta",
+          "default": "Aplicación fácil con brocha o rodillo. Para grietas mayores a 1 mm, rellenar antes de aplicar."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HydroLoko — Beneficios",
+      "settings": {
+        "heading": "¿Por qué elegir HydroLoko?",
+        "layout": "grid_2",
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "accent_color": "#20b19e"
+      },
+      "blocks": [
+        {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Sella grietas y huecos con aplicación fácil",
+            "description": "Para grietas mayores a 1 mm, rellenar antes de aplicar."
+          }
+        },
+        {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Barrera duradera",
+            "description": "Crea una capa protectora que resiste la humedad continua."
+          }
+        },
+        {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Uso interior y exterior",
+            "description": "Techos, paredes, baños, ventanas, juntas y más."
+          }
+        },
+        {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Fórmula de alta eficiencia",
+            "description": "Diseñada para superficies de alta exposición al agua."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

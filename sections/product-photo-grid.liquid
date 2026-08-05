@@ -1,0 +1,742 @@
+{%- comment -%}
+  Product Photo Grid — grid de 4 fotos con aspect-ratio 3:4 (portrait).
+  Desktop: 4 columnas iguales con gap configurable.
+  Tablet: 2 columnas (grid 2×2).
+  Mobile: carrusel horizontal deslizable con scroll-snap nativo (sin JS).
+  Solo CSS puro.
+
+  Aspect ratio 3:4 aplicado con `aspect-ratio: 3 / 4` en cada media.
+  En mobile cada foto ocupa ~86% del ancho para que se vea parte de la
+  siguiente (peek), invitando al swipe. Bordes con máscara suave para
+  indicar visualmente que hay más contenido a los lados.
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  Los slots decorativos llevan `style="display:block;"`.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductPhotoGrid-{{ section.id }} {
+    --ppg-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --ppg-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --ppg-max-width: {{ section.settings.content_max_width | default: 1100 }}px;
+    --ppg-gap: {{ section.settings.column_gap | default: 16 }}px;
+    --ppg-radius: {{ section.settings.image_radius | default: 12 }}px;
+    --ppg-aspect: {{ section.settings.aspect_ratio | default: '3 / 4' }};
+    --ppg-image-padding: {{ section.settings.image_padding | default: 0 }}px;
+    --ppg-heading-size: {{ section.settings.heading_size | default: 28 }}px;
+    --ppg-subheading-size: {{ section.settings.subheading_size | default: 14 }}px;
+    --ppg-caption-size: {{ section.settings.caption_size | default: 13 }}px;
+    background-color: var(--ppg-bg);
+    color: var(--ppg-text);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  /*
+    CSS con MAXIMA especificidad para forzar object-fit: contain sobre la imagen.
+    Uso el ID de la section + tag + clase para ganar contra cualquier regla
+    heredada del tema padre Halo/Ella (que aplica object-fit: cover globalmente
+    a imágenes de sections). Este bloque va inline por section, no en el CSS
+    compartido, para que gane siempre.
+  */
+  #ProductPhotoGrid-{{ section.id }} .product-photo-grid__media {
+    overflow: visible !important;
+  }
+  #ProductPhotoGrid-{{ section.id }} img.product-photo-grid__img,
+  #ProductPhotoGrid-{{ section.id }} .product-photo-grid__list img.product-photo-grid__img,
+  #ProductPhotoGrid-{{ section.id }} .product-photo-grid__item img.product-photo-grid__img,
+  #ProductPhotoGrid-{{ section.id }} .product-photo-grid__media img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    transform: none !important;
+    transition: none !important;
+    clip-path: none !important;
+    aspect-ratio: auto !important;
+  }
+{%- endstyle -%}
+
+<div id="ProductPhotoGrid-{{ section.id }}" class="product-photo-grid">
+  <div class="product-photo-grid__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-photo-grid__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <div class="product-photo-grid__subheading rte">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-photo-grid__viewport" data-photo-grid data-count="{{ section.blocks.size }}">
+      <ul class="product-photo-grid__list" role="list">
+        {%- for block in section.blocks -%}
+          <li
+            class="product-photo-grid__item"
+            style="--ppg-index: {{ forloop.index0 }};"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="product-photo-grid__link">
+            {%- else -%}
+              <div class="product-photo-grid__link product-photo-grid__link--static">
+            {%- endif -%}
+
+              <span class="product-photo-grid__media" style="display:block;">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 1200 | image_tag:
+                    widths: '300, 500, 700, 900, 1080, 1200',
+                    sizes: '(max-width: 749px) 86vw, (max-width: 989px) 46vw, 25vw',
+                    alt: block.settings.caption | default: shop.name,
+                    loading: 'lazy',
+                    class: 'product-photo-grid__img'
+                  }}
+                {%- elsif request.design_mode -%}
+                  <span class="product-photo-grid__placeholder" style="display:block;" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" style="display:block;">
+                      <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                      <circle cx="8.5" cy="9" r="1.5"></circle>
+                      <path d="m21 15-5-5L5 21"></path>
+                    </svg>
+                  </span>
+                {%- else -%}
+                  <span class="product-photo-grid__placeholder product-photo-grid__placeholder--dot" style="display:block;" aria-hidden="true"></span>
+                {%- endif -%}
+              </span>
+
+              {%- if block.settings.caption != blank -%}
+                <span class="product-photo-grid__caption" style="display:block;">{{ block.settings.caption }}</span>
+              {%- endif -%}
+
+            {%- if block.settings.link != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+      </div>
+      <div class="product-photo-grid__dots" role="tablist" aria-label="Navegación de fotos" data-photo-grid-dots>
+        {%- for block in section.blocks -%}
+          <button
+            type="button"
+            class="product-photo-grid__dot{% if forloop.first %} is-active{% endif %}"
+            role="tab"
+            aria-label="Ir a foto {{ forloop.index }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            data-dot-index="{{ forloop.index0 }}"
+          ><span class="visually-hidden">Foto {{ forloop.index }}</span></button>
+        {%- endfor -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <div class="product-photo-grid__empty" style="display:block;">
+        <p>Agrega fotos desde el panel lateral para ver la galería.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-photo-grid__inner {
+    max-width: var(--ppg-max-width, 1100px);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .product-photo-grid__heading {
+    margin: 0 0 1rem;
+    font-size: var(--ppg-heading-size, 28px);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: inherit;
+    line-height: 1.2;
+  }
+
+  .product-photo-grid__subheading {
+    margin: 0 auto 2.4rem;
+    max-width: 60ch;
+    font-size: var(--ppg-subheading-size, 14px);
+    line-height: 1.55;
+    opacity: 0.75;
+  }
+
+  .product-photo-grid__subheading > *:first-child { margin-top: 0; }
+  .product-photo-grid__subheading > *:last-child { margin-bottom: 0; }
+
+  .product-photo-grid__list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--ppg-gap, 16px);
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .product-photo-grid__item {
+    width: 100%;
+    animation: product-photo-grid-in 0.5s ease-out both;
+    animation-delay: calc(var(--ppg-index, 0) * 80ms);
+  }
+
+  .product-photo-grid__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    outline: none;
+    transition: transform 0.25s ease;
+  }
+
+  a.product-photo-grid__link:hover,
+  a.product-photo-grid__link:focus-visible {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.product-photo-grid__link:focus-visible {
+    outline: 2px solid var(--ppg-text, #1a1a1a);
+    outline-offset: 3px;
+    border-radius: var(--ppg-radius, 12px);
+  }
+
+  .product-photo-grid__media {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--ppg-aspect, 3 / 4);
+    background: transparent;
+    border-radius: var(--ppg-radius, 12px);
+    overflow: hidden;
+    isolation: isolate;
+    padding: var(--ppg-image-padding, 0);
+    box-sizing: border-box;
+  }
+
+  /*
+    Foto SIEMPRE completa: object-fit: contain con !important para blindarse
+    contra reglas heredadas del tema padre y contra settings viejos guardados
+    en Shopify. Sin transform, sin transition, sin hover. Se ve exactamente
+    como se subió — nada de zoom, nada de recorte.
+  */
+  .product-photo-grid__img,
+  .product-photo-grid .product-photo-grid__img {
+    position: absolute !important;
+    inset: var(--ppg-image-padding, 0) !important;
+    width: calc(100% - (var(--ppg-image-padding, 0) * 2)) !important;
+    height: calc(100% - (var(--ppg-image-padding, 0) * 2)) !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .product-photo-grid__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.35);
+  }
+
+  .product-photo-grid__placeholder--dot {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .product-photo-grid__caption {
+    display: block;
+    margin-top: 1rem;
+    font-size: var(--ppg-caption-size, 13px);
+    font-weight: 600;
+    line-height: 1.4;
+    color: inherit;
+    letter-spacing: 0.01em;
+  }
+
+  .product-photo-grid__empty {
+    padding: 3rem 2rem;
+    border: 2px dashed rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    color: inherit;
+    opacity: 0.7;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  /* Viewport = contenedor del carrusel (para posicionar el fade lateral y los dots) */
+  .product-photo-grid__viewport {
+    position: relative;
+  }
+
+  /* Dots ocultos en desktop y tablet (solo aparecen en mobile) */
+  .product-photo-grid__dots {
+    display: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @keyframes product-photo-grid-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Tablet: grid 2×2 */
+  @media (max-width: 989px) {
+    .product-photo-grid__list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: calc(var(--ppg-gap, 16px) * 1.2);
+    }
+  }
+
+  /*
+    Mobile (<749px): carrusel horizontal deslizable.
+    - display:flex + overflow-x:auto + scroll-snap-type:x mandatory
+    - cada foto ocupa 86% del ancho para permitir "peek" del siguiente
+    - scroll-snap-align:center → cada swipe encaja la foto en el centro
+    - scrollbar oculta pero funcionalidad de scroll táctil intacta
+    - padding lateral por scroll-padding para centrar la primera y última foto
+  */
+  @media (max-width: 749px) {
+    .product-photo-grid__list {
+      display: flex;
+      flex-wrap: nowrap;
+      grid-template-columns: none;
+      gap: 1.2rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scroll-padding-left: 7vw;
+      scroll-padding-right: 7vw;
+      padding: 0.4rem 7vw 1rem;
+      margin-left: calc(var(--container-padding, 1.6rem) * -1);
+      margin-right: calc(var(--container-padding, 1.6rem) * -1);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    /* Ocultar scrollbar en todos los navegadores */
+    .product-photo-grid__list::-webkit-scrollbar {
+      display: none;
+    }
+    .product-photo-grid__list {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .product-photo-grid__item {
+      flex: 0 0 86%;
+      max-width: 86%;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+
+    .product-photo-grid__caption {
+      margin-top: 0.8rem;
+    }
+
+    /* Hover sin transform en touch — evita comportamientos raros */
+    a.product-photo-grid__link:hover {
+      transform: none;
+    }
+    a.product-photo-grid__link:hover .product-photo-grid__img {
+      transform: none;
+    }
+
+    /* Fade lateral: pseudo-elements con gradiente del color de fondo. Invitan al swipe. */
+    .product-photo-grid__viewport {
+      overflow: hidden;
+    }
+    .product-photo-grid__viewport::before,
+    .product-photo-grid__viewport::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 8vw;
+      max-width: 60px;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.25s ease;
+    }
+    .product-photo-grid__viewport::before {
+      left: 0;
+      background: linear-gradient(to right, var(--ppg-bg, #fff), color-mix(in srgb, var(--ppg-bg, #fff) 0%, transparent));
+      opacity: 0;
+    }
+    .product-photo-grid__viewport::after {
+      right: 0;
+      background: linear-gradient(to left, var(--ppg-bg, #fff), color-mix(in srgb, var(--ppg-bg, #fff) 0%, transparent));
+      opacity: 1;
+    }
+
+    /* Estado del scroll — controlado por JS con data attributes */
+    .product-photo-grid__viewport[data-scroll-start="false"]::before {
+      opacity: 1;
+    }
+    .product-photo-grid__viewport[data-scroll-end="true"]::after {
+      opacity: 0;
+    }
+
+    /* Dots indicadores — visibles solo en mobile */
+    .product-photo-grid__dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1.6rem;
+      padding: 0;
+    }
+
+    .product-photo-grid__dot {
+      width: 0.8rem;
+      height: 0.8rem;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.25;
+      cursor: pointer;
+      transition: opacity 0.25s ease, transform 0.25s ease, width 0.25s ease;
+      color: inherit;
+      appearance: none;
+      font: inherit;
+    }
+
+    .product-photo-grid__dot:hover,
+    .product-photo-grid__dot:focus-visible {
+      opacity: 0.5;
+      outline: none;
+    }
+
+    .product-photo-grid__dot.is-active {
+      opacity: 1;
+      width: 2rem;
+      border-radius: 999px;
+    }
+
+    .product-photo-grid__dot:focus-visible {
+      box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 25%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-photo-grid__item,
+    .product-photo-grid__link,
+    .product-photo-grid__img {
+      animation: none;
+      transition: none;
+    }
+    .product-photo-grid__list {
+      scroll-behavior: auto;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function initGrid(viewport) {
+      if (viewport.__ppgInit) return;
+      viewport.__ppgInit = true;
+
+      var list = viewport.querySelector('.product-photo-grid__list');
+      var items = viewport.querySelectorAll('.product-photo-grid__item');
+      var dotsWrap = viewport.parentElement && viewport.parentElement.querySelector('[data-photo-grid-dots]');
+      var dots = dotsWrap ? dotsWrap.querySelectorAll('.product-photo-grid__dot') : [];
+
+      if (!list || items.length === 0) return;
+
+      function setActiveDot(index) {
+        for (var i = 0; i < dots.length; i++) {
+          var isActive = i === index;
+          dots[i].classList.toggle('is-active', isActive);
+          dots[i].setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }
+      }
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          var best = null;
+          for (var i = 0; i < entries.length; i++) {
+            var e = entries[i];
+            if (!e.isIntersecting) continue;
+            if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+          }
+          if (best) {
+            var idx = parseInt(best.target.getAttribute('data-item-index'), 10) || 0;
+            setActiveDot(idx);
+          }
+        }, { root: list, threshold: [0.5, 0.75, 1] });
+
+        for (var i = 0; i < items.length; i++) {
+          items[i].setAttribute('data-item-index', i);
+          observer.observe(items[i]);
+        }
+      }
+
+      for (var d = 0; d < dots.length; d++) {
+        (function (dot) {
+          dot.addEventListener('click', function () {
+            var idx = parseInt(dot.getAttribute('data-dot-index'), 10) || 0;
+            var target = items[idx];
+            if (!target) return;
+            var listRect = list.getBoundingClientRect();
+            var targetRect = target.getBoundingClientRect();
+            var offset = (targetRect.left - listRect.left) - (listRect.width - targetRect.width) / 2;
+            list.scrollBy({ left: offset, behavior: 'smooth' });
+          });
+        })(dots[d]);
+      }
+
+      function updateFade() {
+        var atStart = list.scrollLeft <= 4;
+        var atEnd = list.scrollLeft + list.clientWidth >= list.scrollWidth - 4;
+        viewport.setAttribute('data-scroll-start', atStart ? 'true' : 'false');
+        viewport.setAttribute('data-scroll-end', atEnd ? 'true' : 'false');
+      }
+      updateFade();
+      list.addEventListener('scroll', updateFade, { passive: true });
+      window.addEventListener('resize', updateFade);
+    }
+
+    function initAll() {
+      var viewports = document.querySelectorAll('[data-photo-grid]');
+      for (var i = 0; i < viewports.length; i++) initGrid(viewports[i]);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAll);
+    } else {
+      initAll();
+    }
+
+    document.addEventListener('shopify:section:load', initAll);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Galería de fotos 3:4",
+  "tag": "section",
+  "class": "section section-product-photo-grid",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Grid de fotos con aspect-ratio 3:4 (retrato). Desktop: 4 columnas. Tablet: 2 columnas. Mobile: carrusel deslizable con snap (se puede arrastrar con el dedo)."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título (opcional)"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subtítulo (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Fotos"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Proporción de la foto",
+      "default": "3 / 4",
+      "options": [
+        { "value": "3 / 4", "label": "3:4 (retrato)" },
+        { "value": "4 / 5", "label": "4:5 (retrato suave)" },
+        { "value": "1 / 1", "label": "1:1 (cuadrado)" },
+        { "value": "4 / 3", "label": "4:3 (paisaje)" },
+        { "value": "16 / 9", "label": "16:9 (panorámico)" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_padding",
+      "label": "Aire interno de la foto",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Deja espacio dentro del marco para que la foto no toque los bordes. Útil si el 'cover' se ve muy zoomeado o para dar más aire."
+    },
+    {
+      "type": "header",
+      "content": "Tamaños de texto"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 16,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Tamaño del subtítulo",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "caption_size",
+      "label": "Tamaño de la leyenda de la foto",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo",
+      "min": 640,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Separación entre fotos",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Radio de bordes de la foto",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "foto",
+      "name": "Foto",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen",
+          "info": "Recomendado: proporción 3:4 (por ejemplo 900×1200 px). Se recorta automáticamente con object-fit: cover."
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Leyenda (opcional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace (opcional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Galería 3:4 (4 fotos)",
+      "blocks": [
+        { "type": "foto", "settings": { "caption": "Foto 1" } },
+        { "type": "foto", "settings": { "caption": "Foto 2" } },
+        { "type": "foto", "settings": { "caption": "Foto 3" } },
+        { "type": "foto", "settings": { "caption": "Foto 4" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

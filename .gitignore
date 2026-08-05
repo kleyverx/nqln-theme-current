@@ -14,3 +14,9 @@ desktop.ini
 # Node (in case any tooling is added)
 node_modules/
 npm-debug.log*
+
+# Playwright MCP - screenshots y logs temporales
+.playwright-mcp/
+
+# Screenshots temporales de referencia
+vauli-template.png

@@ -1,0 +1,674 @@
+{%- comment -%}
+  Product Comparison Table — tabla comparativa fila a fila (HydroLoko vs alternativa).
+  Versión simplificada: cada fila muestra solo el criterio y dos íconos ✓/✗
+  (aplica / no aplica). Sin texto de valores en cada celda para reducir ruido
+  visual. Paleta minimalista: fondo neutro, solo el ícono se pinta con acento
+  verde (aplica) o rojo (no aplica).
+
+  El ícono acepta emoji o SVG completo — los defaults son SVG limpios que
+  heredan color por currentColor.
+
+  Ancho máximo configurable para que la tabla no ocupe todo el viewport;
+  centrada con `margin: 0 auto`.
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  GOTCHA mobile — la tabla se transforma a tarjetas apiladas con `display:block`
+  en <table>, <thead>, <tbody>, <tr>, <th>, <td>.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductComparisonTable-{{ section.id }} {
+    --pct-bg: {{ section.settings.bg_color | default: '#f6f5f1' }};
+    --pct-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pct-yes-color: {{ section.settings.yes_color | default: '#20b19e' }};
+    --pct-no-color: {{ section.settings.no_color | default: '#c33a3a' }};
+    --pct-max-width: {{ section.settings.content_max_width | default: 780 }}px;
+    background-color: var(--pct-bg);
+    color: var(--pct-text);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign col_a_label = section.settings.col_a_label | default: 'HydroLoko'
+  assign col_b_label = section.settings.col_b_label | default: 'Pintura común'
+  assign col_a_image = section.settings.col_a_image
+  assign col_b_image = section.settings.col_b_image
+  assign yes_icon = section.settings.yes_icon
+  assign no_icon = section.settings.no_icon
+-%}
+
+{%- capture default_yes_svg -%}
+<svg viewBox="0 0 15 15" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"/></svg>
+{%- endcapture -%}
+{%- capture default_no_svg -%}
+<svg viewBox="0 0 15 15" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.1969 4.19691C4.4573 3.93656 4.87941 3.93656 5.13976 4.19691L7.49999 6.55713L9.86022 4.19691C10.1206 3.93656 10.5427 3.93656 10.8031 4.19691C11.0634 4.45726 11.0634 4.87937 10.8031 5.13972L8.44283 7.49994L10.8031 9.86016C11.0634 10.1205 11.0634 10.5426 10.8031 10.803C10.5427 11.0633 10.1206 11.0633 9.86022 10.803L7.49999 8.44275L5.13976 10.803C4.87941 11.0633 4.4573 11.0633 4.1969 10.803C3.93655 10.5426 3.93655 10.1205 4.1969 9.86016L6.55712 7.49994L4.1969 5.13972C3.93655 4.87937 3.93655 4.45726 4.1969 4.19691Z"/></svg>
+{%- endcapture -%}
+
+{%- if yes_icon == blank -%}{%- assign yes_icon = default_yes_svg -%}{%- endif -%}
+{%- if no_icon == blank -%}{%- assign no_icon = default_no_svg -%}{%- endif -%}
+
+<div id="ProductComparisonTable-{{ section.id }}" class="product-comparison-table">
+  <div class="product-comparison-table__inner page-width">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-comparison-table__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <div class="product-comparison-table__subheading rte">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-comparison-table__wrap">
+        <table class="product-comparison-table__table">
+          <thead class="product-comparison-table__thead">
+            <tr class="product-comparison-table__head-row">
+              <th scope="col" class="product-comparison-table__th product-comparison-table__th--criterion">
+                <span class="product-comparison-table__th-label">Criterio</span>
+              </th>
+              <th scope="col" class="product-comparison-table__th product-comparison-table__th--a">
+                <span class="product-comparison-table__th-inner" style="display:inline-flex;">
+                  {%- if col_a_image != blank -%}
+                    <span class="product-comparison-table__th-image" style="display:inline-block;">
+                      {{ col_a_image | image_url: width: 240 | image_tag:
+                        widths: '80, 120, 160, 200, 240',
+                        sizes: '(max-width: 749px) 40px, 60px',
+                        alt: col_a_label,
+                        loading: 'lazy',
+                        class: 'product-comparison-table__th-img'
+                      }}
+                    </span>
+                  {%- endif -%}
+                  <span class="product-comparison-table__th-label">{{ col_a_label }}</span>
+                </span>
+              </th>
+              <th scope="col" class="product-comparison-table__th product-comparison-table__th--b">
+                <span class="product-comparison-table__th-inner" style="display:inline-flex;">
+                  {%- if col_b_image != blank -%}
+                    <span class="product-comparison-table__th-image" style="display:inline-block;">
+                      {{ col_b_image | image_url: width: 240 | image_tag:
+                        widths: '80, 120, 160, 200, 240',
+                        sizes: '(max-width: 749px) 40px, 60px',
+                        alt: col_b_label,
+                        loading: 'lazy',
+                        class: 'product-comparison-table__th-img'
+                      }}
+                    </span>
+                  {%- endif -%}
+                  <span class="product-comparison-table__th-label">{{ col_b_label }}</span>
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="product-comparison-table__tbody">
+            {%- for block in section.blocks -%}
+              <tr
+                class="product-comparison-table__row"
+                {{ block.shopify_attributes }}
+              >
+                <th scope="row" class="product-comparison-table__cell product-comparison-table__cell--criterion" data-col-label="Criterio">
+                  <span class="product-comparison-table__criterion-text" style="display:inline-block;">
+                    {{ block.settings.criterion | default: 'Criterio' }}
+                  </span>
+                </th>
+                <td
+                  class="product-comparison-table__cell product-comparison-table__cell--a"
+                  data-col-label="{{ col_a_label | escape }}"
+                >
+                  {%- if block.settings.col_a_applies -%}
+                    <span class="product-comparison-table__mark product-comparison-table__mark--yes" style="display:inline-flex;">
+                      <span class="visually-hidden">Sí</span>
+                      <span class="product-comparison-table__mark-icon" aria-hidden="true" style="display:inline-flex;">{{ yes_icon }}</span>
+                    </span>
+                  {%- else -%}
+                    <span class="product-comparison-table__mark product-comparison-table__mark--no" style="display:inline-flex;">
+                      <span class="visually-hidden">No</span>
+                      <span class="product-comparison-table__mark-icon" aria-hidden="true" style="display:inline-flex;">{{ no_icon }}</span>
+                    </span>
+                  {%- endif -%}
+                </td>
+                <td
+                  class="product-comparison-table__cell product-comparison-table__cell--b"
+                  data-col-label="{{ col_b_label | escape }}"
+                >
+                  {%- if block.settings.col_b_applies -%}
+                    <span class="product-comparison-table__mark product-comparison-table__mark--yes" style="display:inline-flex;">
+                      <span class="visually-hidden">Sí</span>
+                      <span class="product-comparison-table__mark-icon" aria-hidden="true" style="display:inline-flex;">{{ yes_icon }}</span>
+                    </span>
+                  {%- else -%}
+                    <span class="product-comparison-table__mark product-comparison-table__mark--no" style="display:inline-flex;">
+                      <span class="visually-hidden">No</span>
+                      <span class="product-comparison-table__mark-icon" aria-hidden="true" style="display:inline-flex;">{{ no_icon }}</span>
+                    </span>
+                  {%- endif -%}
+                </td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    {%- elsif request.design_mode -%}
+      <div class="product-comparison-table__placeholder" style="display:block;">
+        <p>Agrega filas de comparación desde el panel lateral para ver la tabla.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-comparison-table__inner {
+    text-align: center;
+    max-width: var(--pct-max-width, 780px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .product-comparison-table__heading {
+    margin: 0 0 1rem;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: inherit;
+  }
+
+  .product-comparison-table__subheading {
+    margin: 0 auto 2.4rem;
+    max-width: 60ch;
+    font-size: 1.4rem;
+    line-height: 1.55;
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  .product-comparison-table__wrap {
+    margin-top: 1.6rem;
+  }
+
+  .product-comparison-table__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    color: inherit;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03), 0 6px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .product-comparison-table__th {
+    padding: 1.4rem 1.6rem;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    background: #fafafa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: inherit;
+  }
+
+  .product-comparison-table__th--criterion {
+    width: 46%;
+  }
+
+  .product-comparison-table__th--a,
+  .product-comparison-table__th--b {
+    width: 27%;
+    text-align: center;
+  }
+
+  /* Cabecera con imagen + label centrados verticalmente */
+  .product-comparison-table__th-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .product-comparison-table__th-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    flex-shrink: 0;
+  }
+
+  .product-comparison-table__th-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .product-comparison-table__cell {
+    padding: 1.4rem 1.6rem;
+    vertical-align: middle;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    color: inherit;
+  }
+
+  .product-comparison-table__cell--criterion {
+    font-weight: 600;
+    font-size: 1.45rem;
+    line-height: 1.4;
+  }
+
+  .product-comparison-table__cell--a,
+  .product-comparison-table__cell--b {
+    text-align: center;
+  }
+
+  .product-comparison-table__row:first-child .product-comparison-table__cell {
+    border-top: none;
+  }
+
+  .product-comparison-table__criterion-text {
+    line-height: 1.4;
+  }
+
+  /* Marca circular con el icono adentro */
+  .product-comparison-table__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    line-height: 1;
+  }
+
+  .product-comparison-table__mark--yes {
+    color: var(--pct-yes-color, #20b19e);
+    background: color-mix(in srgb, var(--pct-yes-color, #20b19e) 12%, transparent);
+  }
+
+  .product-comparison-table__mark--no {
+    color: var(--pct-no-color, #c33a3a);
+    background: color-mix(in srgb, var(--pct-no-color, #c33a3a) 10%, transparent);
+    opacity: 0.85;
+  }
+
+  .product-comparison-table__mark-icon {
+    display: inline-flex;
+    width: 1.8rem;
+    height: 1.8rem;
+    line-height: 1;
+  }
+
+  .product-comparison-table__mark-icon > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
+  }
+
+  /* SVGs de línea (usan stroke) también heredan del currentColor */
+  .product-comparison-table__mark-icon > svg[fill="none"] {
+    stroke: currentColor;
+  }
+
+  /* Si el SVG trae un color propio distinto, respetarlo */
+  .product-comparison-table__mark-icon > svg [fill]:not([fill="currentColor"]):not([fill="none"]) {
+    fill: revert;
+  }
+  .product-comparison-table__mark-icon > svg [stroke]:not([stroke="currentColor"]):not([stroke="none"]) {
+    stroke: revert;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .product-comparison-table__placeholder {
+    padding: 3rem 2rem;
+    border: 2px dashed rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    color: inherit;
+    opacity: 0.7;
+    font-size: 1.4rem;
+  }
+
+  /* Tablet: paddings más compactos */
+  @media (max-width: 989px) {
+    .product-comparison-table__th,
+    .product-comparison-table__cell {
+      padding: 1.1rem 1.2rem;
+    }
+    .product-comparison-table__cell--criterion {
+      font-size: 1.35rem;
+    }
+    .product-comparison-table__th {
+      font-size: 1.2rem;
+    }
+    .product-comparison-table__th-image {
+      width: 3.6rem;
+      height: 3.6rem;
+    }
+    .product-comparison-table__mark {
+      width: 2.8rem;
+      height: 2.8rem;
+    }
+    .product-comparison-table__mark-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  /*
+    Mobile (<749px): se mantiene la tabla (NO se transforma en cards).
+    Se comprime: font más chico, paddings mínimos, columnas de check angostas
+    para que la tabla completa quepa en el viewport sin scroll horizontal.
+  */
+  @media (max-width: 749px) {
+    .product-comparison-table__wrap {
+      margin-top: 1.2rem;
+    }
+
+    .product-comparison-table__table {
+      font-size: 1.25rem;
+      border-radius: 10px;
+    }
+
+    .product-comparison-table__th {
+      padding: 0.9rem 0.6rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .product-comparison-table__th--criterion {
+      width: 44%;
+      padding-left: 1rem;
+    }
+
+    .product-comparison-table__th--a,
+    .product-comparison-table__th--b {
+      width: 28%;
+    }
+
+    .product-comparison-table__th-inner {
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .product-comparison-table__th-image {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 6px;
+    }
+
+    .product-comparison-table__cell {
+      padding: 0.9rem 0.6rem;
+    }
+
+    .product-comparison-table__cell--criterion {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.35;
+      padding-left: 1rem;
+    }
+
+    .product-comparison-table__mark {
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+
+    .product-comparison-table__mark-icon {
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+  }
+
+  /* Móvil muy pequeño (<380px): aún más compacto para no romper */
+  @media (max-width: 380px) {
+    .product-comparison-table__table {
+      font-size: 1.15rem;
+    }
+    .product-comparison-table__th,
+    .product-comparison-table__cell {
+      padding: 0.7rem 0.4rem;
+    }
+    .product-comparison-table__th--criterion,
+    .product-comparison-table__cell--criterion {
+      padding-left: 0.8rem;
+    }
+    .product-comparison-table__mark {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+    .product-comparison-table__mark-icon {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-comparison-table__row {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tabla comparativa",
+  "tag": "section",
+  "class": "section section-product-comparison-table",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tabla comparativa minimalista: solo criterio + icono ✓ o ✗ por columna. En desktop es una tabla; en mobile se transforma en tarjetas compactas."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "HydroLoko vs pintura común"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subtítulo (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Etiquetas de columnas"
+    },
+    {
+      "type": "text",
+      "id": "col_a_label",
+      "label": "Columna A (la buena)",
+      "default": "HydroLoko"
+    },
+    {
+      "type": "image_picker",
+      "id": "col_a_image",
+      "label": "Foto columna A (opcional)",
+      "info": "Se muestra en la cabecera junto al nombre. Recomendado: imagen cuadrada del producto."
+    },
+    {
+      "type": "text",
+      "id": "col_b_label",
+      "label": "Columna B (la alternativa)",
+      "default": "Pintura común"
+    },
+    {
+      "type": "image_picker",
+      "id": "col_b_image",
+      "label": "Foto columna B (opcional)",
+      "info": "Se muestra en la cabecera junto al nombre. Recomendado: imagen cuadrada del producto genérico."
+    },
+    {
+      "type": "header",
+      "content": "Iconos ✓ / ✗"
+    },
+    {
+      "type": "textarea",
+      "id": "yes_icon",
+      "label": "Icono 'sí aplica' (emoji o SVG)",
+      "info": "Deja vacío para usar el ícono SVG por defecto (check). También puedes pegar un emoji (✓) o un <svg>…</svg> completo."
+    },
+    {
+      "type": "textarea",
+      "id": "no_icon",
+      "label": "Icono 'no aplica' (emoji o SVG)",
+      "info": "Deja vacío para usar el ícono SVG por defecto (cross)."
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo de la sección",
+      "default": "#f6f5f1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "yes_color",
+      "label": "Color del ícono 'sí aplica'",
+      "default": "#20b19e"
+    },
+    {
+      "type": "color",
+      "id": "no_color",
+      "label": "Color del ícono 'no aplica'",
+      "default": "#c33a3a"
+    },
+    {
+      "type": "header",
+      "content": "Tamaño y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo de la tabla",
+      "min": 480,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 780
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "type": "fila",
+      "name": "Fila de comparación",
+      "settings": [
+        {
+          "type": "text",
+          "id": "criterion",
+          "label": "Criterio",
+          "default": "Criterio"
+        },
+        {
+          "type": "checkbox",
+          "id": "col_a_applies",
+          "label": "Columna A: sí aplica",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "col_b_applies",
+          "label": "Columna B: sí aplica",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HydroLoko — Comparativa",
+      "blocks": [
+        {
+          "type": "fila",
+          "settings": {
+            "criterion": "Impermeabilización real",
+            "col_a_applies": true,
+            "col_b_applies": false
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "criterion": "Versatilidad de superficies",
+            "col_a_applies": true,
+            "col_b_applies": false
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "criterion": "Aplicación sencilla sin equipos especiales",
+            "col_a_applies": true,
+            "col_b_applies": false
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "criterion": "Uso interior y exterior",
+            "col_a_applies": true,
+            "col_b_applies": false
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "criterion": "Resultado duradero a largo plazo",
+            "col_a_applies": true,
+            "col_b_applies": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

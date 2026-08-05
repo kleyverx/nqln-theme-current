@@ -1299,6 +1299,16 @@
                       </div>
                     </div>
                   {%- endif -%}
+                {%- when 'benefits' -%}
+                  <div
+                    class="productView-moreItem"
+                    style="
+                      --spacing-top: {{ spacing_top | append: 'px' }};
+                      --spacing-bottom: {{ spacing_bottom | append: 'px' }}
+                    "
+                  >
+                    {% render 'product-benefits', block: block %}
+                  </div>
                 {%- when 'product_text' -%}
                   {%- liquid
                     assign content_spacing = block.settings.content_spacing
