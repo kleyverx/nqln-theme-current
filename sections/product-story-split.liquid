@@ -29,8 +29,8 @@
     --pss-text: {{ section.settings.text_color | default: '#1a1a1a' }};
     --pss-accent: {{ section.settings.accent_color | default: '#20b19e' }};
     --pss-max-width: {{ content_max_width }}px;
-    --pss-heading-size: {{ heading_size }}px;
-    --pss-body-size: {{ body_size }}px;
+    --pss-heading-size: {{ heading_size | divided_by: 10.0 }}rem;
+    --pss-body-size: {{ body_size | divided_by: 10.0 }}rem;
     background-color: var(--pss-bg);
     color: var(--pss-text);
     padding-top: {{ section.settings.padding_top | default: 64 }}px;
@@ -162,7 +162,7 @@
   .product-story-split__heading {
     margin: 0;
     /* Escalado responsive: mínimo ~22px, ideal según setting, máximo según setting */
-    font-size: clamp(2.2rem, 4.2vw, calc(var(--pss-heading-size, 32px) * 0.1rem));
+    font-size: clamp(2.2rem, 4.2vw, var(--pss-heading-size, 3.2rem));
     font-weight: 800;
     letter-spacing: -0.015em;
     line-height: 1.15;
@@ -171,7 +171,7 @@
   }
 
   .product-story-split__body {
-    font-size: calc(var(--pss-body-size, 16px) * 0.1rem);
+    font-size: var(--pss-body-size, 1.6rem);
     line-height: 1.65;
     color: inherit;
   }

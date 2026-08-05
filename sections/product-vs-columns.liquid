@@ -57,7 +57,7 @@
           {%- endif -%}
           <ul class="product-vs-columns__list" role="list">
             {%- for block in section.blocks -%}
-              <li class="product-vs-columns__item" {{ block.shopify_attributes }}>
+              <li class="product-vs-columns__item">
                 {%- if block.settings.topic != blank -%}
                   <strong class="product-vs-columns__topic">{{ block.settings.topic }}</strong>
                 {%- endif -%}

@@ -340,7 +340,7 @@
         "eyebrow": "Tecnología VAULI",
         "heading": "Pequeño por fuera, potente por dentro",
         "columns": "3",
-        "aspect_ratio": "4 / 3",
+        "aspect_ratio": "4/3",
         "image_radius": 12,
         "bg_color": "#f6f5f1",
         "text_color": "#1a1a1a",
@@ -463,7 +463,51 @@
     },
     "faq": {
       "type": "faq-pop",
-      "disabled": false,
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "¿Las bolsas son reutilizables?",
+            "answer": "<p>Sí, lávalas con agua y jabón y reutilízalas sin problema. Solo evita reusar las que hayan tenido carnes crudas.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "¿Cómo se carga?",
+            "answer": "<p>Por USB-C, como un teléfono. El display muestra la batería en todo momento para que nunca te agarre descargado.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "¿Puedo sellar líquidos o sopas?",
+            "answer": "<p>Está recomendado para alimentos sólidos. Para líquidos, congela primero y luego sella: quedan perfectos.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "¿Venden bolsas de repuesto?",
+            "answer": "<p>Sí, tenemos pack de 10 bolsas de repuesto por $9.99.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "¿Cómo es el envío?",
+            "answer": "<p>Gratis en compras +$20: delivery en Caracas y envíos por MRW/ZOOM al interior del país.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "question": "¿Puedo pagar al recibir?",
+            "answer": "<p>Sí, ofrecemos pago contra entrega en Caracas. También aceptamos pago móvil, transferencia, Zelle y PayPal.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
       "settings": {}
     },
     "cta-final": {
