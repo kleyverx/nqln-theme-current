@@ -1,0 +1,398 @@
+{%- comment -%}
+  Product Story Split — "Hook emocional" para landings de producto.
+  Split imagen + texto que empatiza con el problema del cliente antes de vender.
+  Estructura: eyebrow (línea corta arriba) + H2 fuerte + 2-3 párrafos richtext
+  con <strong> para resaltar frases clave.
+
+  Layout: grid 2 columnas 1fr/1fr en desktop; stack vertical en mobile con la
+  imagen arriba (orden natural del DOM). El setting image_position permite
+  invertir el orden visual (imagen a la derecha) sin alterar el DOM.
+
+  Solo CSS puro, sin JS. Respeta prefers-reduced-motion (aunque no hay
+  animaciones agresivas: solo un fade-in muy sutil).
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  Los contenedores de imagen y contenido siempre llevan contenido (imagen real,
+  placeholder SVG en design_mode, o texto por defecto).
+{%- endcomment -%}
+
+{%- liquid
+  assign image_position = section.settings.image_position | default: 'left'
+  assign heading_size = section.settings.heading_size | default: 32
+  assign body_size = section.settings.body_size | default: 16
+  assign content_max_width = section.settings.content_max_width | default: 1100
+-%}
+
+{%- style -%}
+  #ProductStorySplit-{{ section.id }} {
+    --pss-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --pss-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pss-accent: {{ section.settings.accent_color | default: '#20b19e' }};
+    --pss-max-width: {{ content_max_width }}px;
+    --pss-heading-size: {{ heading_size }}px;
+    --pss-body-size: {{ body_size }}px;
+    background-color: var(--pss-bg);
+    color: var(--pss-text);
+    padding-top: {{ section.settings.padding_top | default: 64 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 64 }}px;
+  }
+{%- endstyle -%}
+
+<div
+  id="ProductStorySplit-{{ section.id }}"
+  class="product-story-split product-story-split--image-{{ image_position }}"
+>
+  <div class="product-story-split__inner">
+    <div class="product-story-split__image-wrap">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag:
+            widths: '400, 600, 800, 1000, 1200, 1600',
+            sizes: '(max-width: 749px) 100vw, (max-width: 989px) 100vw, 50vw',
+            alt: section.settings.image.alt | default: section.settings.heading,
+            loading: 'lazy',
+            class: 'product-story-split__image'
+        }}
+      {%- else -%}
+        {%- if request.design_mode -%}
+          <div class="product-story-split__image product-story-split__image--placeholder" aria-hidden="true">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'product-story-split__placeholder-svg' }}
+          </div>
+        {%- else -%}
+          <div class="product-story-split__image product-story-split__image--empty" aria-hidden="true"></div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <div class="product-story-split__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="product-story-split__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="product-story-split__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.body != blank -%}
+        <div class="product-story-split__body rte">
+          {{ section.settings.body }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-story-split {
+    display: block;
+  }
+
+  .product-story-split__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4.8rem;
+    align-items: center;
+    max-width: var(--pss-max-width, 1100px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-sizing: border-box;
+  }
+
+  /* Invertir orden visual sin cambiar DOM cuando la imagen va a la derecha */
+  .product-story-split--image-right .product-story-split__image-wrap {
+    order: 2;
+  }
+
+  .product-story-split--image-right .product-story-split__content {
+    order: 1;
+  }
+
+  .product-story-split__image-wrap {
+    width: 100%;
+    /* Fade-in muy sutil al cargar */
+    animation: pss-fade-in 0.7s ease both;
+  }
+
+  .product-story-split__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .product-story-split__image--placeholder,
+  .product-story-split__image--empty {
+    background-color: rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-story-split__image--placeholder .product-story-split__placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+  }
+
+  .product-story-split__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    /* Fade-in escalonado tras la imagen */
+    animation: pss-fade-in 0.7s ease 0.1s both;
+  }
+
+  .product-story-split__eyebrow {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pss-accent, #20b19e);
+    line-height: 1.2;
+  }
+
+  .product-story-split__heading {
+    margin: 0;
+    /* Escalado responsive: mínimo ~22px, ideal según setting, máximo según setting */
+    font-size: clamp(2.2rem, 4.2vw, calc(var(--pss-heading-size, 32px) * 0.1rem));
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: inherit;
+    text-wrap: balance;
+  }
+
+  .product-story-split__body {
+    font-size: calc(var(--pss-body-size, 16px) * 0.1rem);
+    line-height: 1.65;
+    color: inherit;
+  }
+
+  .product-story-split__body p {
+    margin: 0 0 1.2rem;
+  }
+
+  .product-story-split__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .product-story-split__body strong {
+    font-weight: 700;
+    color: inherit;
+    /* Marca visual sutil bajo las frases clave */
+    background: linear-gradient(
+      to bottom,
+      transparent 62%,
+      rgba(32, 177, 158, 0.18) 62%,
+      rgba(32, 177, 158, 0.18) 100%
+    );
+    padding: 0 2px;
+  }
+
+  /* Tablet: mantiene 2 columnas pero con menos gap */
+  @media (max-width: 989px) {
+    .product-story-split__inner {
+      gap: 3.2rem;
+    }
+    .product-story-split__image {
+      aspect-ratio: 4 / 4;
+    }
+  }
+
+  /* Móvil: stack vertical, imagen arriba, contenido abajo */
+  @media (max-width: 749px) {
+    .product-story-split__inner {
+      grid-template-columns: 1fr;
+      gap: 2.4rem;
+    }
+
+    /* En mobile ignoramos el image_position: siempre imagen arriba */
+    .product-story-split--image-right .product-story-split__image-wrap,
+    .product-story-split--image-right .product-story-split__content {
+      order: initial;
+    }
+
+    .product-story-split__image {
+      aspect-ratio: 16 / 10;
+    }
+
+    .product-story-split__eyebrow {
+      font-size: 1.2rem;
+    }
+  }
+
+  /* Respeta prefers-reduced-motion: sin fade-in */
+  @media (prefers-reduced-motion: reduce) {
+    .product-story-split__image-wrap,
+    .product-story-split__content {
+      animation: none;
+    }
+  }
+
+  @keyframes pss-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Historia (split)",
+  "tag": "section",
+  "class": "section section-product-story-split",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Split imagen + texto tipo 'hook emocional'. Ideal como primera sección después del hero: empatiza con el problema del cliente antes de presentar la solución. Usa una imagen vertical (4:5) y párrafos richtext con <strong> para resaltar frases clave."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posición de la imagen (escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left",
+      "info": "En móvil la imagen siempre aparece arriba."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Etiqueta (eyebrow)",
+      "default": "Te va a sonar familiar"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título (H2)",
+      "default": "Lo que compraste con esfuerzo, no debería terminar en la basura."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Cuerpo (párrafos)",
+      "default": "<p>Hacer mercado cuesta. Y duele todavía más abrir la nevera a los pocos días y encontrar el queso reseco, la carne quemada por el hielo o las fresas que ya no sirven para nada.</p><p>La nevera no perdona: el aire es el enemigo de tus alimentos. Por eso el vacío funciona — al extraer el aire de la bolsa, <strong>tus alimentos se conservan hasta 5 veces más tiempo</strong>, con su sabor, su textura y su frescura intactos.</p><p><strong>Con VAULI, cada bolsa sellada es comida que no se bota y plata que no se pierde.</strong></p>",
+      "info": "Usa <strong>…</strong> para resaltar frases clave con un subrayado suave del color acento."
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (eyebrow + resaltado)",
+      "default": "#20b19e"
+    },
+    {
+      "type": "header",
+      "content": "Tamaños"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Tamaño del cuerpo",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 720,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAULI — Historia",
+      "settings": {
+        "eyebrow": "Te va a sonar familiar",
+        "heading": "Lo que compraste con esfuerzo, no debería terminar en la basura.",
+        "body": "<p>Hacer mercado cuesta. Y duele todavía más abrir la nevera a los pocos días y encontrar el queso reseco, la carne quemada por el hielo o las fresas que ya no sirven para nada.</p><p>La nevera no perdona: el aire es el enemigo de tus alimentos. Por eso el vacío funciona — al extraer el aire de la bolsa, <strong>tus alimentos se conservan hasta 5 veces más tiempo</strong>, con su sabor, su textura y su frescura intactos.</p><p><strong>Con VAULI, cada bolsa sellada es comida que no se bota y plata que no se pierde.</strong></p>",
+        "image_position": "left",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#20b19e",
+        "heading_size": 32,
+        "body_size": 16,
+        "content_max_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    }
+  ]
+}
+{% endschema %}

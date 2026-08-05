@@ -1,0 +1,329 @@
+{%- comment -%}
+  Product CTA Final — bloque grande de cierre de venta.
+  Estética VAULI/METRIKASA: fondo oscuro (#1a1a1a), texto hueso (#f6f5f1) y
+  botón CTA amarillo (#ffcd11) grande con letter-spacing amplio y hover sutil.
+  Stack vertical centrado: heading + subheading + precio (opcional) + botón + trust line.
+  El precio es texto libre editable desde settings; sin lógica dinámica de producto.
+  Solo CSS, sin JS. Respeta prefers-reduced-motion.
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  Cada subelemento va condicionado con if; el wrapper siempre lleva heading.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductCtaFinal-{{ section.id }} {
+    --pcf-bg: {{ section.settings.bg_color | default: '#1a1a1a' }};
+    --pcf-text: {{ section.settings.text_color | default: '#f6f5f1' }};
+    --pcf-cta-bg: {{ section.settings.cta_bg | default: '#ffcd11' }};
+    --pcf-cta-color: {{ section.settings.cta_color | default: '#1a1a1a' }};
+    --pcf-max-width: {{ section.settings.content_max_width | default: 900 }}px;
+    background-color: var(--pcf-bg);
+    color: var(--pcf-text);
+    padding-top: {{ section.settings.padding_top | default: 80 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 80 }}px;
+  }
+{%- endstyle -%}
+
+<div id="ProductCtaFinal-{{ section.id }}" class="product-cta-final">
+  <div class="product-cta-final__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-cta-final__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <div class="product-cta-final__subheading rte">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.price_text != blank -%}
+      <p class="product-cta-final__price">{{ section.settings.price_text }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="product-cta-final__cta-wrap">
+        <a
+          href="{{ section.settings.cta_link | default: '#' }}"
+          class="product-cta-final__cta"
+        >
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.trust_line != blank -%}
+      <div class="product-cta-final__trust rte">{{ section.settings.trust_line }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-cta-final {
+    text-align: center;
+  }
+
+  .product-cta-final__inner {
+    max-width: var(--pcf-max-width, 900px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .product-cta-final__heading {
+    margin: 0;
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: inherit;
+  }
+
+  .product-cta-final__subheading {
+    margin: 0;
+    font-size: clamp(1.5rem, 2vw, 1.8rem);
+    line-height: 1.5;
+    opacity: 0.85;
+    color: inherit;
+  }
+
+  .product-cta-final__subheading > *,
+  .product-cta-final__subheading p {
+    margin: 0;
+    color: inherit;
+  }
+
+  /* Precio grande en el color del CTA para atraer la vista */
+  .product-cta-final__price {
+    margin: 0.4rem 0 0;
+    font-size: clamp(3.2rem, 6vw, 5.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--pcf-cta-bg);
+  }
+
+  .product-cta-final__cta-wrap {
+    margin-top: 0.4rem;
+  }
+
+  /* Botón grande con letter-spacing amplio y hover sutil */
+  .product-cta-final__cta {
+    display: inline-block;
+    padding: 1.8rem 4.4rem;
+    background-color: var(--pcf-cta-bg);
+    color: var(--pcf-cta-color);
+    font-size: clamp(1.4rem, 1.6vw, 1.7rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    border: 0;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    will-change: transform;
+  }
+
+  .product-cta-final__cta:hover,
+  .product-cta-final__cta:focus-visible {
+    color: var(--pcf-cta-color);
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
+    filter: brightness(1.05);
+  }
+
+  .product-cta-final__cta:focus-visible {
+    outline: 2px solid var(--pcf-text);
+    outline-offset: 4px;
+  }
+
+  .product-cta-final__cta:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Trust line: pequeño y con opacidad reducida */
+  .product-cta-final__trust {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.5;
+    opacity: 0.65;
+    color: inherit;
+  }
+
+  .product-cta-final__trust > *,
+  .product-cta-final__trust p {
+    margin: 0;
+    color: inherit;
+  }
+
+  /* Tablet */
+  @media (max-width: 989px) {
+    .product-cta-final__inner {
+      gap: 1.8rem;
+    }
+  }
+
+  /* Movil */
+  @media (max-width: 749px) {
+    .product-cta-final__inner {
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+      gap: 1.6rem;
+    }
+    .product-cta-final__cta {
+      padding: 1.6rem 3rem;
+      letter-spacing: 0.14em;
+      width: 100%;
+      max-width: 360px;
+    }
+    .product-cta-final__trust {
+      font-size: 1.2rem;
+    }
+  }
+
+  /* Respeta prefers-reduced-motion: sin desplazamiento en hover */
+  @media (prefers-reduced-motion: reduce) {
+    .product-cta-final__cta {
+      transition: none;
+    }
+    .product-cta-final__cta:hover,
+    .product-cta-final__cta:focus-visible,
+    .product-cta-final__cta:active {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CTA de cierre",
+  "tag": "section",
+  "class": "section section-product-cta-final",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Bloque grande de cierre de venta con fondo oscuro. Título fuerte, precio opcional (texto libre), botón CTA grande y línea de trust badges debajo. Deja el precio vacío para no mostrarlo."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Tu comida rinde más cuando no se bota"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "<p>Kit de Sellado al Vacío VAULI — Bomba de extracción + 20 bolsas</p>"
+    },
+    {
+      "type": "text",
+      "id": "price_text",
+      "label": "Precio (texto libre, opcional)",
+      "info": "Ej. \"$49.99\". Deja vacío para no mostrar precio.",
+      "default": "$49.99"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Texto del botón",
+      "default": "AGREGAR AL CARRITO"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace del botón",
+      "info": "Puede ser /cart, /products/handle o un ancla como #comprar."
+    },
+    {
+      "type": "richtext",
+      "id": "trust_line",
+      "label": "Línea de garantía / trust",
+      "default": "<p>Garantía de 15 días · Envío gratis +$20 · Pago contra entrega en Caracas</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#f6f5f1"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "Color de fondo del botón",
+      "default": "#ffcd11"
+    },
+    {
+      "type": "color",
+      "id": "cta_color",
+      "label": "Color del texto del botón",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAULI — CTA final",
+      "settings": {
+        "heading": "Tu comida rinde más cuando no se bota",
+        "subheading": "<p>Kit de Sellado al Vacío VAULI — Bomba de extracción + 20 bolsas</p>",
+        "price_text": "$49.99",
+        "cta_label": "AGREGAR AL CARRITO",
+        "cta_link": "#comprar",
+        "trust_line": "<p>Garantía de 15 días · Envío gratis +$20 · Pago contra entrega en Caracas</p>",
+        "bg_color": "#1a1a1a",
+        "text_color": "#f6f5f1",
+        "cta_bg": "#ffcd11",
+        "cta_color": "#1a1a1a"
+      }
+    }
+  ]
+}
+{% endschema %}

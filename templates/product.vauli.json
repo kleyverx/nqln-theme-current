@@ -1,0 +1,501 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "fontsize_text": 24,
+            "fontsize_text_mb": 20,
+            "color_title": "#1a1a1a",
+            "spacing_top": 0,
+            "spacing_bottom": 6
+          }
+        },
+        "meta": {
+          "type": "meta",
+          "settings": {
+            "show_review": true,
+            "show_sold_in": false,
+            "spacing_top": 0,
+            "spacing_bottom": 12
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "fontsize_text": 26,
+            "spacing_top": 4,
+            "spacing_bottom": 8
+          }
+        },
+        "short_description": {
+          "type": "short_description",
+          "settings": {
+            "word_number": "30",
+            "fontsize_text": 14,
+            "color_text": "#3c3c3c",
+            "spacing_top": 0,
+            "spacing_bottom": 12
+          }
+        },
+        "info": {
+          "type": "info",
+          "settings": {
+            "show_vendor": false,
+            "show_sku": true,
+            "show_availability": true,
+            "show_product_type": false,
+            "spacing_top": 0,
+            "spacing_bottom": 12
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "spacing_top": 0,
+            "spacing_bottom": 15
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {
+            "qty_style": "1",
+            "qty_layout": "1",
+            "spacing_top": 0,
+            "spacing_bottom": 10
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true,
+            "spacing_top": 0,
+            "spacing_bottom": 15,
+            "atc_animation": "horizontal-shaking",
+            "atc_color": "#ffffff",
+            "atc_border_color": "#1a1a1a",
+            "atc_bg_color": "#1a1a1a",
+            "atc_color_hover": "#1a1a1a",
+            "atc_border_color_hover": "#1a1a1a",
+            "atc_bg_color_hover": "#ffcd11"
+          }
+        },
+        "benefits": {
+          "type": "benefits",
+          "settings": {
+            "heading": "¿Por qué elegir este producto?",
+            "show_card": true,
+            "text_color": "#1a1a1a",
+            "accent_color": "#20b19e",
+            "card_bg": "#f6f5f1",
+            "icon_size": 44,
+            "b1_icon": "✅",
+            "b1_title": "Conserva hasta 5 veces más tiempo",
+            "b1_desc": "Sin aire, sin olores cruzados, sin quemadura por hielo.",
+            "b2_icon": "✅",
+            "b2_title": "Inalámbrico y recargable por USB-C",
+            "b2_desc": "Se carga como un teléfono. Compacto, cabe en cualquier gaveta.",
+            "b3_icon": "✅",
+            "b3_title": "20 bolsas de grado alimenticio incluidas",
+            "b3_desc": "10 grandes 30×35 cm + 10 medianas 22×21 cm, reutilizables.",
+            "b4_icon": "✅",
+            "b4_title": "Apagado automático con display",
+            "b4_desc": "El LED muestra la batería y se apaga solo al terminar.",
+            "spacing_top": 12,
+            "spacing_bottom": 15
+          }
+        },
+        "trust_image": {
+          "type": "trust_image",
+          "settings": {
+            "show_trust_image": true,
+            "spacing_top": 8,
+            "spacing_bottom": 0
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "meta",
+        "price",
+        "short_description",
+        "info",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "benefits",
+        "trust_image"
+      ],
+      "settings": {
+        "container": "container",
+        "show_sticky_info": true,
+        "main_image_position": "left",
+        "main_image_layout": "1",
+        "product_image_ratio": "square",
+        "media_fit": "cover",
+        "show_badge": true,
+        "show_qty": true,
+        "show_subtotal": false,
+        "show_sticky_add_to_cart": true,
+        "show_tab": false,
+        "show_product_bundle": false,
+        "background_color": "#f6f5f1",
+        "padding_top": 30,
+        "padding_top_tablet": 20,
+        "padding_top_mobile": 20,
+        "padding_bottom": 40,
+        "padding_bottom_tablet": 30,
+        "padding_bottom_mobile": 30
+      }
+    },
+    "story": {
+      "type": "product-story-split",
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "Te va a sonar familiar",
+        "heading": "Lo que compraste con esfuerzo, no debería terminar en la basura.",
+        "body": "<p>Hacer mercado cuesta. Y duele todavía más abrir la nevera a los pocos días y encontrar el queso reseco, la carne quemada por el hielo o las fresas que ya no sirven para nada.</p><p>La nevera no perdona: el aire es el enemigo de tus alimentos. Por eso el vacío funciona — al extraer el aire de la bolsa, <strong>tus alimentos se conservan hasta 5 veces más tiempo</strong>, con su sabor, su textura y su frescura intactos.</p><p><strong>Con VAULI, cada bolsa sellada es comida que no se bota y plata que no se pierde.</strong></p>",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#20b19e",
+        "heading_size": 32,
+        "body_size": 16,
+        "content_max_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "benefits": {
+      "type": "product-benefits-pop",
+      "blocks": {
+        "b1": {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Conserva hasta 5 veces más",
+            "description": "Carnes, quesos, frutas y vegetales duran semanas en lugar de días. Sin aire, sin olores cruzados, sin quemadura por hielo."
+          }
+        },
+        "b2": {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Tu mercado rinde más",
+            "description": "Cada bolsa sellada es comida que no se bota. Compra en cantidad, porciona en casa y deja de perder lo que pagaste."
+          }
+        },
+        "b3": {
+          "type": "beneficio",
+          "settings": {
+            "icon_emoji": "✅",
+            "title": "Inalámbrico, siempre listo",
+            "description": "Se carga por USB-C como un teléfono. Es compacto, no ocupa espacio y cabe en cualquier gaveta de la cocina."
+          }
+        }
+      },
+      "block_order": ["b1", "b2", "b3"],
+      "settings": {
+        "heading": "Tu mercado rinde más desde el primer sellado",
+        "subheading": "<p>Beneficios clave</p>",
+        "layout": "grid_2",
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "accent_color": "#20b19e",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "usage-steps": {
+      "type": "product-usage-steps",
+      "blocks": {
+        "s1": {
+          "type": "paso",
+          "settings": {
+            "title": "Llena la bolsa con el alimento",
+            "description": "Sin sobrellenarla: deja espacio para el sellado.",
+            "number_override": "1"
+          }
+        },
+        "s2": {
+          "type": "paso",
+          "settings": {
+            "title": "Cierra herméticamente la válvula",
+            "description": "El cierre de la bolsa queda completamente sellado.",
+            "number_override": "2"
+          }
+        },
+        "s3": {
+          "type": "paso",
+          "settings": {
+            "title": "Presiona el botón y extrae el aire",
+            "description": "Succión de alta eficiencia, sin calor, sin dañar el alimento.",
+            "number_override": "3"
+          }
+        },
+        "s4": {
+          "type": "paso",
+          "settings": {
+            "title": "Retira cuando compacte y guarda",
+            "description": "Directo a la nevera o al freezer, plano y etiquetado.",
+            "number_override": "4"
+          }
+        }
+      },
+      "block_order": ["s1", "s2", "s3", "s4"],
+      "settings": {
+        "heading": "Listo en menos de un minuto",
+        "subheading": "<p>Fácil de usar</p>",
+        "number_style": "circle_filled",
+        "bg_color": "#1a1a1a",
+        "text_color": "#f6f5f1",
+        "number_bg": "#ffcd11",
+        "number_color": "#1a1a1a",
+        "content_max_width": 960,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "vs-columns": {
+      "type": "product-vs-columns",
+      "blocks": {
+        "r1": {
+          "type": "fila",
+          "settings": {
+            "topic": "Carnes en el freezer",
+            "bad_text": "Se queman por hielo en semanas.",
+            "good_text": "Selladas duran meses."
+          }
+        },
+        "r2": {
+          "type": "fila",
+          "settings": {
+            "topic": "Quesos y embutidos",
+            "bad_text": "Se resecan y agarran olores.",
+            "good_text": "Frescos como el primer día."
+          }
+        },
+        "r3": {
+          "type": "fila",
+          "settings": {
+            "topic": "Frutas y vegetales",
+            "bad_text": "Se dañan en días.",
+            "good_text": "Hasta 5 veces más tiempo."
+          }
+        },
+        "r4": {
+          "type": "fila",
+          "settings": {
+            "topic": "El freezer",
+            "bad_text": "Bolsas deformes y desorden.",
+            "good_text": "Porciones planas, etiquetadas y apilables."
+          }
+        }
+      },
+      "block_order": ["r1", "r2", "r3", "r4"],
+      "settings": {
+        "eyebrow": "La diferencia",
+        "heading": "Sin VAULI vs. con VAULI",
+        "subheading": "<p>Mismo mercado, mismos alimentos. La única diferencia es el aire que les quitas.</p>",
+        "col_bad_label": "SIN VAULI",
+        "col_good_label": "CON VAULI",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "col_bad_color": "#c33a3a",
+        "col_good_color": "#20b19e",
+        "content_max_width": 900,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "feature-cards": {
+      "type": "product-feature-cards",
+      "blocks": {
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "title": "Sellador portátil inteligente",
+            "description": "Control de porciones, sellado de alta velocidad, conservación óptima y batería de larga duración en un solo equipo."
+          }
+        },
+        "f2": {
+          "type": "feature",
+          "settings": {
+            "title": "Apagado automático",
+            "description": "El display LED muestra la batería en todo momento y el equipo se apaga solo al terminar el sellado."
+          }
+        },
+        "f3": {
+          "type": "feature",
+          "settings": {
+            "title": "Carga USB-C",
+            "description": "Lo cargas con cualquier cargador de teléfono. Sin enchufe fijo ni adaptadores raros: lo usas donde quieras."
+          }
+        }
+      },
+      "block_order": ["f1", "f2", "f3"],
+      "settings": {
+        "eyebrow": "Tecnología VAULI",
+        "heading": "Pequeño por fuera, potente por dentro",
+        "columns": "3",
+        "aspect_ratio": "4 / 3",
+        "image_radius": 12,
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "content_max_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "kit-contents": {
+      "type": "product-kit-contents",
+      "blocks": {
+        "i1": {
+          "type": "item",
+          "settings": {
+            "text": "1 bomba de extracción de aire VAULI"
+          }
+        },
+        "i2": {
+          "type": "item",
+          "settings": {
+            "text": "10 bolsas grandes 30 x 35 cm"
+          }
+        },
+        "i3": {
+          "type": "item",
+          "settings": {
+            "text": "10 bolsas medianas 22 x 21 cm"
+          }
+        },
+        "i4": {
+          "type": "item",
+          "settings": {
+            "text": "1 cable de carga USB-C"
+          }
+        }
+      },
+      "block_order": ["i1", "i2", "i3", "i4"],
+      "settings": {
+        "eyebrow": "Qué incluye",
+        "heading": "Todo lo que necesitas, en un solo kit",
+        "promo_title": "¿Se te acabaron las bolsas?",
+        "promo_body": "<p>Pack de repuesto de 10 bolsas por solo <strong>$9.99</strong></p>",
+        "promo_cta_label": "Agregar repuesto",
+        "promo_cta_link": "#",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "content_max_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "uses-chips": {
+      "type": "product-uses-chips",
+      "blocks": {
+        "c1": { "type": "chip", "settings": { "label": "Carnes y pescados" } },
+        "c2": { "type": "chip", "settings": { "label": "Quesos y embutidos" } },
+        "c3": { "type": "chip", "settings": { "label": "Frutas y vegetales" } },
+        "c4": { "type": "chip", "settings": { "label": "Meal prep de la semana" } },
+        "c5": { "type": "chip", "settings": { "label": "Sobras y porciones" } },
+        "c6": { "type": "chip", "settings": { "label": "Marinados más rápidos al vacío" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5", "c6"],
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "Para todo lo que compras",
+        "heading": "Un kit, toda tu cocina organizada",
+        "body": "<p>Del mercado al freezer, del freezer a la mesa. Si se come, se puede sellar.</p>",
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "chip_bg": "#ffffff",
+        "chip_color": "#1a1a1a",
+        "content_max_width": 1100,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "testimonials": {
+      "type": "product-testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "El queso me duraba 4 días, ahora me dura semanas. Pagó solo con lo que dejé de botar.",
+            "author_name": "María G.",
+            "author_location": "Caracas"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Organizé todo el freezer con porciones planas. Cabe el doble y sé qué hay en cada bolsa.",
+            "author_name": "José R.",
+            "author_location": "Valencia"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Lo cargo como un teléfono y lo guardo en cualquier gaveta. Lo uso cada vez que hago mercado.",
+            "author_name": "Andreína M.",
+            "author_location": "Maracaibo"
+          }
+        }
+      },
+      "block_order": ["t1", "t2", "t3"],
+      "settings": {
+        "eyebrow": "Reseñas de clientes",
+        "heading": "Los que ya lo usan, lo recomiendan",
+        "footnote": "Reseñas de clientes de NQLN Store",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "star_color": "#ffb800",
+        "content_max_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "faq": {
+      "type": "faq-pop",
+      "disabled": false,
+      "settings": {}
+    },
+    "cta-final": {
+      "type": "product-cta-final",
+      "settings": {
+        "heading": "Tu comida rinde más cuando no se bota",
+        "subheading": "<p>Kit de Sellado al Vacío VAULI — Bomba de extracción + 20 bolsas</p>",
+        "price_text": "$49.99",
+        "cta_label": "AGREGAR AL CARRITO",
+        "cta_link": "#comprar",
+        "trust_line": "<p>Garantía de 15 días · Envío gratis +$20 · Pago contra entrega en Caracas</p>",
+        "bg_color": "#1a1a1a",
+        "text_color": "#f6f5f1",
+        "cta_bg": "#ffcd11",
+        "cta_color": "#1a1a1a",
+        "content_max_width": 900,
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": [
+    "main",
+    "story",
+    "benefits",
+    "usage-steps",
+    "vs-columns",
+    "feature-cards",
+    "kit-contents",
+    "uses-chips",
+    "testimonials",
+    "faq",
+    "cta-final"
+  ]
+}

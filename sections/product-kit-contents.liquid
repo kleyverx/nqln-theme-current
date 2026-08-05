@@ -1,0 +1,578 @@
+{%- comment -%}
+  Product Kit Contents — "Qué incluye" en split 2 columnas.
+  Izquierda: foto del kit desplegado. Derecha: eyebrow, H2, intro y lista
+  de items con ícono ✓ (mismo SVG check que product-variant.liquid del tema,
+  color acento verde #20b19e). Debajo de la lista, una card promocional
+  opcional para venta cruzada (repuesto) que aparece solo si `promo_title`
+  está definido. Solo CSS, sin JS. Mobile: stack vertical con imagen arriba.
+
+  GOTCHA :empty — el tema oculta cualquier <div> vacío con `:empty { display:none }`.
+  Por eso los contenedores decorativos (ícono ✓ del item, imagen vacía en
+  el editor) siempre llevan contenido o `style="display:block;"`.
+
+  currentColor — el SVG del check hereda color del acento vía `color: var(--pkc-accent)`
+  en `.product-kit-contents__check`, así que un `<svg fill="currentColor">` se pinta solo.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductKitContents-{{ section.id }} {
+    --pkc-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --pkc-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pkc-accent: {{ section.settings.accent_color | default: '#20b19e' }};
+    --pkc-max-width: {{ section.settings.content_max_width | default: 1200 }}px;
+    background-color: var(--pkc-bg);
+    color: var(--pkc-text);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  #ProductKitContents-{{ section.id }} .product-kit-contents__inner {
+    max-width: var(--pkc-max-width);
+  }
+{%- endstyle -%}
+
+<div id="ProductKitContents-{{ section.id }}" class="product-kit-contents">
+  <div class="product-kit-contents__inner page-width">
+    <div class="product-kit-contents__grid">
+      <div class="product-kit-contents__media">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image
+            | image_url: width: 1200
+            | image_tag:
+              widths: '400, 600, 800, 1000, 1200, 1600',
+              sizes: '(max-width: 749px) 100vw, (max-width: 989px) 100vw, 50vw',
+              alt: section.settings.image.alt | default: section.settings.heading | default: shop.name,
+              loading: 'lazy',
+              class: 'product-kit-contents__img'
+          }}
+        {%- elsif request.design_mode -%}
+          <div class="product-kit-contents__img-placeholder" style="display:block;" aria-hidden="true">
+            <svg viewBox="0 0 60 60" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.4" style="display:block;">
+              <rect x="6" y="10" width="48" height="40" rx="3"></rect>
+              <circle cx="20" cy="24" r="4"></circle>
+              <path d="M6 42l14-14 12 12 8-8 14 14"></path>
+            </svg>
+            <span class="product-kit-contents__img-placeholder-label">Añade una imagen del kit</span>
+          </div>
+        {%- else -%}
+          <div class="product-kit-contents__img-placeholder product-kit-contents__img-placeholder--empty" style="display:block;" aria-hidden="true"></div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-kit-contents__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="product-kit-contents__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="product-kit-contents__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.intro != blank -%}
+          <div class="product-kit-contents__intro rte">{{ section.settings.intro }}</div>
+        {%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ul class="product-kit-contents__list" role="list">
+            {%- for block in section.blocks -%}
+              {%- if block.settings.text != blank -%}
+                <li
+                  class="product-kit-contents__item"
+                  style="--pkc-index: {{ forloop.index0 }};"
+                  {{ block.shopify_attributes }}
+                >
+                  <span class="product-kit-contents__check" aria-hidden="true" style="display:flex;">
+                    <svg viewBox="0 0 15 15" width="16" height="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display:block;"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"/></svg>
+                  </span>
+                  <span class="product-kit-contents__item-text">{{ block.settings.text }}</span>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- elsif request.design_mode -%}
+          <p class="product-kit-contents__list-placeholder">
+            Añade ítems del kit desde el panel de la izquierda.
+          </p>
+        {%- endif -%}
+
+        {%- if section.settings.promo_title != blank -%}
+          <aside class="product-kit-contents__promo" aria-label="{{ section.settings.promo_title | escape }}">
+            <div class="product-kit-contents__promo-body">
+              <h3 class="product-kit-contents__promo-title">{{ section.settings.promo_title }}</h3>
+              {%- if section.settings.promo_body != blank -%}
+                <div class="product-kit-contents__promo-text rte">{{ section.settings.promo_body }}</div>
+              {%- endif -%}
+            </div>
+            {%- if section.settings.promo_cta_label != blank -%}
+              {%- if section.settings.promo_cta_link != blank -%}
+                <a href="{{ section.settings.promo_cta_link }}" class="product-kit-contents__promo-cta">
+                  {{ section.settings.promo_cta_label }}
+                </a>
+              {%- else -%}
+                <span class="product-kit-contents__promo-cta product-kit-contents__promo-cta--static">
+                  {{ section.settings.promo_cta_label }}
+                </span>
+              {%- endif -%}
+            {%- endif -%}
+          </aside>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-kit-contents__inner {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .product-kit-contents__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2.4rem, 5vw, 5.6rem);
+    align-items: start;
+  }
+
+  /* Media column */
+  .product-kit-contents__media {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--pkc-text) 4%, transparent);
+  }
+
+  .product-kit-contents__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .product-kit-contents__img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    aspect-ratio: 4 / 5;
+    color: color-mix(in srgb, var(--pkc-text) 40%, transparent);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .product-kit-contents__img-placeholder--empty {
+    aspect-ratio: 4 / 5;
+    background: color-mix(in srgb, var(--pkc-text) 6%, transparent);
+  }
+
+  .product-kit-contents__img-placeholder-label {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+
+  /* Content column */
+  .product-kit-contents__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .product-kit-contents__eyebrow {
+    display: inline-block;
+    margin: 0 0 1rem;
+    padding: 0.4rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pkc-accent);
+    background: color-mix(in srgb, var(--pkc-accent) 12%, transparent);
+    border-radius: 999px;
+  }
+
+  .product-kit-contents__heading {
+    margin: 0 0 1.4rem;
+    font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: inherit;
+  }
+
+  .product-kit-contents__intro {
+    margin: 0 0 2rem;
+    font-size: clamp(1.5rem, 1.8vw, 1.7rem);
+    line-height: 1.55;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  /* Items list */
+  .product-kit-contents__list {
+    list-style: none;
+    margin: 0 0 2.4rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .product-kit-contents__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    /* Entrada escalonada al cargar */
+    animation: product-kit-contents-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: calc(var(--pkc-index, 0) * 70ms);
+  }
+
+  .product-kit-contents__check {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    color: #ffffff;
+    background: var(--pkc-accent);
+    line-height: 0;
+    box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--pkc-accent) 60%, transparent);
+  }
+
+  .product-kit-contents__check > svg {
+    display: block;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .product-kit-contents__item-text {
+    flex: 1 1 auto;
+    font-size: clamp(1.5rem, 1.7vw, 1.65rem);
+    font-weight: 600;
+    line-height: 1.45;
+    color: inherit;
+    padding-top: 0.1rem;
+  }
+
+  .product-kit-contents__list-placeholder {
+    margin: 0 0 2.4rem;
+    padding: 1.4rem 1.6rem;
+    font-size: 1.4rem;
+    color: color-mix(in srgb, var(--pkc-text) 55%, transparent);
+    background: color-mix(in srgb, var(--pkc-text) 5%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--pkc-text) 20%, transparent);
+    border-radius: 8px;
+  }
+
+  /* Promo card */
+  .product-kit-contents__promo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding: 2rem 2.2rem;
+    background: color-mix(in srgb, var(--pkc-accent) 8%, var(--pkc-bg));
+    border: 1px solid color-mix(in srgb, var(--pkc-accent) 30%, transparent);
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .product-kit-contents__promo-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .product-kit-contents__promo-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 1.9vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: inherit;
+  }
+
+  .product-kit-contents__promo-text {
+    margin: 0;
+    font-size: clamp(1.4rem, 1.6vw, 1.55rem);
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.9;
+  }
+
+  .product-kit-contents__promo-text p {
+    margin: 0;
+  }
+
+  .product-kit-contents__promo-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    padding: 1rem 1.8rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #ffffff;
+    background: var(--pkc-accent);
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .product-kit-contents__promo-cta:hover,
+  .product-kit-contents__promo-cta:focus-visible {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -14px color-mix(in srgb, var(--pkc-accent) 80%, transparent);
+    background: color-mix(in srgb, var(--pkc-accent) 90%, #000000 10%);
+  }
+
+  .product-kit-contents__promo-cta:focus-visible {
+    outline: 2px solid var(--pkc-text);
+    outline-offset: 3px;
+  }
+
+  .product-kit-contents__promo-cta--static {
+    cursor: default;
+  }
+
+  @keyframes product-kit-contents-in {
+    0% {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Tablet: mantener 2 cols pero reducir gap */
+  @media (max-width: 989px) {
+    .product-kit-contents__grid {
+      gap: 3.2rem;
+    }
+    .product-kit-contents__heading {
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* Móvil: stack vertical, imagen arriba */
+  @media (max-width: 749px) {
+    .product-kit-contents__grid {
+      grid-template-columns: 1fr;
+      gap: 2.4rem;
+    }
+    .product-kit-contents__promo {
+      padding: 1.6rem 1.6rem;
+      border-radius: 12px;
+    }
+    .product-kit-contents__promo-cta {
+      width: 100%;
+      align-self: stretch;
+    }
+    .product-kit-contents__check {
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+  }
+
+  /* Respeta prefers-reduced-motion: sin animaciones */
+  @media (prefers-reduced-motion: reduce) {
+    .product-kit-contents__item,
+    .product-kit-contents__promo-cta,
+    .product-kit-contents__promo-cta:hover {
+      animation: none;
+      transition: none;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Kit — Qué incluye",
+  "tag": "section",
+  "class": "section section-product-kit-contents",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Split imagen + lista de items del kit con ícono ✓. Incluye una card promocional opcional para venta cruzada (por ejemplo, un pack de repuesto)."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen del kit"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Etiqueta superior (eyebrow)",
+      "default": "Qué incluye"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "Todo lo que necesitas, en un solo kit"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Introducción (opcional)"
+    },
+    {
+      "type": "header",
+      "content": "Card promocional (opcional)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Si dejas el título vacío, la card no se muestra."
+    },
+    {
+      "type": "text",
+      "id": "promo_title",
+      "label": "Título de la card"
+    },
+    {
+      "type": "richtext",
+      "id": "promo_body",
+      "label": "Texto de la card"
+    },
+    {
+      "type": "text",
+      "id": "promo_cta_label",
+      "label": "Texto del botón"
+    },
+    {
+      "type": "url",
+      "id": "promo_cta_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento (checks y card promo)",
+      "default": "#20b19e"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Ítem",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto del ítem",
+          "default": "1 elemento del kit"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAULI — Kit",
+      "settings": {
+        "eyebrow": "Qué incluye",
+        "heading": "Todo lo que necesitas, en un solo kit",
+        "promo_title": "¿Se te acabaron las bolsas?",
+        "promo_body": "<p>Pack de repuesto de 10 bolsas por solo <strong>$9.99</strong></p>",
+        "promo_cta_label": "Agregar repuesto",
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#20b19e"
+      },
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "text": "1 bomba de extracción de aire VAULI"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "10 bolsas grandes 30 x 35 cm"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "10 bolsas medianas 22 x 21 cm"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "text": "1 cable de carga USB-C"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

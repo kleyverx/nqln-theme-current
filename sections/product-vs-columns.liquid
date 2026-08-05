@@ -1,0 +1,442 @@
+{%- comment -%}
+  Product VS Columns — comparativa narrativa "SIN [producto]" vs "CON [producto]".
+  Dos columnas de texto (card rojo + card verde), cada una con H3 en color y una
+  lista de filas: <strong>topic</strong> + <em>texto</em>.
+
+  Diferente a product-comparison-table (que es tabla con marcas ✓/✗). Aquí NO se
+  usan iconos de check: solo tipografía, color y una barrita vertical de acento.
+
+  Cada block "fila" genera automáticamente una entrada correspondiente en ambas
+  columnas, así el merchant edita en un solo lugar y las filas quedan alineadas.
+
+  Móvil: stack vertical con la columna "sin" arriba y la columna "con" debajo
+  (orden de HTML), refuerzo del "antes/después".
+
+  Solo CSS. Sin JS. Respeta prefers-reduced-motion por defecto (sin animaciones).
+
+  GOTCHA :empty — el tema oculta con `:empty { display:none }` cualquier elemento
+  vacío. Solo se afecta si el merchant borra a la vez topic + bad_text/good_text
+  de una fila; en ese caso ocultar el <li> vacío es el comportamiento deseado.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductVsColumns-{{ section.id }} {
+    --pvc-bg: {{ section.settings.bg_color | default: '#f6f5f1' }};
+    --pvc-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pvc-bad: {{ section.settings.col_bad_color | default: '#c33a3a' }};
+    --pvc-good: {{ section.settings.col_good_color | default: '#20b19e' }};
+    --pvc-max-width: {{ section.settings.content_max_width | default: 900 }}px;
+    background-color: var(--pvc-bg);
+    color: var(--pvc-text);
+    padding-top: {{ section.settings.padding_top | default: 64 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 64 }}px;
+  }
+{%- endstyle -%}
+
+<div id="ProductVsColumns-{{ section.id }}" class="product-vs-columns">
+  <div class="product-vs-columns__inner">
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
+      <header class="product-vs-columns__head">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="product-vs-columns__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="product-vs-columns__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <div class="product-vs-columns__subheading rte">{{ section.settings.subheading }}</div>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-vs-columns__grid">
+        <article class="product-vs-columns__col product-vs-columns__col--bad" aria-label="{{ section.settings.col_bad_label | default: 'Sin' | escape }}">
+          {%- if section.settings.col_bad_label != blank -%}
+            <h3 class="product-vs-columns__col-title">{{ section.settings.col_bad_label }}</h3>
+          {%- endif -%}
+          <ul class="product-vs-columns__list" role="list">
+            {%- for block in section.blocks -%}
+              <li class="product-vs-columns__item" {{ block.shopify_attributes }}>
+                {%- if block.settings.topic != blank -%}
+                  <strong class="product-vs-columns__topic">{{ block.settings.topic }}</strong>
+                {%- endif -%}
+                {%- if block.settings.bad_text != blank -%}
+                  <em class="product-vs-columns__text">{{ block.settings.bad_text }}</em>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </article>
+
+        <article class="product-vs-columns__col product-vs-columns__col--good" aria-label="{{ section.settings.col_good_label | default: 'Con' | escape }}">
+          {%- if section.settings.col_good_label != blank -%}
+            <h3 class="product-vs-columns__col-title">{{ section.settings.col_good_label }}</h3>
+          {%- endif -%}
+          <ul class="product-vs-columns__list" role="list">
+            {%- for block in section.blocks -%}
+              <li class="product-vs-columns__item" {{ block.shopify_attributes }}>
+                {%- if block.settings.topic != blank -%}
+                  <strong class="product-vs-columns__topic">{{ block.settings.topic }}</strong>
+                {%- endif -%}
+                {%- if block.settings.good_text != blank -%}
+                  <em class="product-vs-columns__text">{{ block.settings.good_text }}</em>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </article>
+      </div>
+    {%- elsif request.design_mode -%}
+      <p class="product-vs-columns__placeholder">Agrega filas para comparar SIN vs CON.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-vs-columns__inner {
+    max-width: var(--pvc-max-width, 900px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .product-vs-columns__head {
+    text-align: center;
+    margin-bottom: 3.2rem;
+  }
+
+  .product-vs-columns__eyebrow {
+    margin: 0 0 0.8rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.72;
+  }
+
+  .product-vs-columns__heading {
+    margin: 0 0 1.2rem;
+    font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: inherit;
+  }
+
+  .product-vs-columns__subheading {
+    margin: 0 auto;
+    max-width: 62ch;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .product-vs-columns__subheading > * {
+    margin: 0;
+  }
+
+  .product-vs-columns__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.4rem;
+    align-items: stretch;
+  }
+
+  .product-vs-columns__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 2.4rem 2rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid transparent;
+  }
+
+  .product-vs-columns__col--bad {
+    border-top-color: var(--pvc-bad, #c33a3a);
+  }
+
+  .product-vs-columns__col--good {
+    border-top-color: var(--pvc-good, #20b19e);
+  }
+
+  .product-vs-columns__col-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .product-vs-columns__col--bad .product-vs-columns__col-title {
+    color: var(--pvc-bad, #c33a3a);
+  }
+
+  .product-vs-columns__col--good .product-vs-columns__col-title {
+    color: var(--pvc-good, #20b19e);
+  }
+
+  .product-vs-columns__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .product-vs-columns__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-left: 1.4rem;
+    border-left: 2px solid currentColor;
+  }
+
+  .product-vs-columns__col--bad .product-vs-columns__item {
+    color: var(--pvc-bad, #c33a3a);
+  }
+
+  .product-vs-columns__col--good .product-vs-columns__item {
+    color: var(--pvc-good, #20b19e);
+  }
+
+  .product-vs-columns__topic {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    color: var(--pvc-text, #1a1a1a);
+  }
+
+  .product-vs-columns__text {
+    display: block;
+    font-size: 1.4rem;
+    font-style: italic;
+    line-height: 1.45;
+    color: inherit;
+    opacity: 0.9;
+  }
+
+  .product-vs-columns__placeholder {
+    text-align: center;
+    padding: 3rem;
+    color: currentColor;
+    opacity: 0.6;
+  }
+
+  /* Tablet: mismo grid 2 cols, menos padding interno */
+  @media (max-width: 989px) {
+    .product-vs-columns__grid {
+      gap: 2rem;
+    }
+    .product-vs-columns__col {
+      padding: 2rem 1.6rem;
+    }
+  }
+
+  /* Mobile: stack vertical — columna "sin" arriba, "con" abajo (orden HTML) */
+  @media (max-width: 749px) {
+    .product-vs-columns__grid {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+    }
+    .product-vs-columns__head {
+      margin-bottom: 2.4rem;
+    }
+    .product-vs-columns__topic {
+      font-size: 1.4rem;
+    }
+    .product-vs-columns__text {
+      font-size: 1.35rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sin vs Con (2 columnas)",
+  "tag": "section",
+  "class": "section section-product-vs-columns",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Comparativa narrativa en 2 columnas: la izquierda (rojo) sin el producto, la derecha (verde) con el producto. Cada fila crea una entrada correspondiente en ambas columnas."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Antetítulo",
+      "default": "La diferencia"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Sin VAULI vs. con VAULI"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Descripción corta (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "col_bad_label",
+      "label": "Etiqueta columna izquierda (sin)",
+      "default": "SIN VAULI"
+    },
+    {
+      "type": "text",
+      "id": "col_good_label",
+      "label": "Etiqueta columna derecha (con)",
+      "default": "CON VAULI"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#f6f5f1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "col_bad_color",
+      "label": "Color acento columna sin",
+      "default": "#c33a3a"
+    },
+    {
+      "type": "color",
+      "id": "col_good_color",
+      "label": "Color acento columna con",
+      "default": "#20b19e"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "fila",
+      "name": "Fila comparativa",
+      "settings": [
+        {
+          "type": "text",
+          "id": "topic",
+          "label": "Categoría",
+          "default": "Categoría"
+        },
+        {
+          "type": "text",
+          "id": "bad_text",
+          "label": "Texto columna sin",
+          "default": "Descripción del problema."
+        },
+        {
+          "type": "text",
+          "id": "good_text",
+          "label": "Texto columna con",
+          "default": "Descripción del beneficio."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAULI — Sin vs Con",
+      "settings": {
+        "eyebrow": "La diferencia",
+        "heading": "Sin VAULI vs. con VAULI",
+        "col_bad_label": "SIN VAULI",
+        "col_good_label": "CON VAULI",
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "col_bad_color": "#c33a3a",
+        "col_good_color": "#20b19e"
+      },
+      "blocks": [
+        {
+          "type": "fila",
+          "settings": {
+            "topic": "Carnes en el freezer",
+            "bad_text": "Se queman por hielo en semanas.",
+            "good_text": "Selladas duran meses."
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "topic": "Quesos y embutidos",
+            "bad_text": "Se resecan y agarran olores.",
+            "good_text": "Frescos como el primer día."
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "topic": "Frutas y vegetales",
+            "bad_text": "Se dañan en días.",
+            "good_text": "Hasta 5 veces más tiempo."
+          }
+        },
+        {
+          "type": "fila",
+          "settings": {
+            "topic": "El freezer",
+            "bad_text": "Bolsas deformes y desorden.",
+            "good_text": "Porciones planas, etiquetadas y apilables."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
