@@ -176,6 +176,7 @@
         "b1": {
           "type": "beneficio",
           "settings": {
+            "icon": "❄️",
             "title": "Conserva hasta 5 veces más",
             "description": "Carnes, quesos, frutas y vegetales duran semanas en lugar de días. Sin aire, sin olores cruzados, sin quemadura por hielo."
           }
@@ -183,6 +184,7 @@
         "b2": {
           "type": "beneficio",
           "settings": {
+            "icon": "💰",
             "title": "Tu mercado rinde más",
             "description": "Cada bolsa sellada es comida que no se bota. Compra en cantidad, porciona en casa y deja de perder lo que pagaste."
           }
@@ -190,6 +192,7 @@
         "b3": {
           "type": "beneficio",
           "settings": {
+            "icon": "🔋",
             "title": "Inalámbrico, siempre listo",
             "description": "Se carga por USB-C como un teléfono. Es compacto, no ocupa espacio y cabe en cualquier gaveta de la cocina."
           }
@@ -200,6 +203,9 @@
         "eyebrow": "Beneficios clave",
         "heading": "Tu mercado rinde más desde el primer sellado",
         "columns": "3",
+        "show_icons": true,
+        "icon_size": 44,
+        "icon_color": "#20b19e",
         "bg_color": "#f6f5f1",
         "text_color": "#1a1a1a",
         "eyebrow_color": "#20b19e",

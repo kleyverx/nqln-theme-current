@@ -23,6 +23,8 @@
     --pbs-bg: {{ section.settings.bg_color | default: '#f6f5f1' }};
     --pbs-text: {{ section.settings.text_color | default: '#1a1a1a' }};
     --pbs-eyebrow: {{ section.settings.eyebrow_color | default: '#20b19e' }};
+    --pbs-icon-color: {{ section.settings.icon_color | default: '#20b19e' }};
+    --pbs-icon-size: {{ section.settings.icon_size | default: 44 }}px;
     --pbs-heading-size: {{ heading_size_rem }}rem;
     --pbs-card-title-size: {{ card_title_size_rem }}rem;
     --pbs-max-width: {{ section.settings.content_max_width | default: 1100 }}px;
@@ -68,6 +70,16 @@
             style="--pbs-index: {{ forloop.index0 }};"
             {{ block.shopify_attributes }}
           >
+            {%- if section.settings.show_icons -%}
+              <span class="product-benefits-simple__icon" aria-hidden="true">
+                {%- if block.settings.icon != blank -%}
+                  {{ block.settings.icon }}
+                {%- else -%}
+                  {%- comment -%} Fallback: check SVG del selector de variantes {%- endcomment -%}
+                  <svg viewBox="0 0 15 15" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"/></svg>
+                {%- endif -%}
+              </span>
+            {%- endif -%}
             {%- if block.settings.title != blank -%}
               <h3 class="product-benefits-simple__card-title">{{ block.settings.title }}</h3>
             {%- endif -%}
@@ -119,11 +131,44 @@
   }
 
   .product-benefits-simple__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    gap: 1rem;
     padding: 0;
     background: transparent;
     border: 0;
     box-shadow: none;
+  }
+
+  .product-benefits-simple__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--pbs-icon-size, 44px);
+    height: var(--pbs-icon-size, 44px);
+    color: var(--pbs-icon-color, #20b19e);
+    font-size: calc(var(--pbs-icon-size, 44px) * 0.7);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .product-benefits-simple__icon > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  .product-benefits-simple__icon > svg[fill]:not([fill="currentColor"]),
+  .product-benefits-simple__icon > svg [fill]:not([fill="currentColor"]) {
+    fill: revert;
+  }
+  .product-benefits-simple__icon > svg[stroke]:not([stroke="currentColor"]),
+  .product-benefits-simple__icon > svg [stroke]:not([stroke="currentColor"]) {
+    stroke: revert;
   }
 
   .product-benefits-simple__card-title {
@@ -208,6 +253,33 @@
         { "value": "4", "label": "4 columnas" }
       ],
       "default": "3"
+    },
+    {
+      "type": "header",
+      "content": "Íconos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icons",
+      "label": "Mostrar íconos",
+      "default": true,
+      "info": "Muestra un ícono arriba de cada beneficio. Si un beneficio no tiene ícono configurado, usa un check verde por defecto."
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del ícono",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color del ícono",
+      "default": "#20b19e"
     },
     {
       "type": "header",
@@ -297,6 +369,12 @@
       "name": "Beneficio",
       "settings": [
         {
+          "type": "textarea",
+          "id": "icon",
+          "label": "Ícono (emoji o SVG)",
+          "info": "Pega un emoji (❄️, 🔋, ⚡) o un bloque <svg>…</svg>. Si lo dejas vacío se muestra un check verde por defecto. Solo aparece si 'Mostrar íconos' está activo en la sección."
+        },
+        {
           "type": "text",
           "id": "title",
           "label": "Título del beneficio",
@@ -314,10 +392,16 @@
   "presets": [
     {
       "name": "VAULI — Beneficios claros",
+      "settings": {
+        "show_icons": true,
+        "icon_size": 44,
+        "icon_color": "#20b19e"
+      },
       "blocks": [
         {
           "type": "beneficio",
           "settings": {
+            "icon": "❄️",
             "title": "Conserva hasta 5 veces más",
             "description": "Carnes, quesos, frutas y vegetales duran semanas en lugar de días. Sin aire, sin olores cruzados, sin quemadura por hielo."
           }
@@ -325,6 +409,7 @@
         {
           "type": "beneficio",
           "settings": {
+            "icon": "💰",
             "title": "Tu mercado rinde más",
             "description": "Cada bolsa sellada es comida que no se bota. Compra en cantidad, porciona en casa y deja de perder lo que pagaste."
           }
@@ -332,6 +417,7 @@
         {
           "type": "beneficio",
           "settings": {
+            "icon": "🔋",
             "title": "Inalámbrico, siempre listo",
             "description": "Se carga por USB-C como un teléfono. Es compacto, no ocupa espacio y cabe en cualquier gaveta de la cocina."
           }
