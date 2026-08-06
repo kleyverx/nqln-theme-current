@@ -140,16 +140,20 @@
   .product-kit-contents__media {
     position: relative;
     width: 100%;
+    aspect-ratio: var(--pkc-aspect, 4 / 5);
     border-radius: 16px;
     overflow: hidden;
     background: color-mix(in srgb, var(--pkc-text) 4%, transparent);
   }
 
   .product-kit-contents__img {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: var(--pkc-fit, cover);
+    object-position: center;
   }
 
   .product-kit-contents__img-placeholder {
