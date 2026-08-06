@@ -155,7 +155,7 @@
       "type": "product-story-split",
       "settings": {
         "image_position": "right",
-        "aspect_ratio": "4 / 5",
+        "aspect_ratio": "1 / 1",
         "image_fit": "cover",
         "eyebrow": "Te va a sonar familiar",
         "heading": "Lo que compraste con esfuerzo, no debería terminar en la basura.",
@@ -242,7 +242,7 @@
       "block_order": ["s1", "s2", "s3", "s4"],
       "settings": {
         "image_position": "left",
-        "aspect_ratio": "4 / 5",
+        "aspect_ratio": "1 / 1",
         "image_fit": "cover",
         "eyebrow": "Fácil de usar",
         "heading": "Listo en menos de un minuto",
@@ -338,7 +338,7 @@
         "eyebrow": "Tecnología VAULI",
         "heading": "Pequeño por fuera, potente por dentro",
         "columns": "3",
-        "aspect_ratio": "4/3",
+        "aspect_ratio": "1/1",
         "image_radius": 12,
         "bg_color": "#f6f5f1",
         "text_color": "#1a1a1a",
@@ -378,7 +378,7 @@
       "block_order": ["i1", "i2", "i3", "i4"],
       "settings": {
         "image_position": "right",
-        "aspect_ratio": "4 / 5",
+        "aspect_ratio": "1 / 1",
         "image_fit": "cover",
         "eyebrow": "Qué incluye",
         "heading": "Todo lo que necesitas, en un solo kit",
@@ -406,7 +406,7 @@
       "block_order": ["c1", "c2", "c3", "c4", "c5", "c6"],
       "settings": {
         "image_position": "left",
-        "aspect_ratio": "4 / 3",
+        "aspect_ratio": "1 / 1",
         "image_fit": "cover",
         "eyebrow": "Para todo lo que compras",
         "heading": "Un kit, toda tu cocina organizada",
