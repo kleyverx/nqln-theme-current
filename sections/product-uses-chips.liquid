@@ -24,6 +24,8 @@
     --puc-chip-bg: {{ section.settings.chip_bg | default: '#f6f5f1' }};
     --puc-chip-color: {{ section.settings.chip_color | default: '#1a1a1a' }};
     --puc-max-width: {{ section.settings.content_max_width | default: 1100 }}px;
+    --puc-fit: {{ section.settings.image_fit | default: 'cover' }};
+    --puc-aspect: {{ section.settings.aspect_ratio | default: '4 / 3' }};
     background-color: var(--puc-bg);
     color: var(--puc-text);
     padding-top: {{ section.settings.padding_top | default: 64 }}px;
@@ -113,7 +115,7 @@
   .product-uses-chips__media {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: var(--puc-aspect, 4 / 3);
     overflow: hidden;
     border-radius: 1.2rem;
     background-color: var(--puc-chip-bg, #f6f5f1);
@@ -123,7 +125,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: var(--puc-fit, cover);
   }
 
   .product-uses-chips__placeholder {
@@ -287,6 +289,30 @@
       "default": "left"
     },
     {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Proporción de la imagen (desktop)",
+      "default": "4 / 3",
+      "options": [
+        { "value": "3 / 4", "label": "3:4 (retrato)" },
+        { "value": "4 / 5", "label": "4:5 (retrato suave)" },
+        { "value": "1 / 1", "label": "1:1 (cuadrado)" },
+        { "value": "4 / 3", "label": "4:3 (paisaje)" },
+        { "value": "16 / 9", "label": "16:9 (panorámico)" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de la imagen",
+      "default": "cover",
+      "info": "Cover: llena y recorta si es necesario. Contain: muestra la foto completa sin recortar.",
+      "options": [
+        { "value": "cover", "label": "Cover (recorta si sobra)" },
+        { "value": "contain", "label": "Contain (foto completa)" }
+      ]
+    },
+    {
       "type": "text",
       "id": "eyebrow",
       "label": "Antetítulo (eyebrow)",
@@ -400,6 +426,8 @@
         "heading": "Un kit, toda tu cocina organizada",
         "body": "<p>Del mercado al freezer, del freezer a la mesa. Si se come, se puede sellar.</p>",
         "image_position": "left",
+        "aspect_ratio": "4 / 3",
+        "image_fit": "cover",
         "bg_color": "#ffffff",
         "text_color": "#1a1a1a",
         "accent_color": "#20b19e",

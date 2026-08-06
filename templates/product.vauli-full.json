@@ -154,7 +154,9 @@
     "story": {
       "type": "product-story-split",
       "settings": {
-        "image_position": "left",
+        "image_position": "right",
+        "aspect_ratio": "4 / 5",
+        "image_fit": "cover",
         "eyebrow": "Te va a sonar familiar",
         "heading": "Lo que compraste con esfuerzo, no debería terminar en la basura.",
         "body": "<p>Hacer mercado cuesta. Y duele todavía más abrir la nevera a los pocos días y encontrar el queso reseco, la carne quemada por el hielo o las fresas que ya no sirven para nada.</p><p>La nevera no perdona: el aire es el enemigo de tus alimentos. Por eso el vacío funciona — al extraer el aire de la bolsa, <strong>tus alimentos se conservan hasta 5 veces más tiempo</strong>, con su sabor, su textura y su frescura intactos.</p><p><strong>Con VAULI, cada bolsa sellada es comida que no se bota y plata que no se pierde.</strong></p>",
@@ -240,6 +242,8 @@
       "block_order": ["s1", "s2", "s3", "s4"],
       "settings": {
         "image_position": "left",
+        "aspect_ratio": "4 / 5",
+        "image_fit": "cover",
         "eyebrow": "Fácil de usar",
         "heading": "Listo en menos de un minuto",
         "bg_color": "#f6f5f1",
@@ -373,6 +377,9 @@
       },
       "block_order": ["i1", "i2", "i3", "i4"],
       "settings": {
+        "image_position": "right",
+        "aspect_ratio": "4 / 5",
+        "image_fit": "cover",
         "eyebrow": "Qué incluye",
         "heading": "Todo lo que necesitas, en un solo kit",
         "promo_title": "¿Se te acabaron las bolsas?",
@@ -399,6 +406,8 @@
       "block_order": ["c1", "c2", "c3", "c4", "c5", "c6"],
       "settings": {
         "image_position": "left",
+        "aspect_ratio": "4 / 3",
+        "image_fit": "cover",
         "eyebrow": "Para todo lo que compras",
         "heading": "Un kit, toda tu cocina organizada",
         "body": "<p>Del mercado al freezer, del freezer a la mesa. Si se come, se puede sellar.</p>",

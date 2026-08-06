@@ -20,6 +20,8 @@
     --pkc-text: {{ section.settings.text_color | default: '#1a1a1a' }};
     --pkc-accent: {{ section.settings.accent_color | default: '#20b19e' }};
     --pkc-max-width: {{ section.settings.content_max_width | default: 1200 }}px;
+    --pkc-fit: {{ section.settings.image_fit | default: 'cover' }};
+    --pkc-aspect: {{ section.settings.aspect_ratio | default: '4 / 5' }};
     background-color: var(--pkc-bg);
     color: var(--pkc-text);
     padding-top: {{ section.settings.padding_top }}px;
@@ -31,7 +33,7 @@
   }
 {%- endstyle -%}
 
-<div id="ProductKitContents-{{ section.id }}" class="product-kit-contents">
+<div id="ProductKitContents-{{ section.id }}" class="product-kit-contents" data-image-position="{{ section.settings.image_position | default: 'left' }}">
   <div class="product-kit-contents__inner page-width">
     <div class="product-kit-contents__grid">
       <div class="product-kit-contents__media">
@@ -147,7 +149,7 @@
     display: block;
     width: 100%;
     height: auto;
-    object-fit: cover;
+    object-fit: var(--pkc-fit, cover);
   }
 
   .product-kit-contents__img-placeholder {
@@ -156,14 +158,14 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: var(--pkc-aspect, 4 / 5);
     color: color-mix(in srgb, var(--pkc-text) 40%, transparent);
     padding: 2rem;
     text-align: center;
   }
 
   .product-kit-contents__img-placeholder--empty {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: var(--pkc-aspect, 4 / 5);
     background: color-mix(in srgb, var(--pkc-text) 6%, transparent);
   }
 
@@ -359,6 +361,10 @@
     }
   }
 
+  .product-kit-contents[data-image-position="right"] .product-kit-contents__media {
+    order: 2;
+  }
+
   /* Tablet: mantener 2 cols pero reducir gap */
   @media (max-width: 989px) {
     .product-kit-contents__grid {
@@ -415,6 +421,40 @@
       "type": "image_picker",
       "id": "image",
       "label": "Imagen del kit"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posición de la imagen",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Proporción de la imagen",
+      "default": "4 / 5",
+      "options": [
+        { "value": "3 / 4", "label": "3:4 (retrato)" },
+        { "value": "4 / 5", "label": "4:5 (retrato suave)" },
+        { "value": "1 / 1", "label": "1:1 (cuadrado)" },
+        { "value": "4 / 3", "label": "4:3 (paisaje)" },
+        { "value": "16 / 9", "label": "16:9 (panorámico)" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de la imagen",
+      "default": "cover",
+      "info": "Cover: llena el contenedor y recorta si es necesario. Contain: muestra la foto completa sin recortar.",
+      "options": [
+        { "value": "cover", "label": "Cover (recorta si sobra)" },
+        { "value": "contain", "label": "Contain (foto completa)" }
+      ]
     },
     {
       "type": "text",
@@ -539,6 +579,9 @@
       "settings": {
         "eyebrow": "Qué incluye",
         "heading": "Todo lo que necesitas, en un solo kit",
+        "image_position": "right",
+        "aspect_ratio": "4 / 5",
+        "image_fit": "cover",
         "promo_title": "¿Se te acabaron las bolsas?",
         "promo_body": "<p>Pack de repuesto de 10 bolsas por solo <strong>$9.99</strong></p>",
         "promo_cta_label": "Agregar repuesto",
