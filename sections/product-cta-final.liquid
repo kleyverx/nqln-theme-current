@@ -12,10 +12,12 @@
 
 {%- style -%}
   #ProductCtaFinal-{{ section.id }} {
-    --pcf-bg: {{ section.settings.bg_color | default: '#1a1a1a' }};
-    --pcf-text: {{ section.settings.text_color | default: '#f6f5f1' }};
-    --pcf-cta-bg: {{ section.settings.cta_bg | default: '#ffcd11' }};
-    --pcf-cta-color: {{ section.settings.cta_color | default: '#1a1a1a' }};
+    --pcf-bg: {{ section.settings.bg_color | default: '#ffcd11' }};
+    --pcf-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pcf-price: {{ section.settings.price_color | default: '#1a1a1a' }};
+    --pcf-cta-bg: {{ section.settings.cta_bg | default: '#1a1a1a' }};
+    --pcf-cta-color: {{ section.settings.cta_color | default: '#ffffff' }};
+    --pcf-cta-hover-bg: {{ section.settings.cta_hover_bg | default: '#333333' }};
     --pcf-max-width: {{ section.settings.content_max_width | default: 900 }}px;
     background-color: var(--pcf-bg);
     color: var(--pcf-text);
@@ -94,14 +96,14 @@
     color: inherit;
   }
 
-  /* Precio grande en el color del CTA para atraer la vista */
+  /* Precio grande con color propio configurable (independiente del CTA) */
   .product-cta-final__price {
     margin: 0.4rem 0 0;
     font-size: clamp(3.2rem, 6vw, 5.6rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
-    color: var(--pcf-cta-bg);
+    color: var(--pcf-price);
   }
 
   .product-cta-final__cta-wrap {
@@ -128,11 +130,11 @@
 
   .product-cta-final__cta:hover,
   .product-cta-final__cta:focus-visible {
+    background-color: var(--pcf-cta-hover-bg);
     color: var(--pcf-cta-color);
     text-decoration: none;
     transform: translateY(-2px);
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
-    filter: brightness(1.05);
   }
 
   .product-cta-final__cta:focus-visible {
@@ -253,25 +255,37 @@
       "type": "color",
       "id": "bg_color",
       "label": "Color de fondo",
-      "default": "#1a1a1a"
+      "default": "#ffcd11"
     },
     {
       "type": "color",
       "id": "text_color",
       "label": "Color del texto",
-      "default": "#f6f5f1"
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color del precio",
+      "default": "#1a1a1a"
     },
     {
       "type": "color",
       "id": "cta_bg",
       "label": "Color de fondo del botón",
-      "default": "#ffcd11"
+      "default": "#1a1a1a"
     },
     {
       "type": "color",
       "id": "cta_color",
       "label": "Color del texto del botón",
-      "default": "#1a1a1a"
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_bg",
+      "label": "Color de fondo del botón (hover)",
+      "default": "#333333"
     },
     {
       "type": "header",
@@ -318,10 +332,12 @@
         "cta_label": "AGREGAR AL CARRITO",
         "cta_link": "#comprar",
         "trust_line": "<p>Garantía de 15 días · Envío gratis +$20 · Pago contra entrega en Caracas</p>",
-        "bg_color": "#1a1a1a",
-        "text_color": "#f6f5f1",
-        "cta_bg": "#ffcd11",
-        "cta_color": "#1a1a1a"
+        "bg_color": "#ffcd11",
+        "text_color": "#1a1a1a",
+        "price_color": "#1a1a1a",
+        "cta_bg": "#1a1a1a",
+        "cta_color": "#ffffff",
+        "cta_hover_bg": "#333333"
       }
     }
   ]

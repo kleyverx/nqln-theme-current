@@ -169,12 +169,11 @@
       }
     },
     "benefits": {
-      "type": "product-benefits-pop",
+      "type": "product-benefits-simple",
       "blocks": {
         "b1": {
           "type": "beneficio",
           "settings": {
-            "icon_emoji": "✅",
             "title": "Conserva hasta 5 veces más",
             "description": "Carnes, quesos, frutas y vegetales duran semanas en lugar de días. Sin aire, sin olores cruzados, sin quemadura por hielo."
           }
@@ -182,7 +181,6 @@
         "b2": {
           "type": "beneficio",
           "settings": {
-            "icon_emoji": "✅",
             "title": "Tu mercado rinde más",
             "description": "Cada bolsa sellada es comida que no se bota. Compra en cantidad, porciona en casa y deja de perder lo que pagaste."
           }
@@ -190,7 +188,6 @@
         "b3": {
           "type": "beneficio",
           "settings": {
-            "icon_emoji": "✅",
             "title": "Inalámbrico, siempre listo",
             "description": "Se carga por USB-C como un teléfono. Es compacto, no ocupa espacio y cabe en cualquier gaveta de la cocina."
           }
@@ -198,62 +195,59 @@
       },
       "block_order": ["b1", "b2", "b3"],
       "settings": {
+        "eyebrow": "Beneficios clave",
         "heading": "Tu mercado rinde más desde el primer sellado",
-        "subheading": "<p>Beneficios clave</p>",
-        "layout": "grid_2",
+        "columns": "3",
         "bg_color": "#f6f5f1",
         "text_color": "#1a1a1a",
-        "accent_color": "#20b19e",
+        "eyebrow_color": "#20b19e",
         "padding_top": 64,
         "padding_bottom": 64
       }
     },
     "usage-steps": {
-      "type": "product-usage-steps",
+      "type": "product-usage-split",
       "blocks": {
         "s1": {
           "type": "paso",
           "settings": {
             "title": "Llena la bolsa con el alimento",
-            "description": "Sin sobrellenarla: deja espacio para el sellado.",
-            "number_override": "1"
+            "description": "Sin sobrellenarla: deja espacio para el sellado."
           }
         },
         "s2": {
           "type": "paso",
           "settings": {
             "title": "Cierra herméticamente la válvula",
-            "description": "El cierre de la bolsa queda completamente sellado.",
-            "number_override": "2"
+            "description": "El cierre de la bolsa queda completamente sellado."
           }
         },
         "s3": {
           "type": "paso",
           "settings": {
-            "title": "Presiona el botón y extrae el aire",
-            "description": "Succión de alta eficiencia, sin calor, sin dañar el alimento.",
-            "number_override": "3"
+            "title": "Presiona el botón y la bomba extrae el aire",
+            "description": "Succión de alta eficiencia, sin calor, sin dañar el alimento."
           }
         },
         "s4": {
           "type": "paso",
           "settings": {
             "title": "Retira cuando compacte y guarda",
-            "description": "Directo a la nevera o al freezer, plano y etiquetado.",
-            "number_override": "4"
+            "description": "Directo a la nevera o al freezer, plano y etiquetado."
           }
         }
       },
       "block_order": ["s1", "s2", "s3", "s4"],
       "settings": {
+        "image_position": "left",
+        "eyebrow": "Fácil de usar",
         "heading": "Listo en menos de un minuto",
-        "subheading": "<p>Fácil de usar</p>",
-        "number_style": "circle_filled",
-        "bg_color": "#1a1a1a",
-        "text_color": "#f6f5f1",
+        "bg_color": "#f6f5f1",
+        "text_color": "#1a1a1a",
+        "eyebrow_color": "#20b19e",
         "number_bg": "#ffcd11",
         "number_color": "#1a1a1a",
-        "content_max_width": 960,
+        "content_max_width": 1100,
         "padding_top": 64,
         "padding_bottom": 64
       }
@@ -462,45 +456,45 @@
       }
     },
     "faq": {
-      "type": "faq-pop",
+      "type": "product-faq-simple",
       "blocks": {
         "q1": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Las bolsas son reutilizables?",
             "answer": "<p>Sí, lávalas con agua y jabón y reutilízalas sin problema. Solo evita reusar las que hayan tenido carnes crudas.</p>"
           }
         },
         "q2": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Cómo se carga?",
             "answer": "<p>Por USB-C, como un teléfono. El display muestra la batería en todo momento para que nunca te agarre descargado.</p>"
           }
         },
         "q3": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Puedo sellar líquidos o sopas?",
             "answer": "<p>Está recomendado para alimentos sólidos. Para líquidos, congela primero y luego sella: quedan perfectos.</p>"
           }
         },
         "q4": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Venden bolsas de repuesto?",
             "answer": "<p>Sí, tenemos pack de 10 bolsas de repuesto por $9.99.</p>"
           }
         },
         "q5": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Cómo es el envío?",
             "answer": "<p>Gratis en compras +$20: delivery en Caracas y envíos por MRW/ZOOM al interior del país.</p>"
           }
         },
         "q6": {
-          "type": "question",
+          "type": "pregunta",
           "settings": {
             "question": "¿Puedo pagar al recibir?",
             "answer": "<p>Sí, ofrecemos pago contra entrega en Caracas. También aceptamos pago móvil, transferencia, Zelle y PayPal.</p>"
@@ -508,7 +502,15 @@
         }
       },
       "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
-      "settings": {}
+      "settings": {
+        "eyebrow": "Dudas frecuentes",
+        "heading": "Preguntas frecuentes",
+        "first_open": false,
+        "bg_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "eyebrow_color": "#20b19e",
+        "border_color": "#e5e5e5"
+      }
     },
     "cta-final": {
       "type": "product-cta-final",
@@ -519,10 +521,12 @@
         "cta_label": "AGREGAR AL CARRITO",
         "cta_link": "#comprar",
         "trust_line": "<p>Garantía de 15 días · Envío gratis +$20 · Pago contra entrega en Caracas</p>",
-        "bg_color": "#1a1a1a",
-        "text_color": "#f6f5f1",
-        "cta_bg": "#ffcd11",
-        "cta_color": "#1a1a1a",
+        "bg_color": "#ffcd11",
+        "text_color": "#1a1a1a",
+        "price_color": "#1a1a1a",
+        "cta_bg": "#1a1a1a",
+        "cta_color": "#ffffff",
+        "cta_hover_bg": "#333333",
         "content_max_width": 900,
         "padding_top": 80,
         "padding_bottom": 80

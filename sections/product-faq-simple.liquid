@@ -1,0 +1,409 @@
+{%- comment -%}
+  Product FAQ Simple — acordeón minimalista de preguntas frecuentes.
+  Estética VAULI: fondo blanco, eyebrow verde teal, tipografía centrada,
+  filas separadas solo por líneas divisorias horizontales sutiles.
+
+  Semántico y sin JS: usa <details>/<summary> nativo del navegador.
+  El triángulo marker por defecto se oculta con ::-webkit-details-marker
+  y ::marker. El ícono +/- se hace rotando "+" 45deg cuando [open].
+
+  Diferente de faq-pop.liquid (que tiene mucho estilo/cards): aquí no hay
+  fondos por item, no hay sombras, no hay bordes redondeados — solo líneas.
+{%- endcomment -%}
+
+{%- style -%}
+  #ProductFaqSimple-{{ section.id }} {
+    --pfs-bg: {{ section.settings.bg_color | default: '#ffffff' }};
+    --pfs-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+    --pfs-eyebrow: {{ section.settings.eyebrow_color | default: '#20b19e' }};
+    --pfs-border: {{ section.settings.border_color | default: '#e5e5e5' }};
+    --pfs-heading-size: {{ section.settings.heading_size | divided_by: 10.0 }}rem;
+    --pfs-question-size: {{ section.settings.question_size | divided_by: 10.0 }}rem;
+    --pfs-max-width: {{ section.settings.content_max_width }}px;
+    background-color: var(--pfs-bg);
+    color: var(--pfs-text);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div id="ProductFaqSimple-{{ section.id }}" class="product-faq-simple">
+  <div class="product-faq-simple__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="product-faq-simple__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="product-faq-simple__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-faq-simple__list">
+        {%- for block in section.blocks -%}
+          <details
+            class="product-faq-simple__item"
+            {% if section.settings.first_open and forloop.first %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary class="product-faq-simple__question">
+              <span class="product-faq-simple__question-text">
+                {{- block.settings.question | default: 'Escribe tu pregunta' -}}
+              </span>
+              <span class="product-faq-simple__icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="product-faq-simple__answer rte">
+              {{ block.settings.answer }}
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-faq-simple__inner {
+    max-width: var(--pfs-max-width, 780px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    text-align: center;
+  }
+
+  .product-faq-simple__eyebrow {
+    margin: 0 0 1.2rem;
+    color: var(--pfs-eyebrow, #20b19e);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .product-faq-simple__heading {
+    margin: 0 0 3.6rem;
+    font-size: var(--pfs-heading-size, 3.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: inherit;
+  }
+
+  .product-faq-simple__list {
+    text-align: left;
+    border-top: 1px solid var(--pfs-border, #e5e5e5);
+  }
+
+  .product-faq-simple__item {
+    border-bottom: 1px solid var(--pfs-border, #e5e5e5);
+  }
+
+  /* Ocultar el triángulo por defecto del <summary> */
+  .product-faq-simple__question::-webkit-details-marker {
+    display: none;
+  }
+  .product-faq-simple__question::marker {
+    display: none;
+    content: '';
+  }
+
+  .product-faq-simple__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem 0;
+    cursor: pointer;
+    list-style: none;
+    color: inherit;
+    outline: none;
+  }
+
+  .product-faq-simple__question:focus-visible {
+    outline: 2px solid var(--pfs-eyebrow, #20b19e);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .product-faq-simple__question-text {
+    flex: 1 1 auto;
+    font-size: var(--pfs-question-size, 1.7rem);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    color: inherit;
+  }
+
+  .product-faq-simple__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 2.4rem;
+    font-weight: 300;
+    line-height: 1;
+    color: inherit;
+    transform-origin: center;
+    transition: transform 0.2s ease;
+    user-select: none;
+  }
+
+  /* Al abrir, giramos el + 45deg para formar una x/menos visual */
+  .product-faq-simple__item[open] > .product-faq-simple__question .product-faq-simple__icon {
+    transform: rotate(45deg);
+  }
+
+  .product-faq-simple__answer {
+    padding: 0 0 2.4rem;
+    font-size: 1.5rem;
+    line-height: 1.65;
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  .product-faq-simple__answer > *:first-child {
+    margin-top: 0;
+  }
+  .product-faq-simple__answer > *:last-child {
+    margin-bottom: 0;
+  }
+  .product-faq-simple__answer p {
+    margin: 0 0 1rem;
+  }
+  .product-faq-simple__answer a {
+    color: var(--pfs-eyebrow, #20b19e);
+    text-decoration: underline;
+  }
+
+  /* Tablet */
+  @media (max-width: 989px) {
+    .product-faq-simple__heading {
+      font-size: calc(var(--pfs-heading-size, 3.2rem) * 0.88);
+      margin-bottom: 3rem;
+    }
+  }
+
+  /* Móvil */
+  @media (max-width: 749px) {
+    .product-faq-simple__inner {
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+    }
+    .product-faq-simple__eyebrow {
+      font-size: 1.1rem;
+      letter-spacing: 0.18em;
+    }
+    .product-faq-simple__heading {
+      font-size: calc(var(--pfs-heading-size, 3.2rem) * 0.75);
+      margin-bottom: 2.4rem;
+    }
+    .product-faq-simple__question {
+      padding: 1.6rem 0;
+      gap: 1.2rem;
+    }
+    .product-faq-simple__question-text {
+      font-size: calc(var(--pfs-question-size, 1.7rem) * 0.94);
+    }
+    .product-faq-simple__answer {
+      padding-bottom: 2rem;
+      font-size: 1.4rem;
+    }
+  }
+
+  /* Respeta prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .product-faq-simple__icon {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FAQ simple",
+  "tag": "section",
+  "class": "section section-product-faq-simple",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Acordeón minimalista de preguntas frecuentes. Solo líneas horizontales, sin fondos ni sombras. Usa <details>/<summary> nativo — sin JavaScript."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Etiqueta superior (eyebrow)",
+      "default": "Dudas frecuentes"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Preguntas frecuentes"
+    },
+    {
+      "type": "checkbox",
+      "id": "first_open",
+      "label": "Abrir la primera pregunta por defecto",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color del eyebrow",
+      "default": "#20b19e"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de la línea divisoria",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "header",
+      "content": "Tamaños"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Tamaño de las preguntas",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 480,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 780
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "max_blocks": 20,
+  "blocks": [
+    {
+      "type": "pregunta",
+      "name": "Pregunta",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "¿Cuál es tu pregunta?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Escribe aquí la respuesta.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "VAULI — FAQ",
+      "blocks": [
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Las bolsas son reutilizables?",
+            "answer": "<p>Sí, lávalas con agua y jabón y reutilízalas sin problema. Solo evita reusar las que hayan tenido carnes crudas.</p>"
+          }
+        },
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Cómo se carga?",
+            "answer": "<p>Por USB-C, como un teléfono. El display muestra la batería en todo momento para que nunca te agarre descargado.</p>"
+          }
+        },
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Puedo sellar líquidos o sopas?",
+            "answer": "<p>Está recomendado para alimentos sólidos. Para líquidos, congela primero y luego sella: quedan perfectos.</p>"
+          }
+        },
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Venden bolsas de repuesto?",
+            "answer": "<p>Sí, tenemos pack de 10 bolsas de repuesto por $9.99.</p>"
+          }
+        },
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Cómo es el envío?",
+            "answer": "<p>Gratis en compras +$20: delivery en Caracas y envíos por MRW/ZOOM al interior del país.</p>"
+          }
+        },
+        {
+          "type": "pregunta",
+          "settings": {
+            "question": "¿Puedo pagar al recibir?",
+            "answer": "<p>Sí, ofrecemos pago contra entrega en Caracas. También aceptamos pago móvil, transferencia, Zelle y PayPal.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
