@@ -24,6 +24,22 @@
     padding-top: {{ section.settings.padding_top | default: 80 }}px;
     padding-bottom: {{ section.settings.padding_bottom | default: 80 }}px;
   }
+
+  @media (max-width: 749px) {
+    #ProductCtaFinal-{{ section.id }} {
+      padding-top: 40px !important;
+      padding-bottom: 40px !important;
+    }
+    #ProductCtaFinal-{{ section.id }} .product-cta-final__inner {
+      padding-left: 1.6rem !important;
+      padding-right: 1.6rem !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: 100% !important;
+    }
+  }
 {%- endstyle -%}
 
 <div id="ProductCtaFinal-{{ section.id }}" class="product-cta-final">
@@ -175,6 +191,9 @@
       padding-left: 1.6rem;
       padding-right: 1.6rem;
       gap: 1.6rem;
+    }
+    .product-cta-final__heading {
+      font-size: clamp(2.2rem, 6.5vw, 3rem);
     }
     .product-cta-final__cta {
       padding: 1.6rem 3rem;

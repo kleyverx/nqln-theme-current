@@ -57,6 +57,22 @@
     padding: 0 !important;
     aspect-ratio: auto !important;
   }
+
+  @media (max-width: 749px) {
+    #ProductUsesChips-{{ section.id }} {
+      padding-top: 40px !important;
+      padding-bottom: 40px !important;
+    }
+    #ProductUsesChips-{{ section.id }} .product-uses-chips__inner {
+      padding-left: 1.6rem !important;
+      padding-right: 1.6rem !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: 100% !important;
+    }
+  }
 {%- endstyle -%}
 
 <div id="ProductUsesChips-{{ section.id }}" class="product-uses-chips">
@@ -262,12 +278,20 @@
     .product-uses-chips__inner {
       grid-template-columns: 1fr;
       gap: 2rem;
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
     }
     .product-uses-chips__inner[data-image-position='right'] .product-uses-chips__media {
       order: 0;
     }
     .product-uses-chips__media {
       aspect-ratio: 16 / 10;
+    }
+    .product-uses-chips__heading {
+      font-size: clamp(2rem, 6vw, 2.6rem);
+    }
+    .product-uses-chips__eyebrow {
+      font-size: 1.15rem;
     }
     .product-uses-chips__chips {
       gap: 0.6rem;

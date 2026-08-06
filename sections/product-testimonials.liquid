@@ -27,6 +27,22 @@
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
   }
+
+  @media (max-width: 749px) {
+    #ProductTestimonials-{{ section.id }} {
+      padding-top: 40px !important;
+      padding-bottom: 40px !important;
+    }
+    #ProductTestimonials-{{ section.id }} .product-testimonials__inner {
+      padding-left: 1.6rem !important;
+      padding-right: 1.6rem !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: 100% !important;
+    }
+  }
 {%- endstyle -%}
 
 <div id="ProductTestimonials-{{ section.id }}" class="product-testimonials">
@@ -288,7 +304,11 @@
       padding-right: 1.6rem;
     }
     .product-testimonials__heading {
+      font-size: clamp(2rem, 6vw, 2.6rem);
       margin-bottom: 0.8rem;
+    }
+    .product-testimonials__eyebrow {
+      font-size: 1.15rem;
     }
   }
 

@@ -31,6 +31,22 @@
     padding-top: {{ section.settings.padding_top | default: 64 }}px;
     padding-bottom: {{ section.settings.padding_bottom | default: 64 }}px;
   }
+
+  @media (max-width: 749px) {
+    #ProductVsColumns-{{ section.id }} {
+      padding-top: 40px !important;
+      padding-bottom: 40px !important;
+    }
+    #ProductVsColumns-{{ section.id }} .product-vs-columns__inner {
+      padding-left: 1.6rem !important;
+      padding-right: 1.6rem !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: 100% !important;
+    }
+  }
 {%- endstyle -%}
 
 <div id="ProductVsColumns-{{ section.id }}" class="product-vs-columns">
@@ -244,12 +260,22 @@
 
   /* Mobile: stack vertical — columna "sin" arriba, "con" abajo (orden HTML) */
   @media (max-width: 749px) {
+    .product-vs-columns__inner {
+      padding-left: 1.6rem;
+      padding-right: 1.6rem;
+    }
     .product-vs-columns__grid {
       grid-template-columns: 1fr;
       gap: 1.6rem;
     }
     .product-vs-columns__head {
       margin-bottom: 2.4rem;
+    }
+    .product-vs-columns__eyebrow {
+      font-size: 1.15rem;
+    }
+    .product-vs-columns__heading {
+      font-size: clamp(2rem, 6vw, 2.6rem);
     }
     .product-vs-columns__topic {
       font-size: 1.4rem;

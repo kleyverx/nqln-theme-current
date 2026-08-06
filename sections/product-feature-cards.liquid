@@ -57,6 +57,22 @@
     padding: 0 !important;
     aspect-ratio: auto !important;
   }
+
+  @media (max-width: 749px) {
+    #ProductFeatureCards-{{ section.id }} {
+      padding-top: 40px !important;
+      padding-bottom: 40px !important;
+    }
+    #ProductFeatureCards-{{ section.id }} .product-feature-cards__inner {
+      padding-left: 1.6rem !important;
+      padding-right: 1.6rem !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      width: 100% !important;
+    }
+  }
 {%- endstyle -%}
 
 <div id="ProductFeatureCards-{{ section.id }}" class="product-feature-cards">
@@ -262,7 +278,7 @@
     }
     .product-feature-cards__grid {
       grid-template-columns: 1fr;
-      gap: 2.4rem;
+      gap: 2rem;
     }
     .product-feature-cards__card {
       align-items: center;
@@ -270,6 +286,12 @@
     }
     .product-feature-cards__media {
       max-width: 420px;
+    }
+    .product-feature-cards__heading {
+      font-size: clamp(2rem, 6vw, 2.6rem);
+    }
+    .product-feature-cards__eyebrow {
+      font-size: 1.15rem;
     }
   }
 
