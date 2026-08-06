@@ -68,6 +68,9 @@
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
+    /* SIN fill/stroke forzado: cada SVG decide. Filled (fill=currentColor)
+       hereda color del contenedor; outline (fill=none stroke=currentColor)
+       mantiene su outline sin ser rellenado. */
   }
 
   @media (max-width: 749px) {
@@ -193,17 +196,11 @@
     width: 100%;
     height: 100%;
     display: block;
-    fill: currentColor;
-    stroke: currentColor;
-  }
-
-  .product-benefits-simple__icon > svg[fill]:not([fill="currentColor"]),
-  .product-benefits-simple__icon > svg [fill]:not([fill="currentColor"]) {
-    fill: revert;
-  }
-  .product-benefits-simple__icon > svg[stroke]:not([stroke="currentColor"]),
-  .product-benefits-simple__icon > svg [stroke]:not([stroke="currentColor"]) {
-    stroke: revert;
+    /* NO forzar fill/stroke: el SVG decide.
+       Los SVGs modernos (Heroicons/Lucide) traen currentColor explicito
+       en fill o stroke, asi que heredan el color del contenedor sin
+       necesidad de forzar nada aqui. Forzar fill: currentColor rompia
+       los SVGs outline (fill="none") rellenandolos indebidamente. */
   }
 
   .product-benefits-simple__card-title {

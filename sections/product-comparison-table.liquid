@@ -380,12 +380,10 @@
     width: 100%;
     height: 100%;
     display: block;
-    fill: currentColor;
-  }
-
-  /* SVGs de línea (usan stroke) también heredan del currentColor */
-  .product-comparison-table__mark-icon > svg[fill="none"] {
-    stroke: currentColor;
+    /* SIN fill/stroke forzado: cada SVG decide su estilo.
+       Los defaults (default_yes_svg/default_no_svg) traen fill="currentColor"
+       explicito. SVGs outline pegados por el merchant (fill=none stroke=...)
+       mantienen su outline sin ser rellenados. */
   }
 
   /* Si el SVG trae un color propio distinto, respetarlo */

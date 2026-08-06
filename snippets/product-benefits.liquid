@@ -165,8 +165,12 @@
     overflow: visible !important;
   }
 
-  /* SVG pegados en el icono: llenan el badge y heredan color por currentColor.
-     BLINDAJE con !important para ganar contra reglas globales del tema padre. */
+  /* SVG pegados en el icono: llenan el badge (via width/height 100%) y
+     heredan color por currentColor SOLO si el propio SVG usa currentColor.
+     BLINDAJE con !important en tamano y padding para ganar contra reglas
+     globales del tema padre. SIN forzar fill/stroke: cada SVG decide su
+     estilo — asi los outline (fill=none stroke=currentColor) no quedan
+     rellenados y los filled (fill=currentColor) heredan el color acento. */
   .product-benefits__icon.product-benefits__icon > svg {
     width: 100% !important;
     height: 100% !important;
@@ -179,18 +183,6 @@
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
-    fill: currentColor;
-    stroke: currentColor;
-  }
-
-  /* Si el SVG ya trae fill/stroke propio, respetamos su estilo original */
-  .product-benefits__icon > svg[fill]:not([fill="currentColor"]),
-  .product-benefits__icon > svg [fill]:not([fill="currentColor"]) {
-    fill: revert;
-  }
-  .product-benefits__icon > svg[stroke]:not([stroke="currentColor"]),
-  .product-benefits__icon > svg [stroke]:not([stroke="currentColor"]) {
-    stroke: revert;
   }
 
   /* Cuerpo de texto centrado verticalmente respecto al ícono grande */
