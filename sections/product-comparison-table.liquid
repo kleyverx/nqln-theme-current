@@ -28,6 +28,75 @@
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
   }
+
+  /* BLINDAJE de icono: gana contra CSS global del tema padre Halo/Ella
+     que aplica padding/max-width/width a img+svg. ID + clase + !important. */
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark {
+    width: 3.2rem !important;
+    height: 3.2rem !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    overflow: visible !important;
+  }
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark-icon {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    overflow: visible !important;
+  }
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark-icon > svg,
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: contain !important;
+  }
+
+  /* Blindaje responsive: ajustar tamanos del wrapper en breakpoints,
+     el SVG hijo siempre llena al 100% del wrapper (regla de arriba). */
+  @media (max-width: 989px) {
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark {
+      width: 2.8rem !important;
+      height: 2.8rem !important;
+    }
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark-icon {
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+    }
+  }
+  @media (max-width: 749px) {
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark {
+      width: 2.4rem !important;
+      height: 2.4rem !important;
+    }
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark-icon {
+      width: 1.3rem !important;
+      height: 1.3rem !important;
+    }
+  }
+  @media (max-width: 380px) {
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark {
+      width: 2.2rem !important;
+      height: 2.2rem !important;
+    }
+    #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark-icon {
+      width: 1.1rem !important;
+      height: 1.1rem !important;
+    }
+  }
 {%- endstyle -%}
 
 {%- liquid

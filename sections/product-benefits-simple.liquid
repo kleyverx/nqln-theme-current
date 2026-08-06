@@ -35,6 +35,41 @@
     padding-bottom: {{ section.settings.padding_bottom }}px;
   }
 
+  /* BLINDAJE de ícono: gana contra el CSS global del tema padre Halo/Ella
+     que aplica padding/max-width/width a img+svg dentro de sections. */
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: var(--pbs-icon-size, 44px) !important;
+    height: var(--pbs-icon-size, 44px) !important;
+    min-width: var(--pbs-icon-size, 44px) !important;
+    min-height: var(--pbs-icon-size, 44px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: var(--pbs-icon-color, #20b19e) !important;
+    font-size: calc(var(--pbs-icon-size, 44px) * 0.75) !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon > svg,
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: contain !important;
+  }
+
   @media (max-width: 749px) {
     #ProductBenefitsSimple-{{ section.id }} {
       padding-top: 40px !important;

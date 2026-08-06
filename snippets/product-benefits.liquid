@@ -141,27 +141,44 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   }
 
-  /* Ícono limpio, sin fondo — solo el emoji o SVG a tamaño configurado */
-  .product-benefits__icon {
-    display: flex;
+  /* Icono limpio, sin fondo - solo el emoji o SVG a tamano configurado.
+     BLINDAJE: clase duplicada (.product-benefits__icon.product-benefits__icon)
+     + !important en props criticas para ganar contra el CSS global del tema
+     padre Halo/Ella que aplica padding/max-width/width a img+svg. */
+  .product-benefits__icon.product-benefits__icon {
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    width: var(--pb-icon-size, 44px);
-    height: var(--pb-icon-size, 44px);
+    width: var(--pb-icon-size, 44px) !important;
+    height: var(--pb-icon-size, 44px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     align-self: center;
     font-size: calc(var(--pb-icon-size, 44px) * 0.7);
     line-height: 1;
     color: var(--pb-accent, #20b19e);
     flex-shrink: 0;
+    overflow: visible !important;
   }
 
-  /* SVG pegados en el ícono: llenan el badge y heredan color por currentColor */
-  .product-benefits__icon > svg {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
+  /* SVG pegados en el icono: llenan el badge y heredan color por currentColor.
+     BLINDAJE con !important para ganar contra reglas globales del tema padre. */
+  .product-benefits__icon.product-benefits__icon > svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: contain !important;
     fill: currentColor;
     stroke: currentColor;
   }

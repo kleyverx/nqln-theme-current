@@ -57,6 +57,44 @@
     aspect-ratio: auto !important;
   }
 
+  /* BLINDAJE del check circular: gana contra CSS global del tema padre Halo/Ella
+     que aplica padding/max-width/width a svg. ID + clase + !important. */
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check {
+    width: 2.6rem !important;
+    height: 2.6rem !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+  }
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check > svg,
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check svg {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  @media (max-width: 749px) {
+    #ProductKitContents-{{ section.id }} .product-kit-contents__check {
+      width: 2.4rem !important;
+      height: 2.4rem !important;
+    }
+    #ProductKitContents-{{ section.id }} .product-kit-contents__check > svg,
+    #ProductKitContents-{{ section.id }} .product-kit-contents__check svg {
+      width: 1.4rem !important;
+      height: 1.4rem !important;
+    }
+  }
+
   @media (max-width: 749px) {
     #ProductKitContents-{{ section.id }} {
       padding-top: 40px !important;
