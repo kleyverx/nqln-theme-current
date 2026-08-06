@@ -31,6 +31,31 @@
   #ProductKitContents-{{ section.id }} .product-kit-contents__inner {
     max-width: var(--pkc-max-width);
   }
+
+  /* BLINDAJE: gana contra el CSS global del tema padre Halo/Ella que aplica
+     max-width/height/object-fit a img. ID + tag + clase + !important. */
+  #ProductKitContents-{{ section.id }} .product-kit-contents__media {
+    aspect-ratio: var(--pkc-aspect, 4 / 5) !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  #ProductKitContents-{{ section.id }} img.product-kit-contents__img,
+  #ProductKitContents-{{ section.id }} .product-kit-contents__media img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: var(--pkc-fit, cover) !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    aspect-ratio: auto !important;
+  }
 {%- endstyle -%}
 
 <div id="ProductKitContents-{{ section.id }}" class="product-kit-contents" data-image-position="{{ section.settings.image_position | default: 'left' }}">

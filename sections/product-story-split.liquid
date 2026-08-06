@@ -38,6 +38,32 @@
     --pss-fit: {{ section.settings.image_fit | default: 'cover' }};
     --pss-aspect: {{ section.settings.aspect_ratio | default: '4 / 5' }};
   }
+
+  /* BLINDAJE: gana contra el CSS global del tema padre Halo/Ella. */
+  #ProductStorySplit-{{ section.id }} .product-story-split__image-wrap {
+    position: relative !important;
+    aspect-ratio: var(--pss-aspect, 4 / 5) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #ProductStorySplit-{{ section.id }} img.product-story-split__image,
+  #ProductStorySplit-{{ section.id }} .product-story-split__image-wrap img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: var(--pss-fit, cover) !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    aspect-ratio: auto !important;
+  }
 {%- endstyle -%}
 
 <div

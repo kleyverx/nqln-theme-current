@@ -31,6 +31,32 @@
     padding-top: {{ section.settings.padding_top | default: 64 }}px;
     padding-bottom: {{ section.settings.padding_bottom | default: 64 }}px;
   }
+
+  /* BLINDAJE: gana contra el CSS global del tema padre Halo/Ella. */
+  #ProductUsesChips-{{ section.id }} .product-uses-chips__media {
+    position: relative !important;
+    aspect-ratio: var(--puc-aspect, 4 / 3) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #ProductUsesChips-{{ section.id }} img.product-uses-chips__img,
+  #ProductUsesChips-{{ section.id }} .product-uses-chips__media img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: var(--puc-fit, cover) !important;
+    object-position: center !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    aspect-ratio: auto !important;
+  }
 {%- endstyle -%}
 
 <div id="ProductUsesChips-{{ section.id }}" class="product-uses-chips">
