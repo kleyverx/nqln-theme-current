@@ -64,6 +64,15 @@
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
   }
+  /* SVGs outline: preservar fill=none contra tema padre */
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark svg[fill="none"],
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark svg[fill="none"] * {
+    fill: none !important;
+  }
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark svg[stroke="currentColor"],
+  #ProductComparisonTable-{{ section.id }} .product-comparison-table__mark svg [stroke="currentColor"] {
+    stroke: currentColor !important;
+  }
 
   /* Blindaje responsive: ajustar tamanos del wrapper en breakpoints,
      el SVG hijo siempre llena al 100% del wrapper (regla de arriba). */

@@ -68,9 +68,20 @@
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
-    /* SIN fill/stroke forzado: cada SVG decide. Filled (fill=currentColor)
-       hereda color del contenedor; outline (fill=none stroke=currentColor)
-       mantiene su outline sin ser rellenado. */
+  }
+
+  /* CRÍTICO: SVGs outline (fill="none" stroke="currentColor") — el atributo
+     HTML fill="none" es un presentation attribute de la mas baja especificidad,
+     asi que cualquier regla CSS del tema padre tipo "svg { fill: currentColor }"
+     lo sobreescribe y rellena el outline. Forzamos fill: none !important sobre
+     el SVG y todos sus hijos si el raiz tiene fill="none". */
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon svg[fill="none"],
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon svg[fill="none"] * {
+    fill: none !important;
+  }
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon svg[stroke="currentColor"],
+  #ProductBenefitsSimple-{{ section.id }} .product-benefits-simple__icon svg [stroke="currentColor"] {
+    stroke: currentColor !important;
   }
 
   @media (max-width: 749px) {

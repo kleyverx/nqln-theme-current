@@ -168,9 +168,7 @@
   /* SVG pegados en el icono: llenan el badge (via width/height 100%) y
      heredan color por currentColor SOLO si el propio SVG usa currentColor.
      BLINDAJE con !important en tamano y padding para ganar contra reglas
-     globales del tema padre. SIN forzar fill/stroke: cada SVG decide su
-     estilo — asi los outline (fill=none stroke=currentColor) no quedan
-     rellenados y los filled (fill=currentColor) heredan el color acento. */
+     globales del tema padre. */
   .product-benefits__icon.product-benefits__icon > svg {
     width: 100% !important;
     height: 100% !important;
@@ -183,6 +181,20 @@
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
+  }
+
+  /* CRITICO: SVGs outline (fill="none" stroke="currentColor") — el atributo
+     HTML fill="none" es un presentation attribute de la mas baja especificidad,
+     asi que reglas CSS del tema padre tipo "svg { fill: currentColor }" lo
+     sobreescriben y rellenan el outline. Forzamos fill: none !important sobre
+     el SVG y todos sus hijos cuando el raiz tiene fill="none". */
+  .product-benefits__icon.product-benefits__icon svg[fill="none"],
+  .product-benefits__icon.product-benefits__icon svg[fill="none"] * {
+    fill: none !important;
+  }
+  .product-benefits__icon.product-benefits__icon svg[stroke="currentColor"],
+  .product-benefits__icon.product-benefits__icon svg [stroke="currentColor"] {
+    stroke: currentColor !important;
   }
 
   /* Cuerpo de texto centrado verticalmente respecto al ícono grande */

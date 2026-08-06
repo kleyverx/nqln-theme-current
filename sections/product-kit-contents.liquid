@@ -82,6 +82,15 @@
     display: block !important;
     aspect-ratio: 1 / 1 !important;
   }
+  /* SVGs outline: preservar fill=none contra tema padre */
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check svg[fill="none"],
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check svg[fill="none"] * {
+    fill: none !important;
+  }
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check svg[stroke="currentColor"],
+  #ProductKitContents-{{ section.id }} .product-kit-contents__check svg [stroke="currentColor"] {
+    stroke: currentColor !important;
+  }
 
   @media (max-width: 749px) {
     #ProductKitContents-{{ section.id }} .product-kit-contents__check {
