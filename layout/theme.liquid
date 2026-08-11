@@ -133,44 +133,88 @@
             margin-top: -12px;
       }
 
-      /* === Botón Compartir (share): asegurar visibilidad en desktop y mobile === */
-      /* El block share (Style 1) va standalone en el sidebar del producto. Algunas
-         reglas globales del tema padre pueden ocultarlo o darle max-width: 0.
-         Forzamos display: flex y visibilidad completa en cualquier viewport. */
+      /* === Botón Compartir (share Style 2): al lado del wishlist heart === */
+      /* El share Style 2 se renderiza dentro de product-button.liquid, en la
+         fila de acciones junto al wishlist. El contenedor padre (form actions)
+         es un flex row, y el share entra ahi. Blindamos:
+         1) El wrapper de share (share-button + .productView-share) visible siempre.
+         2) El botón visible con su texto en desktop y mobile.
+         3) La fila padre debe permitir wrap para que el share no se desborde. */
+
+      /* Wrapper del share (custom element share-button + variantes) */
       .productView-share,
       .productView-share.style-1,
+      .productView-share.style-2,
+      .productView-share.style-3,
       .halo-socialShare,
-      share-button.productView-share {
-        display: flex !important;
+      share-button.productView-share,
+      .productView-groupBtnAction share-button,
+      .productView-groupBtnAction .productView-share {
+        display: inline-flex !important;
         align-items: center !important;
         gap: 0.6rem !important;
         visibility: visible !important;
         opacity: 1 !important;
         max-width: none !important;
         max-height: none !important;
+        min-width: 0 !important;
         overflow: visible !important;
+        position: relative !important;
       }
-      .productView-share .share-button__button {
+
+      /* Fila padre de acciones (buy_buttons): permite que el share encaje */
+      .productView-groupBtnAction,
+      .productView-actions {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.8rem !important;
+      }
+
+      /* El botón Compartir en sí */
+      .productView-share .share-button__button,
+      share-button .share-button__button {
         display: inline-flex !important;
         align-items: center !important;
         gap: 0.4rem !important;
         cursor: pointer !important;
         visibility: visible !important;
         opacity: 1 !important;
+        pointer-events: auto !important;
+        background: transparent !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 8px !important;
+        padding: 8px 14px !important;
+        color: inherit !important;
+      }
+      .productView-share .share-button__button:hover {
+        border-color: currentColor !important;
       }
       .productView-share .share-button__button span {
         display: inline !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
       }
-      /* En mobile, no ocultar el texto ni reducir a cero */
+      /* Icono share dentro del botón */
+      .productView-share .share-button__button svg {
+        width: 16px !important;
+        height: 16px !important;
+        display: inline-block !important;
+      }
+
+      /* Mobile: mantener visible, permitir texto (no ocultarlo) */
       @media (max-width: 749px) {
         .productView-share,
         .productView-share.style-1,
         .productView-share.style-2,
         .productView-share.style-3 {
-          display: flex !important;
+          display: inline-flex !important;
         }
         .productView-share .share-button__button span {
           display: inline !important;
+        }
+        .productView-groupBtnAction {
+          gap: 0.6rem !important;
         }
       }
 

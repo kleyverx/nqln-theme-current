@@ -120,7 +120,7 @@
           "type": "share",
           "settings": {
             "show_share": true,
-            "share_layout": "1",
+            "share_layout": "2",
             "spacing_top": 12,
             "spacing_bottom": 0
           }
