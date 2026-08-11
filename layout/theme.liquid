@@ -168,6 +168,30 @@
         fill: none !important;
       }
 
+      /* Mobile: darle aire al final del sidebar del producto para que el
+         boton Compartir (y cualquier otro elemento del final) no quede
+         tapado por la sticky add-to-cart bar de abajo. */
+      @media (max-width: 749px) {
+        .productView-details,
+        .halo-productView-right,
+        .productView-product {
+          padding-bottom: 90px !important;
+        }
+      }
+
+      /* Cuando el modal Compartir esta abierto: ocultar la sticky bar
+         inferior para que no compita visualmente ni interfiera con clicks
+         en la parte baja del modal. Al cerrar, la sticky bar reaparece. */
+      body:has(.halo-nqln-share.is-open) .halo-sticky-toolbar-mobile,
+      body:has(.halo-nqln-share.is-open) [class*="halo-sticky-add-to-cart"],
+      body:has(.halo-nqln-share.is-open) .productView-stickyCart,
+      body:has(.halo-nqln-share.is-open) .sticky-product-mobile {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transition: opacity 0.15s ease, visibility 0.15s;
+      }
+
       /* === Z-index fixes: enforce stacking order so content never overlaps fixed UI === */
       /* Sticky add to cart bar (bottom) must stay on top — keep its native position: fixed */
       .halo-sticky-toolbar-mobile,
