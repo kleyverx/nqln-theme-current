@@ -133,36 +133,18 @@
             margin-top: -12px;
       }
 
-      /* === Botón Compartir (share Style 2): al lado del wishlist heart === */
-      /* El share Style 2 se renderiza dentro de product-button.liquid, en la
-         fila de acciones junto al wishlist. El contenedor padre (form actions)
-         es un flex row, y el share entra ahi. Blindamos:
-         1) El wrapper de share (share-button + .productView-share) visible siempre.
-         2) El botón visible con su texto en desktop y mobile.
-         3) La fila padre debe permitir wrap para que el share no se desborde. */
-
-      /* Wrapper del share (custom element share-button + variantes) */
-      .productView-share,
-      .productView-share.style-1,
-      .productView-share.style-2,
-      .productView-share.style-3,
-      .halo-socialShare,
-      share-button.productView-share,
-      .productView-groupBtnAction share-button,
-      .productView-groupBtnAction .productView-share {
+      /* === Boton Compartir custom NQLN === */
+      /* El snippet halo-share.liquid trae su propio CSS/JS scoped. Aqui solo
+         garantizamos visibilidad del wrapper y que la fila padre (buy_buttons)
+         permita wrap para acomodar el share al lado del wishlist. */
+      .productView-share.halo-nqln-share,
+      .halo-nqln-share {
         display: inline-flex !important;
-        align-items: center !important;
-        gap: 0.6rem !important;
         visibility: visible !important;
         opacity: 1 !important;
         max-width: none !important;
-        max-height: none !important;
-        min-width: 0 !important;
         overflow: visible !important;
-        position: relative !important;
       }
-
-      /* Fila padre de acciones (buy_buttons): permite que el share encaje */
       .productView-groupBtnAction,
       .productView-actions {
         display: flex !important;
@@ -170,52 +152,20 @@
         align-items: center !important;
         gap: 0.8rem !important;
       }
-
-      /* El botón Compartir en sí */
-      .productView-share .share-button__button,
-      share-button .share-button__button {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 0.4rem !important;
-        cursor: pointer !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        background: transparent !important;
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        border-radius: 8px !important;
-        padding: 8px 14px !important;
-        color: inherit !important;
+      /* Iconos SVG con brand color dentro del menu de share: sin heredar el
+         forzado global de fill/stroke que hemos visto en el tema padre. */
+      .halo-nqln-share__icon svg {
+        fill: currentColor !important;
+        stroke: currentColor !important;
       }
-      .productView-share .share-button__button:hover {
-        border-color: currentColor !important;
+      .halo-nqln-share__app--x .halo-nqln-share__icon svg,
+      .halo-nqln-share__app--whatsapp .halo-nqln-share__icon svg,
+      .halo-nqln-share__app--facebook .halo-nqln-share__icon svg,
+      .halo-nqln-share__app--telegram .halo-nqln-share__icon svg {
+        stroke: none !important;
       }
-      .productView-share .share-button__button span {
-        display: inline !important;
-        font-size: 13px !important;
-        font-weight: 600 !important;
-      }
-      /* Icono share dentro del botón */
-      .productView-share .share-button__button svg {
-        width: 16px !important;
-        height: 16px !important;
-        display: inline-block !important;
-      }
-
-      /* Mobile: mantener visible, permitir texto (no ocultarlo) */
-      @media (max-width: 749px) {
-        .productView-share,
-        .productView-share.style-1,
-        .productView-share.style-2,
-        .productView-share.style-3 {
-          display: inline-flex !important;
-        }
-        .productView-share .share-button__button span {
-          display: inline !important;
-        }
-        .productView-groupBtnAction {
-          gap: 0.6rem !important;
-        }
+      .halo-nqln-share__app--copy .halo-nqln-share__icon svg {
+        fill: none !important;
       }
 
       /* === Z-index fixes: enforce stacking order so content never overlaps fixed UI === */
