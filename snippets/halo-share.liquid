@@ -186,12 +186,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.95);
-    width: min(92vw, 440px);
-    max-width: 440px;
-    padding: 24px 22px 22px;
+    width: min(94vw, 480px);
+    max-width: 480px;
+    padding: 26px 24px 24px;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 18px;
+    border-radius: 4px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
     z-index: 10001;
     opacity: 0;
@@ -251,18 +251,18 @@
   .halo-nqln-share__grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    gap: 10px;
   }
   .halo-nqln-share__app {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 6px;
-    padding: 8px 4px;
+    gap: 8px;
+    padding: 10px 4px;
     background: transparent;
     border: 0;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
@@ -278,10 +278,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
     color: #ffffff;
+  }
+  .halo-nqln-share__icon > svg {
+    width: 30px !important;
+    height: 30px !important;
+    display: block;
   }
   .halo-nqln-share__app--whatsapp .halo-nqln-share__icon { background: #25D366; }
   .halo-nqln-share__app--facebook .halo-nqln-share__icon { background: #1877F2; }
@@ -289,7 +294,7 @@
   .halo-nqln-share__app--telegram .halo-nqln-share__icon { background: #0088CC; }
   .halo-nqln-share__app--copy     .halo-nqln-share__icon { background: #666666; }
   .halo-nqln-share__label {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: #333;
     line-height: 1.2;
@@ -298,24 +303,24 @@
   .halo-nqln-share__native {
     display: none;
     width: 100%;
-    margin-top: 10px;
-    padding: 10px 14px;
+    margin-top: 14px;
+    padding: 12px 14px;
     background: #1a1a1a;
     color: #ffffff;
     border: 0;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
   }
   .halo-nqln-share__native:not([hidden]) { display: block; }
 
-  /* Mobile: modal centrado con iconos mas grandes y padding tactil */
+  /* Mobile: modal centrado con iconos grandes y padding tactil */
   @media (max-width: 749px) {
     .halo-nqln-share__menu {
-      width: min(92vw, 380px);
+      width: min(94vw, 420px);
       padding: 22px 18px 20px;
-      border-radius: 20px;
+      border-radius: 4px;
     }
     .halo-nqln-share__menu-title {
       font-size: 14px;
@@ -325,8 +330,12 @@
       gap: 8px;
     }
     .halo-nqln-share__icon {
-      width: 44px;
-      height: 44px;
+      width: 52px;
+      height: 52px;
+    }
+    .halo-nqln-share__icon > svg {
+      width: 26px !important;
+      height: 26px !important;
     }
     .halo-nqln-share__label {
       font-size: 11px;
@@ -337,8 +346,12 @@
       gap: 6px;
     }
     .halo-nqln-share__icon {
-      width: 40px;
-      height: 40px;
+      width: 46px;
+      height: 46px;
+    }
+    .halo-nqln-share__icon > svg {
+      width: 22px !important;
+      height: 22px !important;
     }
   }
 </style>
