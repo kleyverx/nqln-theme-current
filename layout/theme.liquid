@@ -133,6 +133,47 @@
             margin-top: -12px;
       }
 
+      /* === Botón Compartir (share): asegurar visibilidad en desktop y mobile === */
+      /* El block share (Style 1) va standalone en el sidebar del producto. Algunas
+         reglas globales del tema padre pueden ocultarlo o darle max-width: 0.
+         Forzamos display: flex y visibilidad completa en cualquier viewport. */
+      .productView-share,
+      .productView-share.style-1,
+      .halo-socialShare,
+      share-button.productView-share {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.6rem !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        max-width: none !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .productView-share .share-button__button {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.4rem !important;
+        cursor: pointer !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      .productView-share .share-button__button span {
+        display: inline !important;
+      }
+      /* En mobile, no ocultar el texto ni reducir a cero */
+      @media (max-width: 749px) {
+        .productView-share,
+        .productView-share.style-1,
+        .productView-share.style-2,
+        .productView-share.style-3 {
+          display: flex !important;
+        }
+        .productView-share .share-button__button span {
+          display: inline !important;
+        }
+      }
+
       /* === Z-index fixes: enforce stacking order so content never overlaps fixed UI === */
       /* Sticky add to cart bar (bottom) must stay on top — keep its native position: fixed */
       .halo-sticky-toolbar-mobile,

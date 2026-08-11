@@ -115,6 +115,15 @@
             "spacing_top": 8,
             "spacing_bottom": 0
           }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "show_share": true,
+            "share_layout": "1",
+            "spacing_top": 12,
+            "spacing_bottom": 0
+          }
         }
       },
       "block_order": [
@@ -127,7 +136,8 @@
         "quantity_selector",
         "buy_buttons",
         "benefits",
-        "trust_image"
+        "trust_image",
+        "share"
       ],
       "settings": {
         "container": "container",
