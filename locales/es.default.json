@@ -120,6 +120,10 @@
       "aria_label": "Beneficios y tasa BCV",
       "placeholder": "Agrega bloques desde el editor (beneficios, tasa BCV)"
     },
+    "collection_chips": {
+      "aria_label": "Colecciones destacadas",
+      "placeholder": "Agrega bloques para seleccionar colecciones"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. Todos los derechos reservados."
     }

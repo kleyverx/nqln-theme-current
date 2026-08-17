@@ -120,6 +120,10 @@
       "aria_label": "Benefits and BCV rate",
       "placeholder": "Add blocks from the editor (benefits, BCV rate)"
     },
+    "collection_chips": {
+      "aria_label": "Featured collections",
+      "placeholder": "Add blocks to select collections"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
     }

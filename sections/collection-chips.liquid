@@ -1,0 +1,300 @@
+{%- comment -%}
+  Chips horizontales de colecciones destacadas.
+  Ideal para navegacion rapida mobile a las categorias principales.
+
+  Configurable por blocks — el merchant agrega/reordena colecciones
+  desde el theme editor. Cada bloque selecciona una collection.
+
+  Layout mobile-first:
+  - Chips en fila horizontal con scroll-snap.
+  - Cada chip: imagen circular (opcional) + nombre.
+  - Scroll suave, scrollbar oculto.
+  - Active state para la coleccion actual (si el user esta en /collections/xxx).
+
+  Se puede colocar en cualquier lugar via section (Home, arriba del
+  header-group, o donde el merchant quiera). Por default se agrega al
+  header-group.json debajo de la franja informativa.
+{%- endcomment -%}
+
+{%- liquid
+  assign current_handle = collection.handle | default: ''
+  assign chip_style = section.settings.chip_style | default: 'pill'
+  assign show_image = section.settings.show_image
+-%}
+
+<nav
+  class="collection-chips collection-chips--{{ chip_style }} {% if show_image %}collection-chips--with-image{% endif %}"
+  role="navigation"
+  aria-label="{{ 'sections.collection_chips.aria_label' | t }}"
+>
+  <div class="collection-chips__scroll">
+    {%- if section.settings.show_all_link and section.settings.all_url != blank -%}
+      <a
+        class="collection-chips__item {% if request.path == '/collections' %}is-active{% endif %}"
+        href="{{ section.settings.all_url }}"
+      >
+        {%- if show_image -%}
+          <span class="collection-chips__image collection-chips__image--all" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+        {%- endif -%}
+        <span class="collection-chips__name">{{ section.settings.all_label | default: 'Ver todo' }}</span>
+      </a>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- assign coll = block.settings.collection -%}
+      {%- if coll != blank -%}
+        {%- assign is_active = false -%}
+        {%- if coll.handle == current_handle -%}
+          {%- assign is_active = true -%}
+        {%- endif -%}
+        <a
+          class="collection-chips__item {% if is_active %}is-active{% endif %}"
+          href="{{ coll.url }}"
+          {% if is_active %}aria-current="page"{% endif %}
+          {{ block.shopify_attributes }}
+        >
+          {%- if show_image -%}
+            <span class="collection-chips__image">
+              {%- assign chip_img = block.settings.custom_image | default: coll.image | default: coll.products.first.featured_image -%}
+              {%- if chip_img != blank -%}
+                {{ chip_img | image_url: width: 120 | image_tag: loading: 'lazy', width: 60, height: 60, alt: coll.title, class: 'collection-chips__img' }}
+              {%- else -%}
+                <span class="collection-chips__initial" aria-hidden="true">{{ coll.title | slice: 0, 1 | upcase }}</span>
+              {%- endif -%}
+            </span>
+          {%- endif -%}
+          <span class="collection-chips__name">{{ block.settings.custom_name | default: coll.title }}</span>
+        </a>
+      {%- endif -%}
+
+    {%- else -%}
+      {%- if request.design_mode -%}
+        <div class="collection-chips__item collection-chips__item--placeholder">
+          <span class="collection-chips__name">{{ 'sections.collection_chips.placeholder' | t }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</nav>
+
+{% stylesheet %}
+  .collection-chips {
+    background: var(--color-bg);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .collection-chips__scroll {
+    display: flex;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .collection-chips__scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .collection-chips__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    padding: 8px 14px;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: var(--font-weight-strong);
+    white-space: nowrap;
+    transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+    min-height: 40px;
+  }
+
+  .collection-chips--pill .collection-chips__item {
+    border-radius: var(--radius-full);
+  }
+
+  .collection-chips--rounded .collection-chips__item {
+    border-radius: var(--radius-md);
+  }
+
+  .collection-chips--square .collection-chips__item {
+    border-radius: 0;
+  }
+
+  .collection-chips__item:hover,
+  .collection-chips__item:focus-visible {
+    background: var(--color-border);
+  }
+
+  .collection-chips__item.is-active {
+    background: var(--color-brand-secondary);
+    color: var(--color-bg);
+  }
+
+  .collection-chips__item--placeholder {
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  /* Variante con imagen: chip mas alto para dar espacio al thumbnail. */
+  .collection-chips--with-image .collection-chips__item {
+    padding: 4px 14px 4px 4px;
+    min-height: 48px;
+  }
+
+  .collection-chips__image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  .collection-chips--rounded.collection-chips--with-image .collection-chips__image,
+  .collection-chips--square.collection-chips--with-image .collection-chips__image {
+    border-radius: var(--radius-sm);
+  }
+
+  .collection-chips__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .collection-chips__initial {
+    font-size: 16px;
+    font-weight: var(--font-weight-heading);
+    color: var(--color-text-muted);
+  }
+
+  .collection-chips__image--all svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-text-muted);
+  }
+
+  .collection-chips__item.is-active .collection-chips__image {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .collection-chips__item.is-active .collection-chips__initial,
+  .collection-chips__item.is-active .collection-chips__image--all svg {
+    color: var(--color-bg);
+  }
+
+  @media (min-width: 750px) {
+    .collection-chips__scroll {
+      padding: 0 var(--space-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .collection-chips__item {
+      font-size: 14px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Chips de colecciones",
+  "class": "shopify-section-collection-chips",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Chips horizontales scrolleables con las colecciones destacadas. Agrega bloques abajo para seleccionar qué colecciones mostrar."
+    },
+    {
+      "type": "select",
+      "id": "chip_style",
+      "label": "Forma de los chips",
+      "options": [
+        { "value": "pill", "label": "Pastilla (redondeada)" },
+        { "value": "rounded", "label": "Rectángulo redondeado" },
+        { "value": "square", "label": "Cuadrado" }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Mostrar miniatura/imagen",
+      "info": "Muestra un thumbnail circular a la izquierda del texto en cada chip.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Chip 'Ver todo'"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_all_link",
+      "label": "Mostrar chip 'Ver todo' al inicio",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Texto del chip 'Ver todo'",
+      "default": "Ver todo"
+    },
+    {
+      "type": "url",
+      "id": "all_url",
+      "label": "URL del chip 'Ver todo'",
+      "info": "Ej: /collections (todas las colecciones) o /collections/all (todos los productos)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Colección",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Colección"
+        },
+        {
+          "type": "text",
+          "id": "custom_name",
+          "label": "Nombre personalizado",
+          "info": "Deja vacío para usar el nombre real de la colección."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Imagen personalizada",
+          "info": "Se usa si activaste 'Mostrar miniatura'. Deja vacío para usar la imagen de la colección o del primer producto."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Chips de colecciones",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

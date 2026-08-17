@@ -44,10 +44,23 @@
         }
       },
       "block_order": ["shipping", "payment", "warranty", "bcv"]
+    },
+    "collection-chips": {
+      "type": "collection-chips",
+      "settings": {
+        "chip_style": "pill",
+        "show_image": false,
+        "show_all_link": true,
+        "all_label": "Ver todo",
+        "all_url": "/collections"
+      },
+      "blocks": {},
+      "block_order": []
     }
   },
   "order": [
     "header",
-    "header-info-bar"
+    "header-info-bar",
+    "collection-chips"
   ]
 }
