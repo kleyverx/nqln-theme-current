@@ -108,6 +108,14 @@
       "aria_wishlist": "Wishlist",
       "aria_cart": "Shopping cart"
     },
+    "bottom_bar": {
+      "aria_nav": "Bottom navigation",
+      "home": "Home",
+      "search": "Search",
+      "wishlist": "Wishlist",
+      "account": "Account",
+      "cart": "Cart"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
     }

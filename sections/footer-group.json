@@ -17,9 +17,14 @@
         "menu": "",
         "show_payment_icons": true
       }
+    },
+    "mobile-bottom-bar": {
+      "type": "mobile-bottom-bar",
+      "settings": {}
     }
   },
   "order": [
-    "footer"
+    "footer",
+    "mobile-bottom-bar"
   ]
 }

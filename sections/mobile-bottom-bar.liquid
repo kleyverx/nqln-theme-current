@@ -1,0 +1,249 @@
+{%- comment -%}
+  Barra inferior fija para mobile (bottom navigation).
+
+  5 items: Inicio | Buscar | Wishlist | Cuenta | Cart.
+  Cada item: icono outline + label pequeno debajo.
+  Active state segun request.page_type.
+  Solo visible en mobile (<750px). Oculta en desktop.
+  Respeta safe-area-inset-bottom para iPhones con notch.
+  Emite body padding-bottom dinamico via {% style %} para que el
+  contenido no quede tapado detras.
+
+  Se incluye en footer-group.json por default para aparecer en todas
+  las paginas. El merchant puede reorganizar/remover desde el theme
+  editor.
+{%- endcomment -%}
+
+<nav class="mobile-bottom-bar" role="navigation" aria-label="{{ 'sections.bottom_bar.aria_nav' | t }}">
+
+  {%- if section.settings.show_home -%}
+    <a
+      href="{{ routes.root_url }}"
+      class="mobile-bottom-bar__item {% if request.page_type == 'index' %}is-active{% endif %}"
+      {% if request.page_type == 'index' %}aria-current="page"{% endif %}
+    >
+      <svg class="mobile-bottom-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V9.5Z"></path>
+      </svg>
+      <span class="mobile-bottom-bar__label">{{ 'sections.bottom_bar.home' | t }}</span>
+    </a>
+  {%- endif -%}
+
+  {%- if section.settings.show_search -%}
+    <a
+      href="{{ routes.search_url }}"
+      class="mobile-bottom-bar__item {% if request.page_type == 'search' %}is-active{% endif %}"
+      {% if request.page_type == 'search' %}aria-current="page"{% endif %}
+    >
+      <svg class="mobile-bottom-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <span class="mobile-bottom-bar__label">{{ 'sections.bottom_bar.search' | t }}</span>
+    </a>
+  {%- endif -%}
+
+  {%- if section.settings.show_wishlist -%}
+    <a
+      href="/pages/{{ section.settings.wishlist_page_handle | default: 'wish-list' }}"
+      class="mobile-bottom-bar__item"
+    >
+      <svg class="mobile-bottom-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+      <span class="mobile-bottom-bar__label">{{ 'sections.bottom_bar.wishlist' | t }}</span>
+      <span class="mobile-bottom-bar__badge" data-wishlist-count aria-hidden="true">0</span>
+    </a>
+  {%- endif -%}
+
+  {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+    <a
+      href="{{ routes.account_url }}"
+      class="mobile-bottom-bar__item {% if request.page_type contains 'customers' %}is-active{% endif %}"
+    >
+      <svg class="mobile-bottom-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="mobile-bottom-bar__label">{{ 'sections.bottom_bar.account' | t }}</span>
+    </a>
+  {%- endif -%}
+
+  {%- if section.settings.show_cart -%}
+    <a
+      href="{{ routes.cart_url }}"
+      class="mobile-bottom-bar__item {% if request.page_type == 'cart' %}is-active{% endif %}"
+      {% if request.page_type == 'cart' %}aria-current="page"{% endif %}
+    >
+      <svg class="mobile-bottom-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+        <path d="M3 6h18"></path>
+        <path d="M16 10a4 4 0 0 1-8 0"></path>
+      </svg>
+      <span class="mobile-bottom-bar__label">{{ 'sections.bottom_bar.cart' | t }}</span>
+      {%- if cart.item_count > 0 -%}
+        <span class="mobile-bottom-bar__badge mobile-bottom-bar__badge--cart" aria-label="{{ cart.item_count }} items en el carrito">{{ cart.item_count }}</span>
+      {%- endif -%}
+    </a>
+  {%- endif -%}
+
+</nav>
+
+{% stylesheet %}
+  .mobile-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    z-index: 900;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-bottom-bar__item {
+    flex: 1 1 0;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px 6px;
+    min-height: 56px;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: var(--font-weight-strong);
+    line-height: 1;
+    transition: color 150ms ease;
+  }
+
+  .mobile-bottom-bar__item:hover,
+  .mobile-bottom-bar__item:focus-visible {
+    color: var(--color-text);
+  }
+
+  .mobile-bottom-bar__item.is-active {
+    color: var(--color-brand-secondary);
+  }
+
+  .mobile-bottom-bar__icon {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .mobile-bottom-bar__label {
+    display: block;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+  }
+
+  .mobile-bottom-bar__badge {
+    position: absolute;
+    top: 4px;
+    right: calc(50% - 20px);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-primary);
+    color: var(--color-text);
+    font-size: 10px;
+    font-weight: var(--font-weight-strong);
+    line-height: 16px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .mobile-bottom-bar__badge--cart {
+    background: var(--color-brand-secondary);
+    color: var(--color-bg);
+  }
+
+  .mobile-bottom-bar__badge[data-wishlist-count]:not([data-count]) {
+    display: none;
+  }
+
+  /* Push del contenido del body para que la barra no tape lo ultimo.
+     Solo en mobile (donde la barra es visible). */
+  @media (max-width: 749.98px) {
+    body {
+      padding-bottom: calc(56px + env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Hidden en tablet y desktop */
+  @media (min-width: 750px) {
+    .mobile-bottom-bar {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Barra inferior mobile",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Barra fija en la parte inferior de la pantalla en mobile. Oculta en tablet y desktop. Cada icono es opcional — activa solo los que quieras."
+    },
+    {
+      "type": "header",
+      "content": "Elementos visibles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_home",
+      "label": "Mostrar Inicio",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Mostrar Buscar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Mostrar Wishlist",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wishlist_page_handle",
+      "label": "Handle de la página de wishlist",
+      "default": "wish-list"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Mostrar Cuenta",
+      "default": false,
+      "info": "Solo aparece si tienes cuentas de cliente habilitadas en la tienda."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Mostrar Carrito",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barra inferior mobile"
+    }
+  ]
+}
+{% endschema %}

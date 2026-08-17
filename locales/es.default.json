@@ -108,6 +108,14 @@
       "aria_wishlist": "Lista de deseos",
       "aria_cart": "Carrito de compras"
     },
+    "bottom_bar": {
+      "aria_nav": "Navegación inferior",
+      "home": "Inicio",
+      "search": "Buscar",
+      "wishlist": "Deseos",
+      "account": "Cuenta",
+      "cart": "Carrito"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. Todos los derechos reservados."
     }
