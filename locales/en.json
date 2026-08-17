@@ -116,6 +116,10 @@
       "account": "Account",
       "cart": "Cart"
     },
+    "info_bar": {
+      "aria_label": "Benefits and BCV rate",
+      "placeholder": "Add blocks from the editor (benefits, BCV rate)"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
     }

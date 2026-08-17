@@ -22,9 +22,32 @@
         "wishlist_page_handle": "wish-list",
         "menu": "cat-logo"
       }
+    },
+    "header-info-bar": {
+      "type": "header-info-bar",
+      "blocks": {
+        "shipping": {
+          "type": "benefit",
+          "settings": { "icon": "shipping", "text": "Envío gratis desde 30$" }
+        },
+        "payment": {
+          "type": "benefit",
+          "settings": { "icon": "payment", "text": "Pago contra entrega" }
+        },
+        "warranty": {
+          "type": "benefit",
+          "settings": { "icon": "shield", "text": "Garantía de 6 meses" }
+        },
+        "bcv": {
+          "type": "bcv_rate",
+          "settings": {}
+        }
+      },
+      "block_order": ["shipping", "payment", "warranty", "bcv"]
     }
   },
   "order": [
-    "header"
+    "header",
+    "header-info-bar"
   ]
 }

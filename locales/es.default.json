@@ -116,6 +116,10 @@
       "account": "Cuenta",
       "cart": "Carrito"
     },
+    "info_bar": {
+      "aria_label": "Beneficios y tasa BCV",
+      "placeholder": "Agrega bloques desde el editor (beneficios, tasa BCV)"
+    },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. Todos los derechos reservados."
     }
