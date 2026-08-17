@@ -160,3 +160,46 @@ fieldset {
 [data-empty-hide]:empty {
   display: none;
 }
+
+/* ============================================================
+   VIEW TRANSITIONS (cross-document, MPA)
+   Navegacion fluida entre paginas sin JS.
+   - Solo CSS puro. Zero conflict con Growave/Brevo/apps.
+   - Chrome/Edge/Safari 18+ soportan nativo (~85% trafico 2025).
+   - Firefox y viejos: degrada silenciosamente a nav normal.
+   - Same-origin only (nqlnstore.com -> nqlnstore.com OK).
+   - Funciona dentro del WebView de la Shop app.
+   Ref: https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API
+   ============================================================ */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* Header y bottom bar persisten entre navegaciones: no se re-animan
+   cuando cambia el resto de la pagina, dan sensacion de app nativa.
+   IMPORTANTE: view-transition-name debe ser unico por documento. */
+.site-header {
+  view-transition-name: site-header;
+}
+
+.mobile-bottom-bar {
+  view-transition-name: mobile-bottom-bar;
+}
+
+/* Timing default (cross-fade 250ms). Lo bajamos a 180ms + curva suave
+   para que se sienta snappy pero no abrupto. */
+::view-transition-group(root) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Respetar prefers-reduced-motion: desactivar practicamente todo. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
