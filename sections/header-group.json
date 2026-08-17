@@ -23,6 +23,39 @@
         "menu": "cat-logo"
       }
     },
+    "header-info-bar": {
+      "type": "header-info-bar",
+      "settings": {
+        "auto_rotate_mobile": true,
+        "rotate_interval": 4000
+      },
+      "blocks": {
+        "shipping": {
+          "type": "benefit",
+          "settings": { "icon": "shipping", "text": "Envío gratis desde 30$" }
+        },
+        "payment": {
+          "type": "benefit",
+          "settings": { "icon": "payment", "text": "Pago contra entrega" }
+        },
+        "warranty": {
+          "type": "benefit",
+          "settings": { "icon": "shield", "text": "Garantía de 15 días" }
+        },
+        "bcv": {
+          "type": "bcv_rate",
+          "settings": {
+            "label": "BCV:",
+            "manual_rate": "50,00",
+            "suffix": "Bs",
+            "auto_update": true,
+            "api_endpoint": "",
+            "api_key_path": ""
+          }
+        }
+      },
+      "block_order": ["shipping", "payment", "warranty", "bcv"]
+    },
     "collection_chips_eidDTT": {
       "type": "collection-chips",
       "name": "Chips de colecciones",
@@ -38,6 +71,7 @@
   },
   "order": [
     "header",
+    "header-info-bar",
     "collection_chips_eidDTT"
   ]
 }

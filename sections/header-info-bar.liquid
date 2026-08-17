@@ -23,10 +23,11 @@
 -%}
 
 <div
-  class="header-info-bar"
+  class="header-info-bar {% if section.settings.auto_rotate_mobile %}header-info-bar--auto-rotate{% endif %}"
   role="region"
   aria-label="{{ 'sections.info_bar.aria_label' | t }}"
   style="--info-bar-bg: {{ bg_color }}; --info-bar-fg: {{ text_color }};"
+  data-rotate-interval="{{ section.settings.rotate_interval | default: 4000 }}"
 >
   <div class="header-info-bar__scroll">
     {%- for block in section.blocks -%}
@@ -67,13 +68,13 @@
             </span>
             <span class="header-info-bar__text">
               {{ block.settings.label }}
-              <strong data-bcv-rate>{{ block.settings.manual_rate | money_without_currency | default: block.settings.manual_rate }}</strong>
+              <strong data-bcv-rate>{{ block.settings.manual_rate }}</strong>
               {{ block.settings.suffix }}
             </span>
             {%- if block.settings.auto_update -%}
               <script data-bcv-auto-update
-                data-endpoint="{{ block.settings.api_endpoint | default: 'https://pydolarve.org/api/v1/dollar?page=bcv' }}"
-                data-key-path="{{ block.settings.api_key_path | default: 'monitors.bcv.price' }}"
+                data-endpoint="{{ block.settings.api_endpoint | default: 'https://ve.dolarapi.com/v1/dolares/oficial' }}"
+                data-key-path="{{ block.settings.api_key_path | default: 'promedio' }}"
               ></script>
             {%- endif -%}
           </div>
@@ -109,9 +110,24 @@
     padding: 8px var(--space-md);
     overflow-x: auto;
     scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* Auto-rotate mobile: cada item ocupa full width y snap mandatory
+     asegura que solo se vea uno a la vez. El JS hace scrollBy cada N ms. */
+  @media (max-width: 749.98px) {
+    .header-info-bar--auto-rotate .header-info-bar__scroll {
+      scroll-snap-type: x mandatory;
+      gap: 0;
+    }
+    .header-info-bar--auto-rotate .header-info-bar__item {
+      min-width: calc(100% - (var(--space-md) * 2));
+      justify-content: center;
+      scroll-snap-stop: always;
+    }
   }
 
   .header-info-bar__scroll::-webkit-scrollbar {
@@ -192,7 +208,7 @@
 {% endstylesheet %}
 
 {% javascript %}
-  // Auto-update BCV: fetch a API publica (default pydolarve.org)
+  // Auto-update BCV: fetch a API publica (default ve.dolarapi.com/v1/dolares/oficial)
   // Silent fail — si el API esta caido, mantiene el valor manual.
   document.querySelectorAll('script[data-bcv-auto-update]').forEach((script) => {
     const endpoint = script.dataset.endpoint;
@@ -203,7 +219,7 @@
     fetch(endpoint, { headers: { 'Accept': 'application/json' } })
       .then((r) => r.ok ? r.json() : Promise.reject())
       .then((data) => {
-        const value = keyPath.split('.').reduce((obj, k) => obj?.[k], data);
+        const value = keyPath ? keyPath.split('.').reduce((obj, k) => obj?.[k], data) : data;
         if (value == null) return;
         const num = typeof value === 'number' ? value : parseFloat(value);
         if (Number.isFinite(num)) {
@@ -214,6 +230,32 @@
         }
       })
       .catch(() => {}); // silent — mantiene manual_rate
+  });
+
+  // Auto-rotate mobile: cada N ms hace scrollBy al siguiente item.
+  // Solo activa si la section tiene --auto-rotate y ancho <750px.
+  document.querySelectorAll('.header-info-bar--auto-rotate').forEach((bar) => {
+    const scroll = bar.querySelector('.header-info-bar__scroll');
+    if (!scroll) return;
+    const interval = parseInt(bar.dataset.rotateInterval, 10) || 4000;
+    let idx = 0;
+    let paused = false;
+    const mql = window.matchMedia('(max-width: 749.98px)');
+    const items = scroll.children;
+
+    const tick = () => {
+      if (paused || !mql.matches || items.length < 2) return;
+      idx = (idx + 1) % items.length;
+      const target = items[idx];
+      scroll.scrollTo({ left: target.offsetLeft - scroll.offsetLeft, behavior: 'smooth' });
+    };
+
+    setInterval(tick, interval);
+    // Pausa cuando el user interactua (toca o hace scroll manual).
+    scroll.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+    scroll.addEventListener('touchend', () => { setTimeout(() => { paused = false; }, interval); }, { passive: true });
+    // Respeta prefers-reduced-motion — no rotar si esta preferido.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) paused = true;
   });
 {% endjavascript %}
 
@@ -237,6 +279,27 @@
       "id": "text_color",
       "label": "Color de texto",
       "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Comportamiento mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate_mobile",
+      "label": "Rotar mensajes automáticamente en mobile",
+      "info": "Los mensajes se muestran uno a la vez y rotan cada N segundos (como en Halo). Si off, hace scroll horizontal libre.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "rotate_interval",
+      "label": "Intervalo de rotación (ms)",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
     }
   ],
   "blocks": [
