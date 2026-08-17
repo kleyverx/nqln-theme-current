@@ -75,7 +75,7 @@
         "menu": "cat-logo",
         "info_bar_bg": "",
         "info_bar_fg": "#ffffff",
-        "auto_rotate_mobile": true,
+        "auto_rotate_mobile": false,
         "rotate_interval": 4000
       }
     }

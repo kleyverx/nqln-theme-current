@@ -106,8 +106,17 @@
 
   {%- if has_info_blocks -%}
     {%- liquid
-      assign bar_bg = section.settings.info_bar_bg | default: settings.color_brand_secondary
-      assign bar_fg = section.settings.info_bar_fg | default: '#ffffff'
+      assign bar_bg = section.settings.info_bar_bg
+      if bar_bg == blank
+        assign bar_bg = settings.color_brand_secondary
+      endif
+      if bar_bg == blank
+        assign bar_bg = '#20b19e'
+      endif
+      assign bar_fg = section.settings.info_bar_fg
+      if bar_fg == blank
+        assign bar_fg = '#ffffff'
+      endif
     -%}
     <div
       class="site-header__info-bar {% if section.settings.auto_rotate_mobile %}site-header__info-bar--auto-rotate{% endif %}"
@@ -243,17 +252,23 @@
 </header>
 
 {% stylesheet %}
-  /* Header — MOBILE ONLY. Se oculta en tablet + desktop (>=750px).
-     El header desktop se agregara como section aparte en un proximo commit. */
+  /* Header — el bloque principal (logo + iconos) es MOBILE ONLY.
+     La franja info-bar y los chips se muestran tambien en desktop
+     (utiles como top-bar hasta que hagamos el header desktop). */
   .site-header {
     background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
     position: relative;
     z-index: 100;
   }
 
+  .site-header__inner {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Oculta SOLO la row principal (logo/iconos) en tablet+desktop, no
+     el info-bar ni chips. */
   @media (min-width: 750px) {
-    .site-header {
+    .site-header__inner {
       display: none;
     }
   }
@@ -695,8 +710,8 @@
       "type": "checkbox",
       "id": "auto_rotate_mobile",
       "label": "Rotar mensajes en mobile",
-      "info": "Un mensaje a la vez, rota cada N segundos. Si off, scroll horizontal libre.",
-      "default": true
+      "info": "Un mensaje a la vez, rota cada N segundos. Si off (recomendado), muestra todos con scroll horizontal libre.",
+      "default": false
     },
     {
       "type": "range",
