@@ -23,44 +23,48 @@
         "menu": "cat-logo"
       }
     },
-    "header-info-bar": {
-      "type": "header-info-bar",
+    "collection_chips_eidDTT": {
+      "type": "collection-chips",
       "blocks": {
-        "shipping": {
-          "type": "benefit",
-          "settings": { "icon": "shipping", "text": "Envío gratis desde 30$" }
+        "collection_fBEtjw": {
+          "type": "collection",
+          "settings": {
+            "collection": "adhesivos",
+            "custom_name": ""
+          }
         },
-        "payment": {
-          "type": "benefit",
-          "settings": { "icon": "payment", "text": "Pago contra entrega" }
+        "collection_jkDWWN": {
+          "type": "collection",
+          "settings": {
+            "collection": "",
+            "custom_name": ""
+          }
         },
-        "warranty": {
-          "type": "benefit",
-          "settings": { "icon": "shield", "text": "Garantía de 6 meses" }
-        },
-        "bcv": {
-          "type": "bcv_rate",
-          "settings": {}
+        "collection_CJxqLt": {
+          "type": "collection",
+          "settings": {
+            "collection": "accesorios",
+            "custom_name": ""
+          }
         }
       },
-      "block_order": ["shipping", "payment", "warranty", "bcv"]
-    },
-    "collection-chips": {
-      "type": "collection-chips",
+      "block_order": [
+        "collection_fBEtjw",
+        "collection_jkDWWN",
+        "collection_CJxqLt"
+      ],
+      "name": "Chips de colecciones",
       "settings": {
         "chip_style": "pill",
         "show_image": false,
-        "show_all_link": true,
+        "show_all_link": false,
         "all_label": "Ver todo",
-        "all_url": "/collections"
-      },
-      "blocks": {},
-      "block_order": []
+        "all_url": ""
+      }
     }
   },
   "order": [
     "header",
-    "header-info-bar",
-    "collection-chips"
+    "collection_chips_eidDTT"
   ]
 }
