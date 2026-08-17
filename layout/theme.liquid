@@ -12,10 +12,12 @@
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
     {%- comment -%} Font preloading: base variant se precarga; el resto va on-demand via @font-face {%- endcomment -%}
-    {%- unless settings.font_body.system? -%}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-      {{ settings.font_body | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {%- endunless -%}
+    {%- if settings.font_body != blank and settings.font_body.family -%}
+      {%- unless settings.font_body.system? -%}
+        <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+        {{ settings.font_body | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {%- endunless -%}
+    {%- endif -%}
 
     <title>
       {{- page_title -}}

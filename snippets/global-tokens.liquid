@@ -16,11 +16,11 @@
   Fase 3: refinamiento con mockups del usuario.
 {%- endcomment -%}
 {% style %}
-  {%- if settings.font_body -%}
+  {%- if settings.font_body != blank and settings.font_body.family -%}
     {{ settings.font_body | font_face: font_display: 'swap' }}
     {{ settings.font_body | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
   {%- endif -%}
-  {%- if settings.font_heading -%}
+  {%- if settings.font_heading != blank and settings.font_heading.family -%}
     {{ settings.font_heading | font_face: font_display: 'swap' }}
   {%- endif -%}
 

@@ -78,13 +78,13 @@
         "type": "font_picker",
         "id": "font_heading",
         "label": "Fuente titulos",
-        "default": "assistant_n7"
+        "default": "work_sans_n7"
       },
       {
         "type": "font_picker",
         "id": "font_body",
         "label": "Fuente texto",
-        "default": "assistant_n4"
+        "default": "work_sans_n4"
       },
       {
         "type": "range",
