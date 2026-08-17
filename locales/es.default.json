@@ -93,7 +93,11 @@
       "menu": "Menú",
       "search": "Buscar",
       "account": "Cuenta",
-      "cart": "Carrito"
+      "cart": "Carrito",
+      "aria_search": "Abrir búsqueda",
+      "aria_account": "Mi cuenta",
+      "aria_wishlist": "Lista de deseos",
+      "aria_cart": "Carrito de compras"
     },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. Todos los derechos reservados."

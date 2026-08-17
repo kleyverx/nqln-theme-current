@@ -93,7 +93,11 @@
       "menu": "Menu",
       "search": "Search",
       "account": "Account",
-      "cart": "Cart"
+      "cart": "Cart",
+      "aria_search": "Open search",
+      "aria_account": "My account",
+      "aria_wishlist": "Wishlist",
+      "aria_cart": "Shopping cart"
     },
     "footer": {
       "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
