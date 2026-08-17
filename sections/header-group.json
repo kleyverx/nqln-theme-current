@@ -25,36 +25,9 @@
     },
     "collection_chips_eidDTT": {
       "type": "collection-chips",
-      "blocks": {
-        "collection_fBEtjw": {
-          "type": "collection",
-          "settings": {
-            "collection": "adhesivos",
-            "custom_name": ""
-          }
-        },
-        "collection_jkDWWN": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_name": ""
-          }
-        },
-        "collection_CJxqLt": {
-          "type": "collection",
-          "settings": {
-            "collection": "accesorios",
-            "custom_name": ""
-          }
-        }
-      },
-      "block_order": [
-        "collection_fBEtjw",
-        "collection_jkDWWN",
-        "collection_CJxqLt"
-      ],
       "name": "Chips de colecciones",
       "settings": {
+        "menu": "cat-logo-mobile",
         "chip_style": "pill",
         "show_image": false,
         "show_all_link": false,
