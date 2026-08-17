@@ -13,10 +13,17 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "logo_width": 120,
+        "show_search": true,
+        "show_account": true,
+        "show_wishlist": true,
+        "wishlist_page_handle": "wish-list",
+        "menu": "cat-logo"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }
