@@ -13,39 +13,7 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {
-        "logo": "shopify://shop_images/Logo_NQLN0.png",
-        "logo_width": 120,
-        "show_search": true,
-        "show_account": false,
-        "show_wishlist": true,
-        "wishlist_page_handle": "wish-list",
-        "menu": "cat-logo",
-        "auto_rotate_mobile": true,
-        "rotate_interval": 4000
-      },
       "blocks": {
-        "shipping": {
-          "type": "benefit",
-          "settings": { "icon": "shipping", "text": "Envío gratis desde 30$" }
-        },
-        "payment": {
-          "type": "benefit",
-          "settings": { "icon": "payment", "text": "Pago contra entrega" }
-        },
-        "warranty": {
-          "type": "benefit",
-          "settings": { "icon": "shield", "text": "Garantía de 15 días" }
-        },
-        "bcv": {
-          "type": "bcv_rate",
-          "settings": {
-            "label": "BCV:",
-            "manual_rate": "50,00",
-            "suffix": "Bs",
-            "auto_update": true
-          }
-        },
         "chips": {
           "type": "collection_chips",
           "settings": {
@@ -56,10 +24,63 @@
             "all_label": "Ver todo",
             "all_url": ""
           }
+        },
+        "payment": {
+          "type": "benefit",
+          "settings": {
+            "icon": "payment",
+            "text": "Pago contra entrega"
+          }
+        },
+        "warranty": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "text": "Garantía de 15 días"
+          }
+        },
+        "bcv": {
+          "type": "bcv_rate",
+          "settings": {
+            "label": "BCV:",
+            "manual_rate": "50,00",
+            "suffix": "Bs",
+            "auto_update": true,
+            "api_endpoint": "",
+            "api_key_path": "promedio"
+          }
+        },
+        "shipping": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shipping",
+            "text": "Envío gratis desde 30$"
+          }
         }
       },
-      "block_order": ["shipping", "payment", "warranty", "bcv", "chips"]
+      "block_order": [
+        "chips",
+        "payment",
+        "warranty",
+        "bcv",
+        "shipping"
+      ],
+      "settings": {
+        "logo": "shopify://shop_images/Logo_NQLN0.png",
+        "logo_width": 120,
+        "show_search": true,
+        "show_account": false,
+        "show_wishlist": true,
+        "wishlist_page_handle": "wish-list",
+        "menu": "cat-logo",
+        "info_bar_bg": "",
+        "info_bar_fg": "#ffffff",
+        "auto_rotate_mobile": true,
+        "rotate_interval": 4000
+      }
     }
   },
-  "order": ["header"]
+  "order": [
+    "header"
+  ]
 }
