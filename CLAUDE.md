@@ -4,7 +4,7 @@ Este archivo proporciona orientación a Claude Code (claude.ai/code) al trabajar
 
 ## Puntero al Cerebro (Obsidian Vault)
 
-Este proyecto (tema Shopify Liquid del storefront **nqlnstore.com**, "Ella"/Halothemes) también está
+Este proyecto (tema Shopify Liquid del storefront **nqlnstore.com**, ahora en transición de Halo/Ella a tema propio desde Skeleton) también está
 documentado en el **Cerebro**, un wiki de todos los proyectos del escritorio (bóveda de Obsidian).
 Para contexto de negocio, arquitectura resumida, conexiones con otros proyectos y mejoras
 sugeridas, consulta primero:
@@ -18,51 +18,81 @@ abre Claude Code en la bóveda y pide: "re-analiza nqln-theme-current".
 
 ## Qué es esto
 
-Un **tema de Shopify** — el storefront en vivo de "INV MARG", una tienda venezolana. Es el **tema Ella de Halothemes (v6.5.0)** que ha sido fuertemente personalizado in situ. No hay paso de build, gestor de paquetes ni servidor de desarrollo local en este repo; es el código fuente crudo del tema que se sube/baja desde la tienda de Shopify en vivo.
+Repositorio del tema Shopify de **NQLN Store** (nqlnstore.com), tienda venezolana.
 
-El idioma principal de la tienda es **español (es)**. `locales/es.json` es el archivo de traducción de trabajo; las cadenas visibles para el usuario deben agregarse allí (y en `en.default.json` para mantener la paridad).
+**Estructura dual actual (Fase 1 en curso — Setup + base del tema nuevo)**:
+
+- **Tema nuevo** en la raíz del repo, basado en el [Shopify Skeleton Theme](https://github.com/Shopify/skeleton-theme) oficial. Está en construcción — Fase 1 (setup + base) completada; Fases 2-8 pendientes (ver `docs/superpowers/specs/`).
+
+- **Halo legacy** en `_legacy-halo/`. Es el tema Ella/Halothemes v6.5.0 que hoy sirve tráfico real. Se conserva como referencia para portar features. Excluido del CLI push via `.shopifyignore`.
+
+El tema publicado en Shopify sigue siendo Halo hasta la Fase 8, cuando se publica el nuevo.
+
+Idioma principal: **español** (`locales/es.default.json`).
 
 ## Flujo de trabajo y "comandos"
 
-Este repo se edita directamente y se sincroniza con Shopify vía Shopify CLI (o el Editor de Temas del admin). No hay herramientas de `npm`/test/build.
+- **Local dev con hot reload**: `shopify theme dev --store nqlnstore.myshopify.com` levanta `localhost:9292`.
+- **Deploy como sin publicar**: `shopify theme push --unpublished --store nqlnstore.myshopify.com`.
+- **Actualizar tema existente**: `shopify theme push --theme=<id> --store nqlnstore.myshopify.com`.
+- **Lint Liquid + accesibilidad**: `shopify theme check` (o `shopify theme check <archivo>`).
+- **Validar JSON**: `node -e "JSON.parse(require('fs').readFileSync('config/settings_schema.json','utf8'))"`.
+- **Commits en español** siguiendo el estilo del historial (`chore:`, `feat:`, `fix:`, `docs:`).
 
-- **Validar Liquid antes de hacer commit** — al generar o editar archivos `.liquid`, usa el skill `shopify-plugin:shopify-liquid`, que ejecuta `search_docs.mjs` (consultar objetos/filtros) y `validate.mjs` (analizar el archivo). Esto es lo más parecido a un "linter" que hay aquí. El commit `512c557` ("Fix linter errors") se produjo de esta manera.
-- **Validar JSON de configuración** con `node -e "require('./config/settings_data.json')"` — `settings_data.json` es un único objeto enorme y fácil de corromper.
-- Los commits en este repo se escriben **en español** siguiendo el historial existente (p. ej. "Sincronizar tema...", y prefijos Conventional-Commit como `fix(localization):`).
-- Los commits "Recuperación de datos" / "Sincronizar tema" significan que se bajó la exportación en vivo de Shopify — trátalos como la fuente de verdad y evita sobreescribirlos.
+## Arquitectura del tema nuevo
 
-## Arquitectura
+Estructura estándar Shopify Online Store 2.0 (`assets/ blocks/ config/ layout/ locales/ sections/ snippets/ templates/`). El skeleton oficial es la base — solo customizamos lo que no sirve del default.
 
-Estructura estándar de tema Shopify (`assets/ config/ layout/ locales/ sections/ snippets/ templates/`). Escala: ~127 sections, ~370 snippets, ~237 assets. Más allá de la estructura estándar, lo importante a saber:
+### Design tokens (Fase 1)
 
-### Base de vendor vs. trabajo personalizado
-El grueso del tema es **código vendor de Halo/Ella**, reconocible por el prefijo `halo-*` (snippets, assets, sections) y los objetos JS globales `Shopify.theme`/`halo`. **No** reformatees ni "limpies" archivos vendor de forma masiva. Las adiciones personalizadas/específicas de la tienda hechas sobre la base vendor incluyen:
-- `sections/whatsapp-button.liquid`, `sections/smart-app-banner.liquid`, `sections/main-menu-mobile.liquid`, `sections/custom-header-banner.liquid`, `sections/popup-descuento.liquid` (popup de descuento, controlado por cookie).
-- Los grandes bloques inline `<style>`/`<script>` en [layout/theme.liquid](layout/theme.liquid) — esta es la principal superficie de personalización (ver abajo).
+Todo el sistema visual se declara en:
+- `config/settings_schema.json` — settings editables desde el theme editor (colores, tipografía, espaciado, radios).
+- `snippets/global-tokens.liquid` — emite esos settings como CSS custom properties en `:root` y carga las `@font-face` de las fuentes elegidas.
+- `assets/base.css` — reset + tipografía base + utilidades globales, todo usando `var(--*)`.
 
-### `layout/theme.liquid` es el centro de personalización
-De forma inusual, gran parte del comportamiento específico de la tienda vive como **CSS/JS inline directamente en [layout/theme.liquid](layout/theme.liquid)**, no en archivos de assets. Antes de agregar CSS/JS global en otro lugar, revisa aquí primero. Contiene:
-- Un régimen de orden de apilamiento z-index (barra sticky de agregar al carrito, header, footer, marquee) — edita estas reglas `!important` con cuidado; corrigen bugs reales de solapamiento.
-- Estilado global del selector de variantes (`.product-form__input`, swatches, estados sold-out/unavailable).
-- Configuración de la View Transitions API (navegación de páginas en móvil, `@view-transition`), una barra superior de carga de página, boost de LCP con `fetchpriority`, y diferimiento de secciones bajo el pliegue con `content-visibility`.
-- Parches JS en runtime: interceptar `/cart/add` (fetch/XHR/form) para abrir el sidebar del carrito en vez de redirigir; diferir scripts de terceros (Brevo, Lottie) hasta idle/interacción; traducir cadenas de UI que quedan en inglés ("Sold out" → "Agotado") vía MutationObserver.
+Cambiar cualquier token en el theme editor actualiza el tema entero sin tocar código. **Regla clave: nunca hardcodear colores/espacios en CSS, siempre `var(--color-*)` y `var(--space-*)`.**
 
-Al corregir un bug de layout/solapamiento/traducción, la causa suele ser uno de estos bloques inline y no un archivo de section.
+### Layout raíz
 
-### JavaScript: Web Components, no un framework
-La UI interactiva está construida con **custom elements nativos** (`customElements.define(...)`) — p. ej. `cart-items`, `menu-drawer`, `predictive-search`, `product-form`, `quick-add-modal`, `localization-form`. Los helpers principales (`trapFocus`, `pauseAllMedia`, `Shopify.getCart`, el objeto `halo`) viven en `assets/global.js` / `assets/vendor.js`, cargados vía `snippets/global-script.liquid`. No hay módulos JS ni bundling — cada componente es su propio archivo `assets/*.js` cargado por la section/snippet que lo usa. Sigue este patrón al agregar interactividad; no introduzcas un framework ni una herramienta de build.
+`layout/theme.liquid` es corto (~50 líneas), limpio, sin CSS/JS inline gigante. Sin monkey-patches de fetch/XHR/halo.* como los que tenía Halo. Sin scripts de terceros inline (Brevo, Lottie) — se cargan solo donde se usen.
 
-### CSS: un archivo por componente
-El CSS está dividido en muchos archivos `assets/component-*.css`, cargados bajo demanda por la section que los necesita (nombres de clase estilo BEM). Los estilos por componente son la norma; los estilos inline en `theme.liquid` se reservan para correcciones globales/transversales.
+Renders obligatorios en el head: `meta-tags` (Open Graph/Twitter), `schema-jsonld` (SEO estructurado), `global-tokens` (CSS vars).
 
-### Templates e integraciones de apps
-- Los templates JSON (`templates/*.json`) definen la composición de la página; el comerciante los edita vía el Editor de Temas, así que prefiere construir **sections/snippets/blocks** en vez de codificar directo en los templates.
-- Muchos templates `.liquid` son **endpoints de datos de apps**, no páginas — p. ej. `templates/*.magenative-*.liquid`, `templates/*.ssw-*.liquid`, `templates/*.ajax_*.liquid`, `*.foxkit.liquid`. Estos renderizan JSON/parciales para apps de terceros (app móvil MageNative, apps de búsqueda, Foxkit, carrito/quickshop AJAX). No los trates como páginas normales del storefront.
-- Superficies de apps de terceros presentes en el tema: Growave / BON Loyalty (lealtad y wishlist), AliReviews, Pandectes (GDPR), Gameball, Brevo. Los hooks de estas aparecen como `{% render 'nombre-app-...' %}` en `theme.liquid` — déjalos en su lugar.
+### Sections y snippets
+
+Cada `.liquid` de section/snippet trae su CSS en `{% stylesheet %}` (scoped, no hereda ni fugas). Solo `assets/base.css` es global. Los snippets deben llevar `{% doc %}` como header cuando aplique.
+
+### JS
+
+Web Components nativos (`class Foo extends HTMLElement { ... }`), sin jQuery, sin monkey-patches globales, sin `halo.*`. Cada componente interactivo su propio archivo `assets/<componente>.js` cargado por la section que lo usa.
 
 ## Convenciones
 
-- **Español primero.** El texto de la UI es en español. Las nuevas cadenas visibles para el usuario pasan por `{{ 'key' | t }}` con entradas en `locales/es.json` y `locales/en.default.json`. Los archivos de locale `*_pretty.json` y `*.schema.json` son generados/auxiliares — no los edites a mano.
-- Usa `image_url`/`image_tag` (no los deprecados `img_url`/`img_tag`); pasa `width`/`alt` explícitos (el linter marca atributos de imagen faltantes).
-- Prefiere `{% render %}` sobre `{% include %}` (el commit `512c557` migró estos).
-- Mantén la accesibilidad intacta: el tema usa `trapFocus`, skip links y regiones ARIA live — presérvalos al editar componentes interactivos.
+- **Español primero**. Todo texto UI va por `{{ 'key' | t }}` con entradas en `locales/es.default.json`. `en.json` es fallback secundario. Para el theme editor, keys `t:*` van en `locales/es.default.schema.json`.
+- **Tokens obligatorios**: nunca `#ffcd11` ni `16px` directo en CSS — siempre `var(--color-brand-primary)` y `var(--space-md)`.
+- **Filtros de imagen**: solo `image_url` + `image_tag`. `img_url`/`img_tag` prohibidos (deprecados).
+- **HTML semántico + WCAG 2.1 AA**: `<nav>`, `<main>`, `<button>`, `<details>`. Contraste ≥4.5:1. Focus visible. Skip link a `#MainContent`. `prefers-reduced-motion` respetado.
+- **Prohibido `{% ... %}` literal dentro de comentarios CSS del bloque `{% style %}`** (Shopify los parsea y rompe el archivo — bug ya visto en Halo).
+- **`request.design_mode`** para placeholders visuales cuando settings/blocks están vacíos.
+- **Commits en español** siguiendo el historial (`chore:`, `feat:`, `fix:`, `docs:`).
+- **Tema publicado NO se toca** hasta la Fase 8. Cualquier push va siempre a tema "sin publicar" o al tema en desarrollo.
+
+## Trabajando con `_legacy-halo/`
+
+Es solo referencia. **No modificar** los archivos de Halo. Si necesitas portar una feature al tema nuevo:
+
+1. Lee el archivo de Halo (`_legacy-halo/sections/foo.liquid`).
+2. Escribe la versión nueva en la raíz (`sections/foo.liquid`) usando las convenciones actuales (tokens, CSS scoped, semántica, i18n).
+3. NO copies el archivo tal cual — el nuevo es reescritura, no copia.
+
+Si accidentalmente modificas algo en `_legacy-halo/`, revierte con `git checkout _legacy-halo/<archivo>`.
+
+## Documentación de proyecto
+
+- `docs/superpowers/specs/` — specs de diseño por fase (Fase 1 lista).
+- `docs/superpowers/plans/` — plans de implementación por fase.
+- Cada fase = un spec + un plan + N commits + testing.
+
+## Contacto
+
+nqlnstore@gmail.com
