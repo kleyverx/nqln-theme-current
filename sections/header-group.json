@@ -29,7 +29,7 @@
       "settings": {
         "menu": "cat-logo-mobile",
         "chip_style": "pill",
-        "show_image": false,
+        "show_image": true,
         "show_all_link": false,
         "all_label": "Ver todo",
         "all_url": ""
