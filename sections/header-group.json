@@ -13,10 +13,18 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "logo": "shopify://shop_images/Logo_NQLN0.png",
+        "logo_width": 120,
+        "show_search": true,
+        "show_account": false,
+        "show_wishlist": true,
+        "wishlist_page_handle": "wish-list",
+        "menu": "cat-logo"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }
