@@ -1,0 +1,77 @@
+{
+  "general": {
+    "404": "No encontrado",
+    "article": "Artículo",
+    "block": "Bloque",
+    "blog": "Blog",
+    "cart": "Carrito",
+    "collection": "Colección",
+    "collections": "Colecciones",
+    "collection_card": "Tarjeta de colección",
+    "collections_grid": "Grid de colecciones",
+    "colors": "Colores",
+    "column": "Columna",
+    "content": "Contenido",
+    "custom_section": "Sección personalizada",
+    "fonts": "Fuentes",
+    "footer": "Pie de página",
+    "group": "Grupo",
+    "header": "Encabezado",
+    "layout": "Diseño",
+    "main": "Principal",
+    "page": "Página",
+    "password": "Contraseña",
+    "primary": "Principal",
+    "product": "Producto",
+    "row": "Fila",
+    "search": "Buscar",
+    "secondary": "Secundario",
+    "section": "Sección",
+    "settings": "Ajustes",
+    "sidebar": "Barra lateral",
+    "text": "Texto",
+    "theme": "Tema",
+    "typography": "Tipografía"
+  },
+  "labels": {
+    "alignment": "Alineación",
+    "background": "Fondo",
+    "foreground": "Texto",
+    "grid_gap": "Espaciado del grid",
+    "grid_item_width": "Ancho del elemento",
+    "input_corner_radius": "Radio de borde de inputs",
+    "layout_direction": "Dirección del layout",
+    "menu": "Menú",
+    "customer_account_menu": "Menú de cuenta",
+    "padding": "Espaciado interno",
+    "page_margin": "Margen de página",
+    "page_width": "Ancho de página",
+    "show_payment_icons": "Mostrar iconos de pago",
+    "text_style": "Estilo de texto",
+    "text": "Texto"
+  },
+  "options": {
+    "alignment": {
+      "left": "Izquierda",
+      "center": "Centro",
+      "right": "Derecha"
+    },
+    "direction": {
+      "horizontal": "Horizontal",
+      "vertical": "Vertical"
+    },
+    "page_width": {
+      "narrow": "Angosto",
+      "wide": "Ancho"
+    },
+    "size": {
+      "large": "Grande",
+      "small": "Pequeño"
+    },
+    "text_style": {
+      "title": "Título",
+      "subtitle": "Subtítulo",
+      "normal": "Texto normal"
+    }
+  }
+}
