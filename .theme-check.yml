@@ -1,0 +1,9 @@
+# Config de shopify theme check.
+# Se excluye _legacy-halo/ porque son archivos vendor congelados que
+# ya no forman parte del tema nuevo (no se suben via .shopifyignore).
+# Verlos aqui solo agrega ruido y tarda mucho.
+
+ignore:
+  - _legacy-halo/**/*
+  - docs/**/*
+  - .playwright-mcp/**/*

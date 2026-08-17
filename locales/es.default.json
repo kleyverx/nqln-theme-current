@@ -11,36 +11,6 @@
     "not_found": "Página no encontrada.",
     "back_to_shopping": "Volver a comprar"
   },
-  "general": {
-    "search": {
-      "search": "Buscar",
-      "title": "Buscar",
-      "placeholder": "Buscar productos…",
-      "submit": "Enviar búsqueda",
-      "no_results_html": "Sin resultados para {{ terms }}",
-      "results_for_html": "{{ count }} resultados para {{ terms }}"
-    },
-    "cart": {
-      "view": "Ver carrito",
-      "empty": "Tu carrito está vacío",
-      "add": "Agregar al carrito",
-      "checkout": "Finalizar compra",
-      "title": "Carrito",
-      "update": "Actualizar",
-      "remove": "Quitar"
-    },
-    "share": {
-      "share": "Compartir",
-      "copy_to_clipboard": "Copiar enlace",
-      "share_url": "URL del producto",
-      "success_message": "Enlace copiado al portapapeles"
-    },
-    "common": {
-      "close": "Cerrar",
-      "open": "Abrir",
-      "menu": "Menú"
-    }
-  },
   "blog": {
     "article_comments": "Comentarios",
     "article_metadata_html": "{{ date }} por {{ author }}",
@@ -50,27 +20,21 @@
     "comment_form_submit": "Publicar",
     "comment_form_title": "Añadir un comentario"
   },
+  "cart": {
+    "checkout": "Finalizar compra",
+    "title": "Carrito",
+    "update": "Actualizar",
+    "remove": "Quitar"
+  },
   "collections": {
     "title": "Colecciones"
   },
-  "products": {
-    "product": {
-      "add_to_cart": "Agregar al carrito",
-      "sold_out": "Agotado",
-      "unavailable": "No disponible",
-      "on_sale": "En oferta",
-      "price": {
-        "regular_price": "Precio normal",
-        "sale_price": "Precio de oferta"
-      }
-    }
-  },
   "customers": {
     "login": {
-      "title": "Iniciar sesión",
       "email": "Correo electrónico",
       "password": "Contraseña",
-      "submit": "Entrar"
+      "submit": "Entrar",
+      "title": "Iniciar sesión"
     },
     "register": {
       "title": "Crear cuenta"
@@ -91,6 +55,38 @@
     "title": "Esta tienda es privada",
     "password": "Contraseña",
     "enter": "Entrar"
+  },
+  "search": {
+    "title": "Buscar",
+    "placeholder": "Buscar artículos, páginas o productos",
+    "submit": "Buscar",
+    "no_results_html": "Sin resultados para {{ terms }}",
+    "results_for_html": "{{ count }} resultados para {{ terms }}"
+  },
+  "general": {
+    "share": {
+      "share": "Compartir",
+      "copy_to_clipboard": "Copiar enlace",
+      "share_url": "URL del producto",
+      "success_message": "Enlace copiado al portapapeles"
+    },
+    "common": {
+      "close": "Cerrar",
+      "open": "Abrir",
+      "menu": "Menú"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Agregar al carrito",
+      "sold_out": "Agotado",
+      "unavailable": "No disponible",
+      "on_sale": "En oferta",
+      "price": {
+        "regular_price": "Precio normal",
+        "sale_price": "Precio de oferta"
+      }
+    }
   },
   "sections": {
     "header": {

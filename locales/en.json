@@ -1,4 +1,11 @@
 {
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "refresh_page": "Choosing a selection results in a full page refresh.",
+    "loading": "Loading…",
+    "close": "Close",
+    "menu": "Menu"
+  },
   "404": {
     "title": "404",
     "not_found": "Page not found.",
@@ -19,16 +26,23 @@
     "update": "Update",
     "remove": "Remove"
   },
+  "collections": {
+    "title": "Collections"
+  },
   "customers": {
     "login": {
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
       "title": "Login"
+    },
+    "register": {
+      "title": "Create account"
+    },
+    "account": {
+      "title": "My account",
+      "logout": "Sign out"
     }
-  },
-  "collections": {
-    "title": "Collections"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -48,5 +62,41 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "general": {
+    "share": {
+      "share": "Share",
+      "copy_to_clipboard": "Copy link",
+      "share_url": "Product URL",
+      "success_message": "Link copied to clipboard"
+    },
+    "common": {
+      "close": "Close",
+      "open": "Open",
+      "menu": "Menu"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "on_sale": "On sale",
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      }
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "search": "Search",
+      "account": "Account",
+      "cart": "Cart"
+    },
+    "footer": {
+      "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
+    }
   }
 }
