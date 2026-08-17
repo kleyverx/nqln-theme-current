@@ -1,0 +1,74 @@
+{%- comment -%}
+  Emite todos los design tokens del tema como CSS custom properties
+  en :root, leyendo desde settings.*. Se incluye en layout/theme.liquid
+  dentro del <head>. Cuando el merchant cambia un setting en el editor,
+  esta variable se re-renderiza en la siguiente peticion y el tema
+  entero se actualiza sin tocar codigo.
+
+  Los defaults inline (via | default: '...') cubren el caso donde el
+  setting aun no fue definido en config/settings_schema.json (util en
+  Fase 1 antes de que ese schema exista).
+
+  Tambien carga las @font-face de las fuentes elegidas (Shopify hostea
+  las webfonts en su CDN; font_face + font_url hacen el trabajo).
+
+  Fase 1: valores placeholder derivados de la paleta METRIKASA/NQLN.
+  Fase 3: refinamiento con mockups del usuario.
+{%- endcomment -%}
+{% style %}
+  {%- if settings.font_body -%}
+    {{ settings.font_body | font_face: font_display: 'swap' }}
+    {{ settings.font_body | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {%- endif -%}
+  {%- if settings.font_heading -%}
+    {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  :root {
+    --color-brand-primary: {{ settings.color_brand_primary | default: '#ffcd11' }};
+    --color-brand-secondary: {{ settings.color_brand_secondary | default: '#20b19e' }};
+    --color-brand-danger: {{ settings.color_brand_danger | default: '#c33a3a' }};
+
+    --color-text: {{ settings.color_text | default: '#1a1a1a' }};
+    --color-text-muted: {{ settings.color_text_muted | default: '#666666' }};
+    --color-bg: {{ settings.color_bg | default: '#ffffff' }};
+    --color-bg-soft: {{ settings.color_bg_soft | default: '#f6f5f1' }};
+    --color-border: {{ settings.color_border | default: '#e5e5e5' }};
+
+    {%- if settings.font_heading -%}
+      --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    {%- else -%}
+      --font-heading: system-ui, -apple-system, sans-serif;
+    {%- endif -%}
+    {%- if settings.font_body -%}
+      --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    {%- else -%}
+      --font-body: system-ui, -apple-system, sans-serif;
+    {%- endif -%}
+
+    --font-size-h1: {{ settings.size_h1_desktop | default: 32 }}px;
+    --font-size-h1-mobile: {{ settings.size_h1_mobile | default: 24 }}px;
+    --font-size-body: {{ settings.size_body | default: 16 }}px;
+    --font-weight-body: 400;
+    --font-weight-strong: 600;
+    --font-weight-heading: 800;
+
+    --space-base: {{ settings.space_scale | default: 4 }}px;
+    --space-xs: calc(var(--space-base) * 1);
+    --space-sm: calc(var(--space-base) * 2);
+    --space-md: calc(var(--space-base) * 4);
+    --space-lg: calc(var(--space-base) * 6);
+    --space-xl: calc(var(--space-base) * 10);
+    --space-2xl: calc(var(--space-base) * 16);
+    --space-3xl: calc(var(--space-base) * 24);
+
+    --radius-sm: {{ settings.radius_sm | default: 4 }}px;
+    --radius-md: {{ settings.radius_md | default: 8 }}px;
+    --radius-lg: {{ settings.radius_lg | default: 16 }}px;
+    --radius-full: 9999px;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+{% endstyle %}
