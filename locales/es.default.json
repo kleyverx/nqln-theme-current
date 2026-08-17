@@ -106,7 +106,10 @@
       "aria_search": "Abrir búsqueda",
       "aria_account": "Mi cuenta",
       "aria_wishlist": "Lista de deseos",
-      "aria_cart": "Carrito de compras"
+      "aria_cart": "Carrito de compras",
+      "info_bar_aria": "Beneficios y tasa BCV",
+      "chips_aria": "Colecciones destacadas",
+      "chips_placeholder": "Selecciona un menú en el bloque para mostrar chips"
     },
     "bottom_bar": {
       "aria_nav": "Navegación inferior",

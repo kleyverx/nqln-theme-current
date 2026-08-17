@@ -106,7 +106,10 @@
       "aria_search": "Open search",
       "aria_account": "My account",
       "aria_wishlist": "Wishlist",
-      "aria_cart": "Shopping cart"
+      "aria_cart": "Shopping cart",
+      "info_bar_aria": "Benefits and BCV rate",
+      "chips_aria": "Featured collections",
+      "chips_placeholder": "Select a menu in the block to show chips"
     },
     "bottom_bar": {
       "aria_nav": "Bottom navigation",

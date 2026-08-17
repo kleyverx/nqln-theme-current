@@ -1,20 +1,16 @@
 {%- comment -%}
-  Header principal del tema NQLN.
+  Header principal del tema NQLN (unificado).
 
-  Commit 1 (mobile basico funcional):
-  - Layout mobile-first: [search] [logo centrado] [account, wishlist, cart]
-  - Sin JS: cada icono es un link a la pagina correspondiente
-  - Iconos SVG inline (estilo outline, 1.5 stroke, currentColor)
-  - Semantico: <header> con <nav> implicito, ARIA labels en cada action
-  - Tokens: usa var(--color-*), var(--space-*), var(--font-*)
+  Todo lo relacionado con el header vive aqui:
+  - Row principal: [search] [logo centrado] [account, wishlist, cart]
+  - Franja de mensajes de seguridad + BCV como BLOCKS reordenables
+    directamente desde el theme editor "Header" (sin section separada).
 
-  Proximos commits:
-  - 2: sticky on scroll (custom element)
-  - 3: marquee section (aparte)
-  - 4: beneficios strip + BCV mobile
-  - 5: search modal + drawer nav mobile
-  - 6: desktop fila superior (turquesa)
-  - 7: mega menus desktop sticky
+  Blocks disponibles:
+  - benefit: icono + texto (envio gratis, pago contra entrega, garantia)
+  - bcv_rate: tasa BCV con auto-update via API publica (max 1)
+
+  Mobile-first. Sin JS excepto BCV auto-update y auto-rotate opcional.
 {%- endcomment -%}
 
 <header class="site-header" id="Header" role="banner">
@@ -98,15 +94,168 @@
     </div>
 
   </div>
+
+  {%- comment -%} ==== Franja de mensajes + BCV (blocks benefit / bcv_rate) ==== {%- endcomment -%}
+  {%- assign has_info_blocks = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'benefit' or block.type == 'bcv_rate' -%}
+      {%- assign has_info_blocks = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if has_info_blocks -%}
+    {%- liquid
+      assign bar_bg = section.settings.info_bar_bg | default: settings.color_brand_secondary
+      assign bar_fg = section.settings.info_bar_fg | default: '#ffffff'
+    -%}
+    <div
+      class="site-header__info-bar {% if section.settings.auto_rotate_mobile %}site-header__info-bar--auto-rotate{% endif %}"
+      role="region"
+      aria-label="{{ 'sections.header.info_bar_aria' | t }}"
+      style="--info-bar-bg: {{ bar_bg }}; --info-bar-fg: {{ bar_fg }};"
+      data-rotate-interval="{{ section.settings.rotate_interval | default: 4000 }}"
+    >
+      <div class="site-header__info-scroll">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'benefit' -%}
+              <div class="site-header__info-item" {{ block.shopify_attributes }}>
+                {%- if block.settings.icon != 'none' -%}
+                  <span class="site-header__info-icon" aria-hidden="true">
+                    {%- case block.settings.icon -%}
+                      {%- when 'shipping' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                      {%- when 'payment' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                      {%- when 'shield' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+                      {%- when 'check' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                      {%- when 'lock' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      {%- when 'support' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3v4Z"/><path d="M3 19a2 2 0 0 0 2 2h1v-6H3v4Z"/></svg>
+                      {%- when 'return' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+                      {%- when 'gift' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/></svg>
+                    {%- endcase -%}
+                  </span>
+                {%- endif -%}
+                <span class="site-header__info-text">{{ block.settings.text }}</span>
+              </div>
+
+            {%- when 'bcv_rate' -%}
+              <div class="site-header__info-item site-header__info-item--bcv" {{ block.shopify_attributes }}>
+                <span class="site-header__info-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+                <span class="site-header__info-text">
+                  {{ block.settings.label }}
+                  <strong data-bcv-rate>{{ block.settings.manual_rate }}</strong>
+                  {{ block.settings.suffix }}
+                </span>
+                {%- if block.settings.auto_update -%}
+                  <script data-bcv-auto-update
+                    data-endpoint="{{ block.settings.api_endpoint | default: 'https://ve.dolarapi.com/v1/dolares/oficial' }}"
+                    data-key-path="{{ block.settings.api_key_path | default: 'promedio' }}"
+                  ></script>
+                {%- endif -%}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ==== Chips de colecciones (block collection_chips, max 1) ==== {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'collection_chips' -%}
+      {%- liquid
+        assign menu = linklists[block.settings.menu]
+        assign current_handle = collection.handle | default: ''
+        assign chip_style = block.settings.chip_style | default: 'pill'
+        assign show_image = block.settings.show_image
+      -%}
+      {%- if menu != blank and menu.links.size > 0 -%}
+        <nav
+          class="site-header__chips site-header__chips--{{ chip_style }} {% if show_image %}site-header__chips--with-image{% endif %}"
+          role="navigation"
+          aria-label="{{ 'sections.header.chips_aria' | t }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="site-header__chips-scroll">
+            {%- if block.settings.show_all_link and block.settings.all_url != blank -%}
+              <a class="site-header__chip" href="{{ block.settings.all_url }}">
+                {%- if show_image -%}
+                  <span class="site-header__chip-image site-header__chip-image--all" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  </span>
+                {%- endif -%}
+                <span class="site-header__chip-name">{{ block.settings.all_label | default: 'Ver todo' }}</span>
+              </a>
+            {%- endif -%}
+
+            {%- for link in menu.links -%}
+              {%- assign is_active = false -%}
+              {%- if link.type == 'collection_link' and link.object.handle == current_handle -%}
+                {%- assign is_active = true -%}
+              {%- endif -%}
+              {%- assign chip_img = blank -%}
+              {%- if link.type == 'collection_link' and link.object -%}
+                {%- assign chip_img = link.object.image | default: link.object.products.first.featured_image -%}
+              {%- elsif link.type == 'product_link' and link.object -%}
+                {%- assign chip_img = link.object.featured_image -%}
+              {%- endif -%}
+              <a
+                class="site-header__chip {% if is_active %}is-active{% endif %}"
+                href="{{ link.url }}"
+                {% if is_active %}aria-current="page"{% endif %}
+              >
+                {%- if show_image -%}
+                  <span class="site-header__chip-image">
+                    {%- if chip_img != blank -%}
+                      {{ chip_img | image_url: width: 80 | image_tag: loading: 'lazy', width: 40, height: 40, alt: link.title, class: 'site-header__chip-img' }}
+                    {%- else -%}
+                      <span class="site-header__chip-initial" aria-hidden="true">{{ link.title | slice: 0, 1 | upcase }}</span>
+                    {%- endif -%}
+                  </span>
+                {%- endif -%}
+                <span class="site-header__chip-name">{{ link.title }}</span>
+              </a>
+            {%- endfor -%}
+          </div>
+        </nav>
+      {%- elsif request.design_mode -%}
+        <div class="site-header__chips">
+          <div class="site-header__chips-scroll">
+            <div class="site-header__chip site-header__chip--placeholder">
+              <span class="site-header__chip-name">{{ 'sections.header.chips_placeholder' | t }}</span>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
 </header>
 
 {% stylesheet %}
-  /* Header — mobile first */
+  /* Header — MOBILE ONLY. Se oculta en tablet + desktop (>=750px).
+     El header desktop se agregara como section aparte en un proximo commit. */
   .site-header {
     background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
     position: relative;
     z-index: 100;
+  }
+
+  @media (min-width: 750px) {
+    .site-header {
+      display: none;
+    }
   }
 
   .site-header__inner {
@@ -208,48 +357,258 @@
     color: var(--color-bg);
   }
 
-  /* Hide wishlist badge cuando esta en 0 (evita ver "0" cuando el user no tiene nada). */
   .site-header__badge[data-wishlist-count]:not([data-count]) {
     display: none;
   }
 
-  /* Tablet & up: mas aire, iconos ligeramente mas grandes */
-  @media (min-width: 750px) {
-    .site-header__inner {
-      min-height: 64px;
-      gap: var(--space-md);
-    }
+  /* Sin media queries de tablet/desktop aca: este header se OCULTA a partir
+     de 750px (regla arriba). El header desktop es una section separada. */
 
-    .site-header__logo-image {
-      max-height: 42px;
-    }
-
-    .site-header__icon {
-      width: 24px;
-      height: 24px;
-    }
-
-    .site-header__actions {
-      gap: var(--space-xs);
-    }
+  /* ============================================================
+     Franja de mensajes de seguridad + BCV
+     ============================================================ */
+  .site-header__info-bar {
+    background: var(--info-bar-bg);
+    color: var(--info-bar-fg);
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: var(--font-weight-strong);
+    letter-spacing: 0.01em;
+    overflow: hidden;
+    position: relative;
   }
 
-  /* Desktop 990+: header con logo mas grande. En commit 6 se anade la barra
-     superior turquesa con beneficios/BCV y en commit 7 los megamenus. */
-  @media (min-width: 990px) {
-    .site-header__inner {
-      min-height: 72px;
-    }
+  .site-header__info-scroll {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: 8px var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    .site-header__logo-image {
-      max-height: 48px;
-    }
+  .site-header__info-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-header__info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+
+  .site-header__info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+
+  .site-header__info-icon svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
+  .site-header__info-text {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .site-header__info-text strong {
+    font-weight: 800;
+  }
+
+  .site-header__info-item--bcv {
+    padding-left: var(--space-md);
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* Auto-rotate mobile: solo 1 item visible a la vez (todo el header ya
+     esta oculto en desktop, no necesitamos media query aqui). */
+  .site-header__info-bar--auto-rotate .site-header__info-scroll {
+    scroll-snap-type: x mandatory;
+    gap: 0;
+  }
+  .site-header__info-bar--auto-rotate .site-header__info-item {
+    min-width: calc(100% - (var(--space-md) * 2));
+    justify-content: center;
+    scroll-snap-stop: always;
+  }
+  .site-header__info-bar--auto-rotate .site-header__info-item--bcv {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  /* ============================================================
+     Chips de colecciones (block collection_chips)
+     ============================================================ */
+  .site-header__chips {
+    background: var(--color-bg);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+
+  .site-header__chips-scroll {
+    display: flex;
+    gap: 6px;
+    padding: 0 var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .site-header__chips-scroll::-webkit-scrollbar { display: none; }
+
+  .site-header__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    padding: 5px 12px;
+    background: var(--color-bg-soft);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: var(--font-weight-strong);
+    white-space: nowrap;
+    transition: background 150ms ease, color 150ms ease;
+    min-height: 30px;
+    line-height: 1.1;
+  }
+
+  .site-header__chips--pill .site-header__chip { border-radius: var(--radius-full); }
+  .site-header__chips--rounded .site-header__chip { border-radius: var(--radius-md); }
+  .site-header__chips--square .site-header__chip { border-radius: 0; }
+
+  .site-header__chip:hover,
+  .site-header__chip:focus-visible {
+    background: var(--color-border);
+  }
+
+  .site-header__chip.is-active {
+    background: var(--color-brand-secondary);
+    color: var(--color-bg);
+  }
+
+  .site-header__chip--placeholder {
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  .site-header__chips--with-image .site-header__chip {
+    padding: 3px 10px 3px 3px;
+    min-height: 36px;
+  }
+
+  .site-header__chip-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  .site-header__chips--rounded.site-header__chips--with-image .site-header__chip-image,
+  .site-header__chips--square.site-header__chips--with-image .site-header__chip-image {
+    border-radius: var(--radius-sm);
+  }
+
+  .site-header__chip-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .site-header__chip-initial {
+    font-size: 13px;
+    font-weight: var(--font-weight-heading);
+    color: var(--color-text-muted);
+  }
+
+  .site-header__chip-image--all svg {
+    width: 16px;
+    height: 16px;
+    color: var(--color-text-muted);
+  }
+
+  .site-header__chip.is-active .site-header__chip-image {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .site-header__chip.is-active .site-header__chip-initial,
+  .site-header__chip.is-active .site-header__chip-image--all svg {
+    color: var(--color-bg);
   }
 {% endstylesheet %}
 
+{% javascript %}
+  // BCV auto-update — fetch a API publica (default ve.dolarapi.com).
+  // Silent fail: si el API cae, mantiene el manual_rate.
+  document.querySelectorAll('script[data-bcv-auto-update]').forEach((script) => {
+    const endpoint = script.dataset.endpoint;
+    const keyPath = script.dataset.keyPath || '';
+    const target = script.previousElementSibling?.querySelector('[data-bcv-rate]');
+    if (!endpoint || !target) return;
+
+    fetch(endpoint, { headers: { 'Accept': 'application/json' } })
+      .then((r) => r.ok ? r.json() : Promise.reject())
+      .then((data) => {
+        const value = keyPath ? keyPath.split('.').reduce((obj, k) => obj?.[k], data) : data;
+        if (value == null) return;
+        const num = typeof value === 'number' ? value : parseFloat(value);
+        if (Number.isFinite(num)) {
+          target.textContent = num.toLocaleString('es-VE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        }
+      })
+      .catch(() => {});
+  });
+
+  // Auto-rotate mobile — scroll al siguiente item cada N ms.
+  document.querySelectorAll('.site-header__info-bar--auto-rotate').forEach((bar) => {
+    const scroll = bar.querySelector('.site-header__info-scroll');
+    if (!scroll) return;
+    const interval = parseInt(bar.dataset.rotateInterval, 10) || 4000;
+    let idx = 0;
+    let paused = false;
+    const mql = window.matchMedia('(max-width: 749.98px)');
+    const items = scroll.children;
+
+    setInterval(() => {
+      if (paused || !mql.matches || items.length < 2) return;
+      idx = (idx + 1) % items.length;
+      const target = items[idx];
+      scroll.scrollTo({ left: target.offsetLeft - scroll.offsetLeft, behavior: 'smooth' });
+    }, interval);
+
+    scroll.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+    scroll.addEventListener('touchend', () => { setTimeout(() => { paused = false; }, interval); }, { passive: true });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) paused = true;
+  });
+{% endjavascript %}
+
 {% schema %}
 {
-  "name": "Header",
+  "name": "Header Mobile",
   "class": "shopify-section-header",
   "settings": [
     {
@@ -265,7 +624,7 @@
     {
       "type": "range",
       "id": "logo_width",
-      "label": "Ancho maximo del logo (px)",
+      "label": "Ancho máximo del logo (px)",
       "min": 60,
       "max": 240,
       "step": 10,
@@ -287,7 +646,7 @@
       "id": "show_account",
       "label": "Mostrar cuenta",
       "default": true,
-      "info": "Solo aparece si tienes cuentas de cliente habilitadas en la tienda."
+      "info": "Solo aparece si tienes cuentas de cliente habilitadas."
     },
     {
       "type": "checkbox",
@@ -298,25 +657,196 @@
     {
       "type": "text",
       "id": "wishlist_page_handle",
-      "label": "Handle de la pagina de wishlist",
+      "label": "Handle de la página de wishlist",
       "default": "wish-list",
       "info": "Sin barra al principio. Ej: 'wish-list' apunta a /pages/wish-list"
     },
     {
       "type": "header",
-      "content": "Navegacion"
+      "content": "Navegación"
     },
     {
       "type": "link_list",
       "id": "menu",
-      "label": "Menu principal",
-      "default": "main-menu",
-      "info": "Se muestra completo en desktop (commit siguiente). En mobile se accede desde el drawer."
+      "label": "Menú principal",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Franja informativa (bloques abajo)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Agrega bloques (Beneficio, Tasa BCV) desde el botón 'Agregar bloque' abajo. Si no agregas ninguno, la franja no se muestra."
+    },
+    {
+      "type": "color",
+      "id": "info_bar_bg",
+      "label": "Color de fondo",
+      "info": "Vacío = color secundario del tema (turquesa)."
+    },
+    {
+      "type": "color",
+      "id": "info_bar_fg",
+      "label": "Color de texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate_mobile",
+      "label": "Rotar mensajes en mobile",
+      "info": "Un mensaje a la vez, rota cada N segundos. Si off, scroll horizontal libre.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotate_interval",
+      "label": "Intervalo de rotación (ms)",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icono",
+          "options": [
+            { "value": "none", "label": "Ninguno" },
+            { "value": "shipping", "label": "Envío / Camión" },
+            { "value": "payment", "label": "Pago / Tarjeta" },
+            { "value": "shield", "label": "Escudo / Garantía" },
+            { "value": "check", "label": "Check" },
+            { "value": "lock", "label": "Pago seguro" },
+            { "value": "support", "label": "Soporte 24/7" },
+            { "value": "return", "label": "Devolución" },
+            { "value": "gift", "label": "Regalo" }
+          ],
+          "default": "shipping"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "Envío gratis desde 30$"
+        }
+      ]
+    },
+    {
+      "type": "bcv_rate",
+      "name": "Tasa BCV",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta",
+          "default": "BCV:"
+        },
+        {
+          "type": "text",
+          "id": "manual_rate",
+          "label": "Tasa manual (Bs por USD)",
+          "info": "Se muestra si auto-update está off o si el API falla.",
+          "default": "50,00"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Sufijo",
+          "default": "Bs"
+        },
+        {
+          "type": "checkbox",
+          "id": "auto_update",
+          "label": "Actualizar automáticamente",
+          "info": "Consulta ve.dolarapi.com. Silent fail si el API cae.",
+          "default": true
+        },
+        {
+          "type": "url",
+          "id": "api_endpoint",
+          "label": "Endpoint API (avanzado)",
+          "info": "Vacío = ve.dolarapi.com/v1/dolares/oficial (default)."
+        },
+        {
+          "type": "text",
+          "id": "api_key_path",
+          "label": "Ruta al valor en el JSON (avanzado)",
+          "info": "Vacío = 'promedio' (default para dolarapi).",
+          "default": "promedio"
+        }
+      ]
+    },
+    {
+      "type": "collection_chips",
+      "name": "Chips de colecciones",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Genera chips horizontales desde un menú de Shopify. Cada link del menú se convierte en un chip."
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menú",
+          "default": "main-menu"
+        },
+        {
+          "type": "select",
+          "id": "chip_style",
+          "label": "Forma",
+          "options": [
+            { "value": "pill", "label": "Pastilla" },
+            { "value": "rounded", "label": "Rectángulo redondeado" },
+            { "value": "square", "label": "Cuadrado" }
+          ],
+          "default": "pill"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_image",
+          "label": "Mostrar miniatura",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_all_link",
+          "label": "Mostrar chip 'Ver todo' al inicio",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "all_label",
+          "label": "Texto 'Ver todo'",
+          "default": "Ver todo"
+        },
+        {
+          "type": "url",
+          "id": "all_url",
+          "label": "URL 'Ver todo'"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Header"
+      "name": "Header Mobile",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "shipping", "text": "Envío gratis desde 30$" } },
+        { "type": "benefit", "settings": { "icon": "payment", "text": "Pago contra entrega" } },
+        { "type": "benefit", "settings": { "icon": "shield", "text": "Garantía de 15 días" } },
+        { "type": "bcv_rate", "settings": {} },
+        { "type": "collection_chips", "settings": { "menu": "main-menu" } }
+      ]
     }
   ]
 }

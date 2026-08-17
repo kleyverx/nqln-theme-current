@@ -20,12 +20,7 @@
         "show_account": false,
         "show_wishlist": true,
         "wishlist_page_handle": "wish-list",
-        "menu": "cat-logo"
-      }
-    },
-    "header-info-bar": {
-      "type": "header-info-bar",
-      "settings": {
+        "menu": "cat-logo",
         "auto_rotate_mobile": true,
         "rotate_interval": 4000
       },
@@ -48,30 +43,23 @@
             "label": "BCV:",
             "manual_rate": "50,00",
             "suffix": "Bs",
-            "auto_update": true,
-            "api_endpoint": "",
-            "api_key_path": ""
+            "auto_update": true
+          }
+        },
+        "chips": {
+          "type": "collection_chips",
+          "settings": {
+            "menu": "cat-logo-mobile",
+            "chip_style": "pill",
+            "show_image": true,
+            "show_all_link": false,
+            "all_label": "Ver todo",
+            "all_url": ""
           }
         }
       },
-      "block_order": ["shipping", "payment", "warranty", "bcv"]
-    },
-    "collection_chips_eidDTT": {
-      "type": "collection-chips",
-      "name": "Chips de colecciones",
-      "settings": {
-        "menu": "cat-logo-mobile",
-        "chip_style": "pill",
-        "show_image": true,
-        "show_all_link": false,
-        "all_label": "Ver todo",
-        "all_url": ""
-      }
+      "block_order": ["shipping", "payment", "warranty", "bcv", "chips"]
     }
   },
-  "order": [
-    "header",
-    "header-info-bar",
-    "collection_chips_eidDTT"
-  ]
+  "order": ["header"]
 }
