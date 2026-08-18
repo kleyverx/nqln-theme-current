@@ -95,92 +95,7 @@
 
   </div>
 
-  {%- comment -%} ==== Franja de mensajes + BCV (blocks benefit / bcv_rate) ==== {%- endcomment -%}
-  {%- assign has_info_blocks = false -%}
-  {%- for block in section.blocks -%}
-    {%- if block.type == 'benefit' or block.type == 'bcv_rate' -%}
-      {%- assign has_info_blocks = true -%}
-      {%- break -%}
-    {%- endif -%}
-  {%- endfor -%}
-
-  {%- if has_info_blocks -%}
-    {%- liquid
-      assign bar_bg = section.settings.info_bar_bg
-      if bar_bg == blank
-        assign bar_bg = settings.color_brand_secondary
-      endif
-      if bar_bg == blank
-        assign bar_bg = '#20b19e'
-      endif
-      assign bar_fg = section.settings.info_bar_fg
-      if bar_fg == blank
-        assign bar_fg = '#ffffff'
-      endif
-    -%}
-    <div
-      class="site-header__info-bar {% if section.settings.auto_rotate_mobile %}site-header__info-bar--auto-rotate{% endif %}"
-      role="region"
-      aria-label="{{ 'sections.header.info_bar_aria' | t }}"
-      style="--info-bar-bg: {{ bar_bg }}; --info-bar-fg: {{ bar_fg }};"
-      data-rotate-interval="{{ section.settings.rotate_interval | default: 4000 }}"
-    >
-      <div class="site-header__info-scroll">
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-
-            {%- when 'benefit' -%}
-              <div class="site-header__info-item" {{ block.shopify_attributes }}>
-                {%- if block.settings.icon != 'none' -%}
-                  <span class="site-header__info-icon" aria-hidden="true">
-                    {%- case block.settings.icon -%}
-                      {%- when 'shipping' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
-                      {%- when 'payment' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                      {%- when 'shield' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
-                      {%- when 'check' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                      {%- when 'lock' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      {%- when 'support' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3v4Z"/><path d="M3 19a2 2 0 0 0 2 2h1v-6H3v4Z"/></svg>
-                      {%- when 'return' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
-                      {%- when 'gift' -%}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/></svg>
-                    {%- endcase -%}
-                  </span>
-                {%- endif -%}
-                <span class="site-header__info-text">{{ block.settings.text }}</span>
-              </div>
-
-            {%- when 'bcv_rate' -%}
-              <div class="site-header__info-item site-header__info-item--bcv" {{ block.shopify_attributes }}>
-                <span class="site-header__info-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </span>
-                <span class="site-header__info-text">
-                  {{ block.settings.label }}
-                  <strong data-bcv-rate>{{ block.settings.manual_rate }}</strong>
-                  {{ block.settings.suffix }}
-                </span>
-                {%- if block.settings.auto_update -%}
-                  <script data-bcv-auto-update
-                    data-endpoint="{{ block.settings.api_endpoint | default: 'https://ve.dolarapi.com/v1/dolares/oficial' }}"
-                    data-key-path="{{ block.settings.api_key_path | default: 'promedio' }}"
-                  ></script>
-                {%- endif -%}
-              </div>
-
-          {%- endcase -%}
-        {%- endfor -%}
-      </div>
-    </div>
-  {%- endif -%}
-
-  {%- comment -%} ==== Chips de colecciones (block collection_chips, max 1) ==== {%- endcomment -%}
+  {%- comment -%} ==== Chips de colecciones PRIMERO (arriba del info-bar) ==== {%- endcomment -%}
   {%- for block in section.blocks -%}
     {%- if block.type == 'collection_chips' -%}
       {%- liquid
@@ -207,7 +122,6 @@
                 <span class="site-header__chip-name">{{ block.settings.all_label | default: 'Ver todo' }}</span>
               </a>
             {%- endif -%}
-
             {%- for link in menu.links -%}
               {%- assign is_active = false -%}
               {%- if link.type == 'collection_link' and link.object.handle == current_handle -%}
@@ -249,26 +163,122 @@
       {%- endif -%}
     {%- endif -%}
   {%- endfor -%}
+
+  {%- comment -%} ==== Franja de mensajes + BCV DEBAJO (grid 2x2 pastillas) ==== {%- endcomment -%}
+  {%- assign has_info_blocks = false -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'benefit' or block.type == 'bcv_rate' -%}
+      {%- assign has_info_blocks = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if has_info_blocks -%}
+    {%- liquid
+      assign bar_bg = section.settings.info_bar_bg
+      if bar_bg == blank
+        assign bar_bg = settings.color_brand_secondary
+      endif
+      if bar_bg == blank
+        assign bar_bg = '#20b19e'
+      endif
+      assign bar_fg = section.settings.info_bar_fg
+      if bar_fg == blank
+        assign bar_fg = '#ffffff'
+      endif
+    -%}
+    <div
+      class="site-header__info-bar"
+      role="region"
+      aria-label="{{ 'sections.header.info_bar_aria' | t }}"
+      style="--info-bar-bg: {{ bar_bg }}; --info-bar-fg: {{ bar_fg }};"
+    >
+      <div class="site-header__info-scroll" data-info-carousel data-interval="{{ section.settings.rotate_interval | default: 4000 }}">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'benefit' -%}
+              <div class="site-header__info-item" {{ block.shopify_attributes }}>
+                {%- if block.settings.icon != 'none' -%}
+                  <span class="site-header__info-icon" aria-hidden="true">
+                    {%- case block.settings.icon -%}
+                      {%- when 'shipping' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                      {%- when 'payment' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                      {%- when 'shield' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+                      {%- when 'check' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                      {%- when 'lock' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      {%- when 'support' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3v4Z"/><path d="M3 19a2 2 0 0 0 2 2h1v-6H3v4Z"/></svg>
+                      {%- when 'return' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>
+                      {%- when 'gift' -%}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/></svg>
+                    {%- endcase -%}
+                  </span>
+                {%- endif -%}
+                <span class="site-header__info-text-stack">
+                  <span class="site-header__info-title">{{ block.settings.text }}</span>
+                  {%- if block.settings.subtitle != blank -%}
+                    <span class="site-header__info-subtitle">{{ block.settings.subtitle }}</span>
+                  {%- endif -%}
+                </span>
+              </div>
+
+            {%- when 'bcv_rate' -%}
+              <div class="site-header__info-item site-header__info-item--bcv" {{ block.shopify_attributes }}>
+                <span class="site-header__info-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+                <span class="site-header__info-text-stack">
+                  <span class="site-header__info-title">
+                    {{ block.settings.label }}
+                    <strong data-bcv-rate>{{ block.settings.manual_rate }}</strong>{{ block.settings.suffix }}
+                  </span>
+                  {%- if block.settings.subtitle != blank -%}
+                    <span class="site-header__info-subtitle">{{ block.settings.subtitle }}</span>
+                  {%- endif -%}
+                </span>
+                {%- if block.settings.auto_update -%}
+                  <script data-bcv-auto-update
+                    data-endpoint="{{ block.settings.api_endpoint | default: 'https://ve.dolarapi.com/v1/dolares/oficial' }}"
+                    data-key-path="{{ block.settings.api_key_path | default: 'promedio' }}"
+                  ></script>
+                {%- endif -%}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
 </header>
 
 {% stylesheet %}
-  /* Header — el bloque principal (logo + iconos) es MOBILE ONLY.
-     La franja info-bar y los chips se muestran tambien en desktop
-     (utiles como top-bar hasta que hagamos el header desktop). */
+  /* HEADER MOBILE — TODO oculto en tablet+desktop (>=750px).
+     Regla del proyecto: ningun componente de esta section (inner, info-bar,
+     chips) debe verse en desktop. El desktop tiene su propia section
+     'Header Desktop' separada.
+     Ver: memory/project-header-mobile-oculto-desktop.md */
   .site-header {
     background: var(--color-bg);
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 100;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
   }
 
   .site-header__inner {
     border-bottom: 1px solid var(--color-border);
   }
 
-  /* Oculta SOLO la row principal (logo/iconos) en tablet+desktop, no
-     el info-bar ni chips. */
   @media (min-width: 750px) {
-    .site-header__inner {
+    .site-header {
       display: none;
     }
   }
@@ -381,48 +391,99 @@
 
   /* ============================================================
      Franja de mensajes de seguridad + BCV
+     Mobile: pastillas turquesa con circulo blanco a la izq (icono
+     dentro) + titulo bold + subtitle opcional debajo.
      ============================================================ */
   .site-header__info-bar {
-    background: var(--info-bar-bg);
     color: var(--info-bar-fg);
-    font-size: 12px;
-    line-height: 1.3;
-    font-weight: var(--font-weight-strong);
-    letter-spacing: 0.01em;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .site-header__info-scroll {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
     padding: 8px var(--space-md);
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
+    background: transparent;
   }
 
-  .site-header__info-scroll::-webkit-scrollbar {
-    display: none;
+  /* Carousel: solo 2 pastillas visibles a la vez (una a cada lado).
+     Todos los items apilados con position absolute. El JS asigna
+     is-slot-1 (izq) o is-slot-2 (der) al par activo. */
+  .site-header__info-scroll {
+    position: relative;
+    min-height: 40px;
+    perspective: 800px;
   }
 
   .site-header__info-item {
-    display: inline-flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(50% - 4px);
     align-items: center;
-    gap: 6px;
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    white-space: nowrap;
+    gap: 8px;
+    background: var(--info-bar-bg);
+    color: var(--info-bar-fg);
+    padding: 5px 12px 5px 5px;
+    border-radius: var(--radius-full);
+    min-height: 40px;
+    text-align: left;
+    line-height: 1.1;
+    min-width: 0;
+    display: inline-flex;
+    opacity: 0;
+    transform: rotateY(90deg);
+    transform-origin: center;
+    backface-visibility: hidden;
+    transition: opacity 250ms ease, transform 500ms cubic-bezier(0.4, 0.2, 0.2, 1);
+    pointer-events: none;
+    will-change: transform, opacity;
   }
 
+  .site-header__info-item.is-slot-1 {
+    left: 0;
+    right: auto;
+    opacity: 1;
+    transform: rotateY(0);
+    pointer-events: auto;
+    transition-delay: 0ms;
+  }
+
+  .site-header__info-item.is-slot-2 {
+    left: auto;
+    right: 0;
+    opacity: 1;
+    transform: rotateY(0);
+    pointer-events: auto;
+    transition-delay: 80ms;
+  }
+
+  /* Fallback sin JS: pintar los primeros 2 items en sus slots via nth-of-type. */
+  .site-header__info-scroll:not([data-carousel-ready]) .site-header__info-item:nth-of-type(1) {
+    left: 0;
+    right: auto;
+    opacity: 1;
+    transform: rotateY(0);
+  }
+  .site-header__info-scroll:not([data-carousel-ready]) .site-header__info-item:nth-of-type(2) {
+    left: auto;
+    right: 0;
+    opacity: 1;
+    transform: rotateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__info-item {
+      transition: opacity 150ms ease;
+      transform: rotateY(0);
+    }
+  }
+
+  /* Circulo blanco con el icono en color turquesa (el mismo del fondo
+     de la pastilla) */
   .site-header__info-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--info-bar-fg);
+    color: var(--info-bar-bg);
     flex: 0 0 auto;
   }
 
@@ -432,35 +493,39 @@
     display: block;
   }
 
-  .site-header__info-text {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
+  .site-header__info-text-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
-  .site-header__info-text strong {
+  .site-header__info-title {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .site-header__info-title strong {
     font-weight: 800;
   }
 
-  .site-header__info-item--bcv {
-    padding-left: var(--space-md);
-    border-left: 1px solid rgba(255, 255, 255, 0.25);
-  }
-
-  /* Auto-rotate mobile: solo 1 item visible a la vez (todo el header ya
-     esta oculto en desktop, no necesitamos media query aqui). */
-  .site-header__info-bar--auto-rotate .site-header__info-scroll {
-    scroll-snap-type: x mandatory;
-    gap: 0;
-  }
-  .site-header__info-bar--auto-rotate .site-header__info-item {
-    min-width: calc(100% - (var(--space-md) * 2));
-    justify-content: center;
-    scroll-snap-stop: always;
-  }
-  .site-header__info-bar--auto-rotate .site-header__info-item--bcv {
-    padding-left: 0;
-    border-left: none;
+  .site-header__info-subtitle {
+    font-size: 9.5px;
+    font-weight: 500;
+    line-height: 1.15;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   /* ============================================================
@@ -468,14 +533,14 @@
      ============================================================ */
   .site-header__chips {
     background: var(--color-bg);
-    padding: 6px 0;
+    padding: 4px 0;
     border-bottom: 1px solid var(--color-border);
     overflow: hidden;
   }
 
   .site-header__chips-scroll {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     padding: 0 var(--space-md);
     overflow-x: auto;
     scroll-snap-type: x proximity;
@@ -489,18 +554,18 @@
   .site-header__chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex: 0 0 auto;
     scroll-snap-align: start;
-    padding: 5px 12px;
+    padding: 3px 9px;
     background: var(--color-bg-soft);
     color: var(--color-text);
     text-decoration: none;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: var(--font-weight-strong);
     white-space: nowrap;
     transition: background 150ms ease, color 150ms ease;
-    min-height: 30px;
+    min-height: 24px;
     line-height: 1.1;
   }
 
@@ -524,16 +589,16 @@
   }
 
   .site-header__chips--with-image .site-header__chip {
-    padding: 3px 10px 3px 3px;
-    min-height: 36px;
+    padding: 2px 8px 2px 2px;
+    min-height: 28px;
   }
 
   .site-header__chip-image {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     border-radius: var(--radius-full);
     background: var(--color-bg);
     overflow: hidden;
@@ -553,14 +618,14 @@
   }
 
   .site-header__chip-initial {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: var(--font-weight-heading);
     color: var(--color-text-muted);
   }
 
   .site-header__chip-image--all svg {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     color: var(--color-text-muted);
   }
 
@@ -574,6 +639,37 @@
 {% endstylesheet %}
 
 {% javascript %}
+  // Info-bar carousel: 2 pastillas visibles, rota al siguiente par cada N ms.
+  document.querySelectorAll('[data-info-carousel]').forEach((carousel) => {
+    const items = Array.from(carousel.children);
+    const total = items.length;
+    if (total === 0) return;
+
+    // Marca ready para desactivar el fallback CSS :not([data-carousel-ready]).
+    carousel.setAttribute('data-carousel-ready', '');
+
+    // Con 1 o 2 items: no rotamos, ambos siempre visibles.
+    if (total <= 2) {
+      items.forEach((el, i) => el.classList.add(i === 0 ? 'is-slot-1' : 'is-slot-2'));
+      return;
+    }
+
+    let cursor = 0;
+    const paint = () => {
+      items.forEach((el) => el.classList.remove('is-slot-1', 'is-slot-2'));
+      items[cursor % total].classList.add('is-slot-1');
+      items[(cursor + 1) % total].classList.add('is-slot-2');
+    };
+    paint();
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const interval = parseInt(carousel.dataset.interval, 10) || 4000;
+    setInterval(() => {
+      cursor = (cursor + 2) % total;
+      paint();
+    }, interval);
+  });
+
   // BCV auto-update — fetch a API publica (default ve.dolarapi.com).
   // Silent fail: si el API cae, mantiene el manual_rate.
   document.querySelectorAll('script[data-bcv-auto-update]').forEach((script) => {
@@ -598,27 +694,6 @@
       .catch(() => {});
   });
 
-  // Auto-rotate mobile — scroll al siguiente item cada N ms.
-  document.querySelectorAll('.site-header__info-bar--auto-rotate').forEach((bar) => {
-    const scroll = bar.querySelector('.site-header__info-scroll');
-    if (!scroll) return;
-    const interval = parseInt(bar.dataset.rotateInterval, 10) || 4000;
-    let idx = 0;
-    let paused = false;
-    const mql = window.matchMedia('(max-width: 749.98px)');
-    const items = scroll.children;
-
-    setInterval(() => {
-      if (paused || !mql.matches || items.length < 2) return;
-      idx = (idx + 1) % items.length;
-      const target = items[idx];
-      scroll.scrollTo({ left: target.offsetLeft - scroll.offsetLeft, behavior: 'smooth' });
-    }, interval);
-
-    scroll.addEventListener('touchstart', () => { paused = true; }, { passive: true });
-    scroll.addEventListener('touchend', () => { setTimeout(() => { paused = false; }, interval); }, { passive: true });
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) paused = true;
-  });
 {% endjavascript %}
 
 {% schema %}
@@ -707,16 +782,10 @@
       "default": "#ffffff"
     },
     {
-      "type": "checkbox",
-      "id": "auto_rotate_mobile",
-      "label": "Rotar mensajes en mobile",
-      "info": "Un mensaje a la vez, rota cada N segundos. Si off (recomendado), muestra todos con scroll horizontal libre.",
-      "default": false
-    },
-    {
       "type": "range",
       "id": "rotate_interval",
       "label": "Intervalo de rotación (ms)",
+      "info": "Cada cuánto rotan los pares de pastillas. Solo aplica si hay más de 2 bloques.",
       "min": 2000,
       "max": 8000,
       "step": 500,
@@ -749,8 +818,14 @@
         {
           "type": "text",
           "id": "text",
-          "label": "Texto",
+          "label": "Título",
           "default": "Envío gratis desde 30$"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtítulo (opcional)",
+          "info": "Texto pequeño debajo del título."
         }
       ]
     },
@@ -777,6 +852,12 @@
           "id": "suffix",
           "label": "Sufijo",
           "default": "Bs"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtítulo (opcional)",
+          "info": "Texto pequeño debajo. Ej: 'Oficial'."
         },
         {
           "type": "checkbox",
