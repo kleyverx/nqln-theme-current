@@ -1,17 +1,17 @@
 # Congelado: Halo legacy. Se preserva como referencia local pero NO se
 # sube al tema publicado. Ver docs/superpowers/specs/
 #   2026-08-11-nqln-theme-fase-1-setup-design.md
-_legacy-halo/
+_legacy-halo/*
 
 # Documentacion del proyecto (specs, plans). No forma parte del tema.
-docs/
+docs/*
 
 # Screenshots temporales usados durante brainstorming.
 vauli-template.png
 vauli-live-full.jpeg
 
 # Playwright MCP output (screenshots, snapshots) durante debugging.
-.playwright-mcp/
+.playwright-mcp/*
 
 # Backup local del tema (nunca commitear al repo, doble seguridad).
 *.zip
